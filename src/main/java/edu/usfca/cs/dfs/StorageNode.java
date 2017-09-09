@@ -1,6 +1,8 @@
 package edu.usfca.cs.dfs;
 
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class StorageNode {
@@ -9,6 +11,22 @@ public class StorageNode {
     throws Exception {
         String hostname = getHostname();
         System.out.println("Starting storage node on " + hostname + "...");
+        new StorageNode().start();
+    }
+
+    private void start() throws Exception
+    {
+        ServerSocket serverSocket = new ServerSocket(9999);
+        System.out.println("Listening...");
+        while (true) {
+            Socket socket = serverSocket.accept();
+            StorageMessages.StoreChunk storeChunk
+                    = StorageMessages.StoreChunk.parseDelimitedFrom(
+                    socket.getInputStream());
+
+            System.out.println("Storing file name: "
+                    + storeChunk.getFileName());
+        }
     }
 
     /**

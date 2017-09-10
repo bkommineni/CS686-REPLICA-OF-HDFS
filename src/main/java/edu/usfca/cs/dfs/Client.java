@@ -2,7 +2,6 @@ package edu.usfca.cs.dfs;
 
 import com.google.protobuf.ByteString;
 import java.net.Socket;
-import java.util.List;
 
 public class Client {
 

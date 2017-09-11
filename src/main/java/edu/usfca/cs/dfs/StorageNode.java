@@ -1,9 +1,13 @@
 package edu.usfca.cs.dfs;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class StorageNode {
 
@@ -20,12 +24,51 @@ public class StorageNode {
         System.out.println("Listening...");
         while (true) {
             Socket socket = serverSocket.accept();
-            StorageMessages.StoreChunk storeChunk
-                    = StorageMessages.StoreChunk.parseDelimitedFrom(
-                    socket.getInputStream());
+            new Thread(new Request(socket)).start();
+        }
+    }
 
-            System.out.println("Storing file name: "
-                    + storeChunk.getFileName());
+    public class Request implements Runnable {
+        Socket connectionSocket = null;
+
+        public Request(Socket connectionSocket) {
+            this.connectionSocket = connectionSocket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                System.out.println("in thread:SN");
+                StorageMessages.StoreChunk storeChunk
+                        = StorageMessages.StoreChunk.parseDelimitedFrom(
+                        connectionSocket.getInputStream());
+
+                System.out.println("Storing file name: "
+                        + storeChunk.getFileName());
+
+                System.out.println(storeChunk.getData());
+
+                byte[] bytes = storeChunk.getData().toByteArray();
+
+                int i=0;
+                String currPath = ".";
+                Path p = Paths.get(currPath);
+                Path absDir = p.toAbsolutePath();
+                String blockFile = absDir.toString() + "/data/" + "File1Part" + storeChunk.getChunkId() +"_SN" +".txt";
+                FileWriter writer = new FileWriter(blockFile);
+
+                while(i < bytes.length)
+                {
+                    writer.write(bytes[i]);
+                    i++;
+                }
+                writer.close();
+
+                Status.receivedStatus status = Status.receivedStatus.newBuilder().setSuccess(true).build();
+                status.writeDelimitedTo(connectionSocket.getOutputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

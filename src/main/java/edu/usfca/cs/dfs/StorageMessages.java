@@ -37,6 +37,30 @@ public final class StorageMessages {
      * <code>bytes data = 3;</code>
      */
     com.google.protobuf.ByteString getData();
+
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    java.util.List<edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port> 
+        getPortIDList();
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port getPortID(int index);
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    int getPortIDCount();
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    java.util.List<? extends edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder> 
+        getPortIDOrBuilderList();
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder getPortIDOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code StoreChunk}
@@ -54,6 +78,7 @@ public final class StorageMessages {
       fileName_ = "";
       chunkId_ = 0;
       data_ = com.google.protobuf.ByteString.EMPTY;
+      portID_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -100,6 +125,15 @@ public final class StorageMessages {
               data_ = input.readBytes();
               break;
             }
+            case 34: {
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                portID_ = new java.util.ArrayList<edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port>();
+                mutable_bitField0_ |= 0x00000008;
+              }
+              portID_.add(
+                  input.readMessage(edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.parser(), extensionRegistry));
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -108,6 +142,9 @@ public final class StorageMessages {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          portID_ = java.util.Collections.unmodifiableList(portID_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -124,6 +161,455 @@ public final class StorageMessages {
               edu.usfca.cs.dfs.StorageMessages.StoreChunk.class, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Builder.class);
     }
 
+    public interface PortOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:StoreChunk.Port)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       * <code>int32 portNum = 1;</code>
+       */
+      int getPortNum();
+    }
+    /**
+     * Protobuf type {@code StoreChunk.Port}
+     */
+    public  static final class Port extends
+        com.google.protobuf.GeneratedMessageV3 implements
+        // @@protoc_insertion_point(message_implements:StoreChunk.Port)
+        PortOrBuilder {
+    private static final long serialVersionUID = 0L;
+      // Use Port.newBuilder() to construct.
+      private Port(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
+      }
+      private Port() {
+        portNum_ = 0;
+      }
+
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+      getUnknownFields() {
+        return this.unknownFields;
+      }
+      private Port(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        this();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownFieldProto3(
+                    input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 8: {
+
+                portNum_ = input.readInt32();
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return edu.usfca.cs.dfs.StorageMessages.internal_static_StoreChunk_Port_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return edu.usfca.cs.dfs.StorageMessages.internal_static_StoreChunk_Port_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.class, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder.class);
+      }
+
+      public static final int PORTNUM_FIELD_NUMBER = 1;
+      private int portNum_;
+      /**
+       * <code>int32 portNum = 1;</code>
+       */
+      public int getPortNum() {
+        return portNum_;
+      }
+
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        if (portNum_ != 0) {
+          output.writeInt32(1, portNum_);
+        }
+        unknownFields.writeTo(output);
+      }
+
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (portNum_ != 0) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(1, portNum_);
+        }
+        size += unknownFields.getSerializedSize();
+        memoizedSize = size;
+        return size;
+      }
+
+      @java.lang.Override
+      public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+         return true;
+        }
+        if (!(obj instanceof edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port)) {
+          return super.equals(obj);
+        }
+        edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port other = (edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port) obj;
+
+        boolean result = true;
+        result = result && (getPortNum()
+            == other.getPortNum());
+        result = result && unknownFields.equals(other.unknownFields);
+        return result;
+      }
+
+      @java.lang.Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (37 * hash) + PORTNUM_FIELD_NUMBER;
+        hash = (53 * hash) + getPortNum();
+        hash = (29 * hash) + unknownFields.hashCode();
+        memoizedHashCode = hash;
+        return hash;
+      }
+
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(
+          java.nio.ByteBuffer data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(
+          java.nio.ByteBuffer data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+      }
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+      public static Builder newBuilder(edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE
+            ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code StoreChunk.Port}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+          // @@protoc_insertion_point(builder_implements:StoreChunk.Port)
+          edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return edu.usfca.cs.dfs.StorageMessages.internal_static_StoreChunk_Port_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return edu.usfca.cs.dfs.StorageMessages.internal_static_StoreChunk_Port_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.class, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder.class);
+        }
+
+        // Construct using edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessageV3
+                  .alwaysUseFieldBuilders) {
+          }
+        }
+        public Builder clear() {
+          super.clear();
+          portNum_ = 0;
+
+          return this;
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return edu.usfca.cs.dfs.StorageMessages.internal_static_StoreChunk_Port_descriptor;
+        }
+
+        public edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port getDefaultInstanceForType() {
+          return edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.getDefaultInstance();
+        }
+
+        public edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port build() {
+          edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port buildPartial() {
+          edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port result = new edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port(this);
+          result.portNum_ = portNum_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder clone() {
+          return (Builder) super.clone();
+        }
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            java.lang.Object value) {
+          return (Builder) super.setField(field, value);
+        }
+        public Builder clearField(
+            com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return (Builder) super.clearField(field);
+        }
+        public Builder clearOneof(
+            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return (Builder) super.clearOneof(oneof);
+        }
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index, java.lang.Object value) {
+          return (Builder) super.setRepeatedField(field, index, value);
+        }
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            java.lang.Object value) {
+          return (Builder) super.addRepeatedField(field, value);
+        }
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port) {
+            return mergeFrom((edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port other) {
+          if (other == edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.getDefaultInstance()) return this;
+          if (other.getPortNum() != 0) {
+            setPortNum(other.getPortNum());
+          }
+          this.mergeUnknownFields(other.unknownFields);
+          onChanged();
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port) e.getUnfinishedMessage();
+            throw e.unwrapIOException();
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+
+        private int portNum_ ;
+        /**
+         * <code>int32 portNum = 1;</code>
+         */
+        public int getPortNum() {
+          return portNum_;
+        }
+        /**
+         * <code>int32 portNum = 1;</code>
+         */
+        public Builder setPortNum(int value) {
+          
+          portNum_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>int32 portNum = 1;</code>
+         */
+        public Builder clearPortNum() {
+          
+          portNum_ = 0;
+          onChanged();
+          return this;
+        }
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFieldsProto3(unknownFields);
+        }
+
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
+
+        // @@protoc_insertion_point(builder_scope:StoreChunk.Port)
+      }
+
+      // @@protoc_insertion_point(class_scope:StoreChunk.Port)
+      private static final edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port DEFAULT_INSTANCE;
+      static {
+        DEFAULT_INSTANCE = new edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port();
+      }
+
+      public static edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<Port>
+          PARSER = new com.google.protobuf.AbstractParser<Port>() {
+        public Port parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+            return new Port(input, extensionRegistry);
+        }
+      };
+
+      public static com.google.protobuf.Parser<Port> parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<Port> getParserForType() {
+        return PARSER;
+      }
+
+      public edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+
+    }
+
+    private int bitField0_;
     public static final int FILENAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object fileName_;
     /**
@@ -176,6 +662,41 @@ public final class StorageMessages {
       return data_;
     }
 
+    public static final int PORTID_FIELD_NUMBER = 4;
+    private java.util.List<edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port> portID_;
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    public java.util.List<edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port> getPortIDList() {
+      return portID_;
+    }
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    public java.util.List<? extends edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder> 
+        getPortIDOrBuilderList() {
+      return portID_;
+    }
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    public int getPortIDCount() {
+      return portID_.size();
+    }
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    public edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port getPortID(int index) {
+      return portID_.get(index);
+    }
+    /**
+     * <code>repeated .StoreChunk.Port portID = 4;</code>
+     */
+    public edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder getPortIDOrBuilder(
+        int index) {
+      return portID_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -197,6 +718,9 @@ public final class StorageMessages {
       if (!data_.isEmpty()) {
         output.writeBytes(3, data_);
       }
+      for (int i = 0; i < portID_.size(); i++) {
+        output.writeMessage(4, portID_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -215,6 +739,10 @@ public final class StorageMessages {
       if (!data_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(3, data_);
+      }
+      for (int i = 0; i < portID_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, portID_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -238,6 +766,8 @@ public final class StorageMessages {
           == other.getChunkId());
       result = result && getData()
           .equals(other.getData());
+      result = result && getPortIDList()
+          .equals(other.getPortIDList());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -255,6 +785,10 @@ public final class StorageMessages {
       hash = (53 * hash) + getChunkId();
       hash = (37 * hash) + DATA_FIELD_NUMBER;
       hash = (53 * hash) + getData().hashCode();
+      if (getPortIDCount() > 0) {
+        hash = (37 * hash) + PORTID_FIELD_NUMBER;
+        hash = (53 * hash) + getPortIDList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -380,6 +914,7 @@ public final class StorageMessages {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getPortIDFieldBuilder();
         }
       }
       public Builder clear() {
@@ -390,6 +925,12 @@ public final class StorageMessages {
 
         data_ = com.google.protobuf.ByteString.EMPTY;
 
+        if (portIDBuilder_ == null) {
+          portID_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        } else {
+          portIDBuilder_.clear();
+        }
         return this;
       }
 
@@ -412,9 +953,21 @@ public final class StorageMessages {
 
       public edu.usfca.cs.dfs.StorageMessages.StoreChunk buildPartial() {
         edu.usfca.cs.dfs.StorageMessages.StoreChunk result = new edu.usfca.cs.dfs.StorageMessages.StoreChunk(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.fileName_ = fileName_;
         result.chunkId_ = chunkId_;
         result.data_ = data_;
+        if (portIDBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008)) {
+            portID_ = java.util.Collections.unmodifiableList(portID_);
+            bitField0_ = (bitField0_ & ~0x00000008);
+          }
+          result.portID_ = portID_;
+        } else {
+          result.portID_ = portIDBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -466,6 +1019,32 @@ public final class StorageMessages {
         if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
           setData(other.getData());
         }
+        if (portIDBuilder_ == null) {
+          if (!other.portID_.isEmpty()) {
+            if (portID_.isEmpty()) {
+              portID_ = other.portID_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+            } else {
+              ensurePortIDIsMutable();
+              portID_.addAll(other.portID_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.portID_.isEmpty()) {
+            if (portIDBuilder_.isEmpty()) {
+              portIDBuilder_.dispose();
+              portIDBuilder_ = null;
+              portID_ = other.portID_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+              portIDBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getPortIDFieldBuilder() : null;
+            } else {
+              portIDBuilder_.addAllMessages(other.portID_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -492,6 +1071,7 @@ public final class StorageMessages {
         }
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object fileName_ = "";
       /**
@@ -615,6 +1195,246 @@ public final class StorageMessages {
         data_ = getDefaultInstance().getData();
         onChanged();
         return this;
+      }
+
+      private java.util.List<edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port> portID_ =
+        java.util.Collections.emptyList();
+      private void ensurePortIDIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          portID_ = new java.util.ArrayList<edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port>(portID_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder, edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder> portIDBuilder_;
+
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public java.util.List<edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port> getPortIDList() {
+        if (portIDBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(portID_);
+        } else {
+          return portIDBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public int getPortIDCount() {
+        if (portIDBuilder_ == null) {
+          return portID_.size();
+        } else {
+          return portIDBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port getPortID(int index) {
+        if (portIDBuilder_ == null) {
+          return portID_.get(index);
+        } else {
+          return portIDBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public Builder setPortID(
+          int index, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port value) {
+        if (portIDBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePortIDIsMutable();
+          portID_.set(index, value);
+          onChanged();
+        } else {
+          portIDBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public Builder setPortID(
+          int index, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder builderForValue) {
+        if (portIDBuilder_ == null) {
+          ensurePortIDIsMutable();
+          portID_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          portIDBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public Builder addPortID(edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port value) {
+        if (portIDBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePortIDIsMutable();
+          portID_.add(value);
+          onChanged();
+        } else {
+          portIDBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public Builder addPortID(
+          int index, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port value) {
+        if (portIDBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePortIDIsMutable();
+          portID_.add(index, value);
+          onChanged();
+        } else {
+          portIDBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public Builder addPortID(
+          edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder builderForValue) {
+        if (portIDBuilder_ == null) {
+          ensurePortIDIsMutable();
+          portID_.add(builderForValue.build());
+          onChanged();
+        } else {
+          portIDBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public Builder addPortID(
+          int index, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder builderForValue) {
+        if (portIDBuilder_ == null) {
+          ensurePortIDIsMutable();
+          portID_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          portIDBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public Builder addAllPortID(
+          java.lang.Iterable<? extends edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port> values) {
+        if (portIDBuilder_ == null) {
+          ensurePortIDIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, portID_);
+          onChanged();
+        } else {
+          portIDBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public Builder clearPortID() {
+        if (portIDBuilder_ == null) {
+          portID_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+          onChanged();
+        } else {
+          portIDBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public Builder removePortID(int index) {
+        if (portIDBuilder_ == null) {
+          ensurePortIDIsMutable();
+          portID_.remove(index);
+          onChanged();
+        } else {
+          portIDBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder getPortIDBuilder(
+          int index) {
+        return getPortIDFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder getPortIDOrBuilder(
+          int index) {
+        if (portIDBuilder_ == null) {
+          return portID_.get(index);  } else {
+          return portIDBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public java.util.List<? extends edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder> 
+           getPortIDOrBuilderList() {
+        if (portIDBuilder_ != null) {
+          return portIDBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(portID_);
+        }
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder addPortIDBuilder() {
+        return getPortIDFieldBuilder().addBuilder(
+            edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder addPortIDBuilder(
+          int index) {
+        return getPortIDFieldBuilder().addBuilder(
+            index, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .StoreChunk.Port portID = 4;</code>
+       */
+      public java.util.List<edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder> 
+           getPortIDBuilderList() {
+        return getPortIDFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder, edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder> 
+          getPortIDFieldBuilder() {
+        if (portIDBuilder_ == null) {
+          portIDBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port, edu.usfca.cs.dfs.StorageMessages.StoreChunk.Port.Builder, edu.usfca.cs.dfs.StorageMessages.StoreChunk.PortOrBuilder>(
+                  portID_,
+                  ((bitField0_ & 0x00000008) == 0x00000008),
+                  getParentForChildren(),
+                  isClean());
+          portID_ = null;
+        }
+        return portIDBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1193,6 +2013,11 @@ public final class StorageMessages {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_StoreChunk_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_StoreChunk_Port_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_StoreChunk_Port_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_RetrieveFile_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -1206,10 +2031,12 @@ public final class StorageMessages {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\026storage_messages.proto\"=\n\nStoreChunk\022\020" +
+      "\n\026storage_messages.proto\"x\n\nStoreChunk\022\020" +
       "\n\010fileName\030\001 \001(\t\022\017\n\007chunkId\030\002 \001(\005\022\014\n\004dat" +
-      "a\030\003 \001(\014\" \n\014RetrieveFile\022\020\n\010fileName\030\001 \001(" +
-      "\tB\022\n\020edu.usfca.cs.dfsb\006proto3"
+      "a\030\003 \001(\014\022 \n\006portID\030\004 \003(\0132\020.StoreChunk.Por" +
+      "t\032\027\n\004Port\022\017\n\007portNum\030\001 \001(\005\" \n\014RetrieveFi" +
+      "le\022\020\n\010fileName\030\001 \001(\tB\022\n\020edu.usfca.cs.dfs" +
+      "b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1228,7 +2055,13 @@ public final class StorageMessages {
     internal_static_StoreChunk_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_StoreChunk_descriptor,
-        new java.lang.String[] { "FileName", "ChunkId", "Data", });
+        new java.lang.String[] { "FileName", "ChunkId", "Data", "PortID", });
+    internal_static_StoreChunk_Port_descriptor =
+      internal_static_StoreChunk_descriptor.getNestedTypes().get(0);
+    internal_static_StoreChunk_Port_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_StoreChunk_Port_descriptor,
+        new java.lang.String[] { "PortNum", });
     internal_static_RetrieveFile_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_RetrieveFile_fieldAccessorTable = new

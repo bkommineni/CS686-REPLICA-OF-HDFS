@@ -5,6 +5,10 @@ message StoreChunk {
     string fileName = 1;
     int32 chunkId = 2;
     bytes data = 3;
+    message Port {
+        int32 portNum = 1;
+    }
+    repeated Port portID = 4;
 }
 
 message RetrieveFile {

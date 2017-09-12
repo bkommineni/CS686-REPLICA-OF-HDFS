@@ -1,11 +1,15 @@
 package edu.usfca.cs.dfs;
 
+import com.google.protobuf.ByteString;
+
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -47,6 +51,7 @@ public class StorageNode {
                         + storeChunk.getFileName());
 
                 System.out.println(storeChunk.getData());
+                System.out.println(storeChunk.getPortIDList());
 
                 byte[] bytes = storeChunk.getData().toByteArray();
 
@@ -65,7 +70,17 @@ public class StorageNode {
                 writer.close();
 
                 Status.receivedStatus status = Status.receivedStatus.newBuilder().setSuccess(true).build();
-                status.writeDelimitedTo(connectionSocket.getOutputStream());
+                Status.retrieveChunkdata chunkdata = Status.retrieveChunkdata
+                                                        .newBuilder()
+                                                        .setFilename(blockFile)
+                                                        .setData(ByteString.copyFrom(Files.readAllBytes(new File(blockFile).toPath())))
+                                                        .build();
+                Status.StorageMessageWrapper messageWrapper = Status.StorageMessageWrapper
+                                                                .newBuilder()
+                                                                .setRecvStatus(status)
+                                                                .setRetrvChunkdata(chunkdata)
+                                                                .build();
+                messageWrapper.writeDelimitedTo(connectionSocket.getOutputStream());
             } catch (IOException e) {
                 e.printStackTrace();
             }

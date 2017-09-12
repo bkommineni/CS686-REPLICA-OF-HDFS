@@ -44,7 +44,13 @@ public class Controller {
                 System.out.println("in thread:CN");
                 GetStorageNode.getStorageNode storageNode =
                         GetStorageNode.getStorageNode.newBuilder().setPort(9999).build();
-                storageNode.writeDelimitedTo(connectionSocket.getOutputStream());
+                GetStorageNode.getStorageNode storageNode1 =
+                        GetStorageNode.getStorageNode.newBuilder().setPort(9997).build();
+                GetStorageNode.storageNodesList storageNodesList = GetStorageNode.storageNodesList.newBuilder()
+                                                                    .addPortList(storageNode)
+                                                                    .addPortList(storageNode1)
+                                                                    .build();
+                storageNodesList.writeDelimitedTo(connectionSocket.getOutputStream());
             } catch (IOException e) {
                 e.printStackTrace();
             }

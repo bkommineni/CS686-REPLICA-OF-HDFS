@@ -1,0 +1,54 @@
+syntax = "proto3";
+option java_package = "edu.usfca.cs.dfs";
+
+//Controller
+message StoreChunkResponse
+{
+    message storageNode
+    {
+        int32 port = 1;
+    }
+
+    repeated storageNode storageNodeList = 1;
+}
+
+message RetrieveFileResponseFromCN
+{
+    string filename = 1;
+    message storageNode
+    {
+        int32 chunkId = 1;
+        int32 port = 2;
+    }
+
+    repeated storageNode storageNodeList = 2;
+}
+
+//StorageNode
+message RetrieveFileResponseFromSN
+{
+    int32 checksum = 1;
+    bytes chunkData = 2;
+    string filename = 3;
+    int32 chunkId  = 4;
+}
+
+message AcknowledgeReadinessToClient
+{
+    bool success = 1;
+}
+
+message AcknowledgeStoreChunkToClient
+{
+    bool success = 1;
+}
+
+message ResponsesToClientWrapper {
+    oneof msg {
+        StoreChunkResponse StoreChunkResponseMsg = 1;
+        RetrieveFileResponseFromCN RetrieveFileResponseFromCNMsg = 2;
+        RetrieveFileResponseFromSN RetrieveFileResponseFromSNMsg = 3;
+        AcknowledgeReadinessToClient AcknowledgeReadinessToClientMsg = 4;
+        AcknowledgeStoreChunkToClient AcknowledgeStoreChunkToClientMsg = 5;
+    }
+}

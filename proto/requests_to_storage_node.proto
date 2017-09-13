@@ -1,0 +1,40 @@
+syntax = "proto3";
+option java_package = "edu.usfca.cs.dfs";
+
+message ReadinessCheckRequestToSN
+{
+    message StorageNode
+    {
+        int32 port = 1;
+    }
+
+    repeated StorageNode storageNodeList = 1;
+}
+
+message StoreChunkRequestToSN
+{
+    string filename = 1;
+    int32 chunkId   = 2;
+    bytes chunkData = 3;
+
+    message StorageNode
+    {
+        int32 port = 1;
+    }
+
+    repeated StorageNode storageNodeList = 4;
+}
+
+message RetrieveFileRequestToSN
+{
+    string filename = 1;
+    int32  chunkId  = 2;
+}
+
+message RequestsToStorageNodeWrapper {
+    oneof msg {
+        ReadinessCheckRequestToSN readinessCheckRequestToSNMsg = 1;
+        StoreChunkRequestToSN storeChunkRequestToSNMsg = 2;
+        RetrieveFileRequestToSN retrieveFileRequestToSNMsg = 3;
+    }
+}

@@ -1,0 +1,48 @@
+syntax = "proto3";
+option java_package = "edu.usfca.cs.dfs";
+
+//Client
+message StoreChunkRequest
+{
+    string filename = 1;
+    int32  chunkId  = 2;
+}
+
+message RetrieveFileRequest
+{
+    string filename = 1;
+}
+
+message AcknowledgeStoreChunk
+{
+    bool success = 1;
+}
+
+//StorageNode
+message Enroll
+{
+    int32 port = 1;
+}
+
+message Heartbeat
+{
+    int32 port = 1;
+
+    message ChunkMetadata
+    {
+        string filename = 1;
+        int32  chunkId  = 2;
+    }
+
+    repeated ChunkMetadata metadata = 2;
+}
+
+message RequestsToControllerWrapper {
+    oneof msg {
+        StoreChunkRequest storeChunkRequestMsg = 1;
+        RetrieveFileRequest retrieveFileRequestMsg = 2;
+        AcknowledgeStoreChunk acknowledgeStoreChunkMsg = 3;
+        Enroll enrollMsg = 4;
+        Heartbeat heartbeatMsg = 5;
+    }
+}

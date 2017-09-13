@@ -1,0 +1,25 @@
+oring chunks and checksums on the local disks
+[2] Detecting (and recovering from) file corruption
+[1] Heartbeat messages
+[5 pts]: Client implementation:
+[2] Storing files (chunk creation, determining appropriate servers)
+[2] Retrieving files in parallel
+[1] Viewing the file list and available disk space
+[2 pts]: Project retrospective document
+Note: your system must be able to support at least 10 active storage nodes. During grading, you will launch these components on the bass cluster.
+Milestones
+Here￢ﾀﾙs some milestones to guide your implementation:
+Week 1: design document complete, basic Protocol Buffer messaging implementation
+Week 2: client chunking functionality, controller data structures
+Week 3: storage node implementation, heartbeats, single-threaded client retrievals
+Week 4: failure detection and recovery, parallel retrievals
+Week 5: wrap-up, client file list/disk functions, retrospective mortem
+You are required to work alone on this project. However, you are certainly free to discuss the project with your peers. We will also conduct in-class lab sessions where you can:
+Get help, discuss issues, think about your design
+Demonstrate working functionality early to receive partial credit for completed milestones. If you didn￢ﾀﾙt understand a requirement or have an error in your logic, you will know early.
+Grading
+You will have a one-on-one interview and code review to grade your assignment. You will demonstrate the required functionality and walk through your design.
+I will deduct points if you violate any of the requirements listed in this document ￢ﾀﾔ for example, using an unauthorized external library. I may also deduct points for poor design and/or formatting; please use good development practices, break your code into separate classes based on functionality, and include comments in your source where appropriate.
+Changelog
+9/7: Added a small hint about storing files on the bass cluster.
+9/6: Added another bullet to the design document grade breakdown and ad

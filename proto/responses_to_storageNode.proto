@@ -1,0 +1,22 @@
+syntax = "proto3";
+option java_package = "edu.usfca.cs.dfs";
+
+//Controller
+message AcknowledgeEnrollment
+{
+    bool success = 1;
+}
+
+//StorageNode
+message AcknowledgeReadinessToSN
+{
+    bool success = 1;
+}
+
+message ResponsesToStorageNodeWrapper {
+    oneof msg {
+        AcknowledgeEnrollment AcknowledgeEnrollmentMsg = 1;
+        AcknowledgeReadinessToSN AcknowledgeReadinessToSNMsg = 2;
+    }
+}
+

@@ -58,61 +58,120 @@ public class Client {
         for(byte[] block : blocks)
         {
             //sending block to controller with blockinfo
+            //StoreFile request to Controller
             socket = new Socket("localhost",9998);
-            String blockFile = absDir.toString() + "/data/" + "File1Part" + filePart  +".txt";
-            StorageMessages.StoreChunk storeChunk
-                    = StorageMessages.StoreChunk.newBuilder()
+            String filename = "File1";
+            RequestsToController.StoreChunkRequest storeChunk
+                    = RequestsToController.StoreChunkRequest.newBuilder()
                     .setChunkId(filePart)
-                    .setFileName(blockFile)
-                    .setData(ByteString.copyFrom(block)).build();
-            System.out.println("Sending request to Controller...");
-            storeChunk.writeDelimitedTo(socket.getOutputStream());
+                    .setFilename(filename).build();
+            RequestsToController.RequestsToControllerWrapper requestsToControllerWrapper = RequestsToController.RequestsToControllerWrapper.newBuilder()
+                                                                                            .setStoreChunkRequestMsg(storeChunk).build();
+            System.out.println("Sending StoreFile request to Controller...");
+            requestsToControllerWrapper.writeDelimitedTo(socket.getOutputStream());
 
-            System.out.println("Waiting for response from Controller...");
+            System.out.println("Waiting for StoreFile response from Controller...");
+
+            ResponsesToClient.StoreChunkResponse response =  ResponsesToClient.StoreChunkResponse.parseDelimitedFrom(socket.getInputStream());
+
+            System.out.println("Received StoreFile response from Controller...");
+            socket.close();
+
+            //readinessCheck request to Storage Node
+            socket1 = new Socket("localhost",response.getStorageNodeList(0).getPort());
+
+            RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode readinessCheck = RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.newBuilder()
+                    .setPort(response.getStorageNodeList(0).getPort()).build();
+
+            RequestsToStorageNode.ReadinessCheckRequestToSN readinessCheckRequestToSN = RequestsToStorageNode.ReadinessCheckRequestToSN.newBuilder()
+                                                                                        .addStorageNodeList(readinessCheck)
+                                                                                        .build();
+
+            RequestsToStorageNode.RequestsToStorageNodeWrapper requestsToStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
+                                                                                                .setReadinessCheckRequestToSNMsg(readinessCheckRequestToSN).build();
 
 
+            System.out.println("Sending readinessCheck request to Storage Node...");
+            requestsToStorageNodeWrapper.writeDelimitedTo(socket1.getOutputStream());
 
+            ResponsesToClient.AcknowledgeReadinessToClient acknowledgeReadinessToClient = ResponsesToClient.AcknowledgeReadinessToClient.parseDelimitedFrom(socket1.getInputStream());
 
-            GetStorageNode.storageNodesList storageNodesList
-                    = GetStorageNode.storageNodesList.parseDelimitedFrom(socket.getInputStream());
+            System.out.println("Received readinessCheck response from Storage Node...");
+            socket1.close();
 
-            System.out.println("Received response from Controller...");
-
-            System.out.println(storageNodesList.getPortListList());
-
-            socket1 = new Socket("localhost",storageNodesList.getPortList(0).getPort());
-
-            storeChunk
-                    = StorageMessages.StoreChunk.newBuilder()
-                    .setChunkId(filePart)
-                    .setFileName(blockFile)
-                    //.addPortID(StorageMessages.StoreChunk.Port.newBuilder().setPortNum(storageNodesList.getPortList(0).getPort()))
-                    .addPortID(StorageMessages.StoreChunk.Port.newBuilder().setPortNum(storageNodesList.getPortList(1).getPort()))
-                    .setData(ByteString.copyFrom(block)).build();
-            System.out.println("Sending request to Storage Node...");
-            storeChunk.writeDelimitedTo(socket1.getOutputStream());
-
-            System.out.println("Received response from Storage Node...");
-
-            Status.StorageMessageWrapper wrapper = Status.StorageMessageWrapper.parseDelimitedFrom(socket1.getInputStream());
-
-            if(wrapper.getRecvStatus().getSuccess())
+            if(acknowledgeReadinessToClient.getSuccess())
             {
-                System.out.println("stored successfully on datanode");
-                byte[] temp = wrapper.getRetrvChunkdata().getData().toByteArray();
+                //StoreFileRequest to Storage Node
+                RequestsToStorageNode.StoreChunkRequestToSN.StorageNode storageNode = RequestsToStorageNode.StoreChunkRequestToSN.StorageNode.newBuilder()
+                        .setPort(response.getStorageNodeList(0).getPort()).build();
+
+
+                RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSN.newBuilder()
+                        .addStorageNodeList(storageNode)
+                        .setChunkId(filePart)
+                        .setFilename(filename)
+                        .setChunkData(ByteString.copyFrom(block)).build();
+                RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
+                                                                                .setStoreChunkRequestToSNMsg(storeChunkRequestToSN).build();
+                socket1 = new Socket("localhost",response.getStorageNodeList(0).getPort());
+                System.out.println("Sending store chunk request to Storage Node...");
+                wrapper.writeDelimitedTo(socket1.getOutputStream());
+                System.out.println("Waiting for store chunk response from Storage Node...");
+
+                ResponsesToClient.ResponsesToClientWrapper responsesToClientWrapper = ResponsesToClient.ResponsesToClientWrapper.parseDelimitedFrom(socket1.getInputStream());
+
+                if(responsesToClientWrapper.hasAcknowledgeStoreChunkToClientMsg())
+                {
+                    if(responsesToClientWrapper.getAcknowledgeStoreChunkToClientMsg().getSuccess())
+                        System.out.println("Received response from Storage Node!!success");
+                    else
+                        System.out.println("Received response from Storage Node!!fail");
+                }
+                socket1.close();
+            }
+
+            //RetrieveFileRequest to Controller
+            RequestsToController.RetrieveFileRequest retrieveFileRequest = RequestsToController.RetrieveFileRequest.newBuilder()
+                                                                            .setFilename(filename)
+                                                                            .build();
+            RequestsToController.RequestsToControllerWrapper requestsToControllerWrapper1 = RequestsToController.RequestsToControllerWrapper.newBuilder().setRetrieveFileRequestMsg(retrieveFileRequest).build();
+            System.out.println("Sending RetrieveFile request to Controller...");
+            socket = new Socket("localhost",9998);
+            requestsToControllerWrapper1.writeDelimitedTo(socket.getOutputStream());
+
+            System.out.println("Waiting for RetrieveFile response from Controller...");
+            ResponsesToClient.RetrieveFileResponseFromCN responseFromCN = ResponsesToClient.RetrieveFileResponseFromCN.parseDelimitedFrom(socket.getInputStream());
+            System.out.println("Received RetrieveFile response from Controller...");
+            socket.close();
+
+            for(ResponsesToClient.RetrieveFileResponseFromCN.storageNode storageNode : responseFromCN.getStorageNodeListList())
+            {
+                //chunkid needs to bet get form controller node response but now as it is not fully implemented
+                //needs to change it later
+                RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = RequestsToStorageNode.RetrieveFileRequestToSN.newBuilder()
+                                                                            .setChunkId(filePart)
+                                                                            .setFilename(filename)
+                                                                            .build();
+                RequestsToStorageNode.RequestsToStorageNodeWrapper toStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
+                                                                                            .setRetrieveFileRequestToSNMsg(requestToSN).build();
+                socket1 = new Socket("localhost",storageNode.getPort());
+                System.out.println("Sending RetrieveFile request to Storage Node...");
+                toStorageNodeWrapper.writeDelimitedTo(socket1.getOutputStream());
+                System.out.println("Waiting for RetrieveFile response from Storage Node...");
+
+
+                ResponsesToClient.RetrieveFileResponseFromSN responseFromSN = ResponsesToClient.RetrieveFileResponseFromSN.parseDelimitedFrom(socket1.getInputStream());
+                System.out.println("Received RetrieveFile response from Storage Node...");
+                byte[] temp = responseFromSN.getChunkData().toByteArray();
                 int k=0;
                 while(k < temp.length)
                 {
                     writer.write(temp[k]);
                     k++;
                 }
+                socket1.close();
             }
-            else
-                System.out.println("Failed to store on datanode");
 
-
-            socket.close();
-            socket1.close();
             filePart = filePart + 1;
         }
         writer.close();

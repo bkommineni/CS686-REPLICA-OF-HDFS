@@ -1,7 +1,6 @@
 package edu.usfca.cs.dfs;
 
 import com.google.protobuf.ByteString;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +14,9 @@ import java.nio.file.Paths;
 
 public class StorageNode {
 
+    private int controllerPort = 9998;
+    private int storageNodePort = 9999;
+
     public static void main(String[] args) 
     throws Exception {
         String hostname = getHostname();
@@ -24,11 +26,30 @@ public class StorageNode {
 
     private void start() throws Exception
     {
-        ServerSocket serverSocket = new ServerSocket(9999);
-        System.out.println("Listening...");
-        while (true) {
-            Socket socket = serverSocket.accept();
-            new Thread(new Request(socket)).start();
+        System.out.println("Enrolling with Controller after entering to network...");
+        Socket connsocket = new Socket("localhost",controllerPort);
+        RequestsToController.Enroll enroll = RequestsToController.Enroll.newBuilder()
+                                                        .setPort(storageNodePort)
+                                                        .build();
+        RequestsToController.RequestsToControllerWrapper wrapper = RequestsToController.RequestsToControllerWrapper
+                                                                    .newBuilder()
+                                                                    .setEnrollMsg(enroll).build();
+
+        wrapper.writeDelimitedTo(connsocket.getOutputStream());
+        System.out.println("Waiting for Controller to acknowledge enrollment to start server...");
+        ResponsesToStorageNode.AcknowledgeEnrollment response = ResponsesToStorageNode.AcknowledgeEnrollment
+                                                                        .parseDelimitedFrom(connsocket.getInputStream());
+        System.out.println("Successfully enrolled with Controller!!");
+        connsocket.close();
+        System.out.println("Starting Storage Node on : "+ storageNodePort);
+        if(response.getSuccess())
+        {
+            ServerSocket serverSocket = new ServerSocket(storageNodePort);
+            System.out.println("Listening...");
+            while (true) {
+                Socket socket = serverSocket.accept();
+                new Thread(new Request(socket)).start();
+            }
         }
     }
 
@@ -41,46 +62,80 @@ public class StorageNode {
 
         @Override
         public void run() {
-            try {
-                System.out.println("in thread:SN");
-                StorageMessages.StoreChunk storeChunk
-                        = StorageMessages.StoreChunk.parseDelimitedFrom(
-                        connectionSocket.getInputStream());
-
-                System.out.println("Storing file name: "
-                        + storeChunk.getFileName());
-
-                System.out.println(storeChunk.getData());
-                System.out.println(storeChunk.getPortIDList());
-
-                byte[] bytes = storeChunk.getData().toByteArray();
-
-                int i=0;
+            try
+            {
                 String currPath = ".";
                 Path p = Paths.get(currPath);
                 Path absDir = p.toAbsolutePath();
-                String blockFile = absDir.toString() + "/data/" + "File1Part" + storeChunk.getChunkId() +"_SN" +".txt";
-                FileWriter writer = new FileWriter(blockFile);
+                RequestsToStorageNode.RequestsToStorageNodeWrapper requestsWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper
+                                                                                    .parseDelimitedFrom(connectionSocket.getInputStream());
 
-                while(i < bytes.length)
+                if(requestsWrapper.hasStoreChunkRequestToSNMsg())
                 {
-                    writer.write(bytes[i]);
-                    i++;
-                }
-                writer.close();
+                    //Process the Request
+                    System.out.println("store chunk SN!!!");
+                    RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = requestsWrapper.getStoreChunkRequestToSNMsg();
+                    System.out.println("Storing file name: "
+                            + storeChunkRequestToSN.getFilename());
 
-                Status.receivedStatus status = Status.receivedStatus.newBuilder().setSuccess(true).build();
-                Status.retrieveChunkdata chunkdata = Status.retrieveChunkdata
-                                                        .newBuilder()
-                                                        .setFilename(blockFile)
-                                                        .setData(ByteString.copyFrom(Files.readAllBytes(new File(blockFile).toPath())))
-                                                        .build();
-                Status.StorageMessageWrapper messageWrapper = Status.StorageMessageWrapper
-                                                                .newBuilder()
-                                                                .setRecvStatus(status)
-                                                                .setRetrvChunkdata(chunkdata)
-                                                                .build();
-                messageWrapper.writeDelimitedTo(connectionSocket.getOutputStream());
+                    System.out.println(storeChunkRequestToSN.getChunkData());
+                    System.out.println(storeChunkRequestToSN.getStorageNodeListList());
+
+                    byte[] bytes = storeChunkRequestToSN.getChunkData().toByteArray();
+
+                    int i=0;
+                    String blockFile = absDir.toString() + "/data/" + storeChunkRequestToSN.getFilename() + "Part" + storeChunkRequestToSN.getChunkId() +".txt";
+                    FileWriter writer = new FileWriter(blockFile);
+                    while(i < bytes.length)
+                    {
+                        writer.write(bytes[i]);
+                        i++;
+                    }
+                    writer.close();
+
+                    ResponsesToClient.AcknowledgeStoreChunkToClient acknowledgeStoreChunkToClient = ResponsesToClient.AcknowledgeStoreChunkToClient.newBuilder()
+                                                                                                    .setSuccess(true).build();
+                    ResponsesToClient.ResponsesToClientWrapper wrapper = ResponsesToClient.ResponsesToClientWrapper.newBuilder()
+                                                                        .setAcknowledgeStoreChunkToClientMsg(acknowledgeStoreChunkToClient).build();
+
+                    wrapper.writeDelimitedTo(connectionSocket.getOutputStream());
+
+                    //Send Response
+                    /*ResponsesToController.AcknowledgeStoreChunkRequest acknowledgeStoreChunkRequest = ResponsesToController.AcknowledgeStoreChunkRequest
+                                                                                                    .newBuilder()
+                                                                                                    .setChunkId(storeChunkRequestToSN.getChunkId())
+                                                                                                    .setFilename(storeChunkRequestToSN.getFilename())
+                                                                                                    .setPort(storageNodePort)
+                                                                                                    .build();
+                    Socket socket = new Socket("localhost",controllerPort);
+                    acknowledgeStoreChunkRequest.writeDelimitedTo(socket.getOutputStream());*/
+                }
+
+                if(requestsWrapper.hasRetrieveFileRequestToSNMsg())
+                {
+                    System.out.println("Retrieve file request in SN!!");
+                    RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = requestsWrapper.getRetrieveFileRequestToSNMsg();
+                    String filepath = absDir.toString() + "/data/";
+                    byte[] chunkData = Files.readAllBytes(new File(filepath+ requestToSN.getFilename()+"Part"+requestToSN.getChunkId()+".txt").toPath());
+                    System.out.println(requestToSN.getFilename());
+                    System.out.println(chunkData.length);
+
+                    ResponsesToClient.RetrieveFileResponseFromSN response = ResponsesToClient.RetrieveFileResponseFromSN.newBuilder()
+                                                                            .setChecksum(0)
+                                                                            .setFilename(requestToSN.getFilename())
+                                                                            .setChunkId(requestToSN.getChunkId())
+                                                                            .setChunkData(ByteString.copyFrom(chunkData)).build();
+                    response.writeDelimitedTo(connectionSocket.getOutputStream());
+                }
+
+                if(requestsWrapper.hasReadinessCheckRequestToSNMsg())
+                {
+                    ResponsesToClient.AcknowledgeReadinessToClient readinessToClient = ResponsesToClient.AcknowledgeReadinessToClient.newBuilder()
+                                                                                        .setSuccess(true).build();
+                    readinessToClient.writeDelimitedTo(connectionSocket.getOutputStream());
+                }
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

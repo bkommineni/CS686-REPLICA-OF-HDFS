@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Controller {
 
@@ -78,6 +79,11 @@ public class Controller {
                 {
                     //store file functionality
                     //allocate storage nodes for store file request
+                    //when deploying on bass
+                    Random rand = new Random();
+                    int n = rand.nextInt(24) + 1;
+                    System.out.println(n);
+                    //return the set of nodes/numbers generated in response
                     ResponsesToClient.StoreChunkResponse.storageNode storageNode =
                             ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(9999).build();
                     ResponsesToClient.StoreChunkResponse storeChunkResponse =

@@ -29,14 +29,14 @@ public class StorageNode {
     private void start(String[] args) throws Exception
     {
         if(args.length > 0) {
-            if (args[1] != null) {
-                storageNodePort = Integer.parseInt(args[1]);
-                if (args[2] != null)
-                    controllerPort = Integer.parseInt(args[2]);
+            if (args[0] != null) {
+                controllerPortHostName = args[0] + ".cs.usfca.edu";
+                if (args[1] != null)
+                    storageNodePort = Integer.parseInt(args[1]);
             }
         }
         System.out.println("Enrolling with Controller after entering to network...");
-        Socket connSocket = new Socket("localhost",controllerPort);
+        Socket connSocket = new Socket(controllerPortHostName,controllerPort);
         RequestsToController.Enroll enroll = RequestsToController.Enroll.newBuilder()
                                                         .setPort(storageNodePort)
                                                         .setHostname(getHostname())

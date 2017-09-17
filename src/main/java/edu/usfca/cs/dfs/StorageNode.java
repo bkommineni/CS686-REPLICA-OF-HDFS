@@ -21,7 +21,8 @@ public class StorageNode {
     private int storageNodePort = 9999;
 
     public static void main(String[] args) 
-    throws Exception {
+    throws Exception
+    {
         new StorageNode().start(args);
     }
 
@@ -60,15 +61,18 @@ public class StorageNode {
         }
     }
 
-    public class Request implements Runnable {
+    public class Request implements Runnable
+    {
         Socket connectionSocket = null;
 
-        public Request(Socket connectionSocket) {
+        public Request(Socket connectionSocket)
+        {
             this.connectionSocket = connectionSocket;
         }
 
         @Override
-        public void run() {
+        public void run()
+        {
             try
             {
                 String currPath = ".";
@@ -123,12 +127,11 @@ public class StorageNode {
 
                 if(requestsWrapper.hasRetrieveFileRequestToSNMsg())
                 {
-                    System.out.println("Retrieve file request in SN!!");
                     RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = requestsWrapper.getRetrieveFileRequestToSNMsg();
                     String filepath = absDir.toString() + "/data/";
-                    byte[] chunkData = Files.readAllBytes(new File(filepath+ requestToSN.getFilename()+"Part"+requestToSN.getChunkId()+".txt").toPath());
-                    System.out.println(requestToSN.getFilename());
-                    System.out.println(chunkData.length);
+                    String[] tokens = requestToSN.getFilename().split("/");
+                    int length = tokens.length;
+                    byte[] chunkData = Files.readAllBytes(new File(filepath+ tokens[length-1].split(".")[0]+"Part"+requestToSN.getChunkId()+".txt").toPath());
 
                     ResponsesToClient.RetrieveFileResponseFromSN response = ResponsesToClient.RetrieveFileResponseFromSN.newBuilder()
                                                                             .setChecksum(0)

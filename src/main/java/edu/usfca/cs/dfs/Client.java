@@ -146,16 +146,16 @@ public class Client {
             System.out.println("Received RetrieveFile response from Controller...");
             socket.close();
 
-            for (ResponsesToClient.RetrieveFileResponseFromCN.storageNode storageNode : responseFromCN.getStorageNodeListList()) {
+            for (ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata : responseFromCN.getChunkListList()) {
                 //chunkid needs to be get form controller node response but now as it is not fully implemented
                 //needs to change it later
                 RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = RequestsToStorageNode.RetrieveFileRequestToSN.newBuilder()
-                        .setChunkId(filePart)
-                        .setFilename(filename)
+                        .setChunkId(chunkMetadata.getChunkId())
+                        .setFilename(responseFromCN.getFilename())
                         .build();
                 RequestsToStorageNode.RequestsToStorageNodeWrapper toStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
                         .setRetrieveFileRequestToSNMsg(requestToSN).build();
-                socket1 = new Socket("localhost", storageNode.getPort());
+                socket1 = new Socket(chunkMetadata.getNode().getHostname(),chunkMetadata.getNode().getPort());
                 System.out.println("Sending RetrieveFile request to Storage Node...");
                 toStorageNodeWrapper.writeDelimitedTo(socket1.getOutputStream());
                 System.out.println("Waiting for RetrieveFile response from Storage Node...");

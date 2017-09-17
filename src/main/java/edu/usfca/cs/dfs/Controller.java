@@ -2,6 +2,7 @@ package edu.usfca.cs.dfs;
 
 import com.google.protobuf.Message;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -113,7 +114,7 @@ public class Controller {
                             buffer.append("bass0");
                         else
                             buffer.append("bass");
-                        DataNode storageNode = storageNodesList.get(buffer.toString()+Integer.toString(portNum));
+                        DataNode storageNode = storageNodesList.get(buffer.toString()+Integer.toString(portNum)+".cs.usfca.edu");
                         ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
                                 ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(storageNode.getPort())
                                                                                              .setHostname(storageNode.getHostname())

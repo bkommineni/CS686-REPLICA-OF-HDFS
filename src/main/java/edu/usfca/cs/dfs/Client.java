@@ -22,9 +22,11 @@ public class Client {
         int controllerPort = 9998;
         String controllerHostname = InetAddress.getLocalHost().getHostName();
 
-        controllerPort = Integer.parseInt(args[0]);
+        controllerHostname = args[0]+"cs.usfca.edu";
+        controllerPort = Integer.parseInt(args[1]);
 
-        if(args[1].equals("store")) {
+
+        if(args[2].equals("store")) {
 
             //chunking functionality
             /*String currPath = ".";
@@ -32,7 +34,7 @@ public class Client {
             Path absDir = p.toAbsolutePath();
             String filePath = absDir.toString() + "/clientDirectory/File1.txt";*/
             System.out.println("storeeee");
-            String filePath = args[2];
+            String filePath = args[3];
             int filePart = 1;
             List<byte[]> blocks = chunking(filePath);
 
@@ -44,7 +46,7 @@ public class Client {
                 /*String[] tokens = filePath.split("/");
                 int noOfTokens = tokens.length;
                 String filename = tokens[noOfTokens-1].split(".")[0];*/
-                String filename = args[2];
+                String filename = args[3];
                 RequestsToController.StoreChunkRequest storeChunk
                         = RequestsToController.StoreChunkRequest.newBuilder()
                         .setChunkId(filePart)
@@ -124,13 +126,13 @@ public class Client {
         }
 
 
-        else if(args[1].equals("retrieve")) {
+        else if(args[2].equals("retrieve")) {
             //RetrieveFileRequest to Controller
             //String mergedFile = absDir.toString() + "/clientDirectory/FileM.txt";
             String currPath = ".";
             Path p = Paths.get(currPath);
             Path absDir = p.toAbsolutePath();
-            String fileRequired = args[2];
+            String fileRequired = args[3];
             String[] tokens = fileRequired.split("/");
             int length = tokens.length;
             String filename  = tokens[length-1].split(".")[0];

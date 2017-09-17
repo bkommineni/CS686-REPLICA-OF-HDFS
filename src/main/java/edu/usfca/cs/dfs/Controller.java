@@ -28,8 +28,10 @@ public class Controller {
 
     private void start(String[] args) throws Exception
     {
-        if(args[1] != null)
-            controllerPort = Integer.parseInt(args[1]);
+        if(args.length > 0 ) {
+            if (args[1] != null)
+                controllerPort = Integer.parseInt(args[1]);
+        }
         String hostname = getHostname();
         System.out.println("Starting controller on " + hostname + " and port: "+ controllerPort + "...");
         ServerSocket serverSocket = new ServerSocket(9998);
@@ -103,7 +105,8 @@ public class Controller {
                     //store file functionality
                     //allocate storage nodes for store file request
                     //when deploying on bass
-                    /*Random rand = new Random();
+                    System.out.println("entering store chunk in controller!!");
+                    Random rand = new Random();
                     List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
                     for(int i=0;i<3;i++)
                     {
@@ -120,18 +123,20 @@ public class Controller {
                                                                                              .setHostname(storageNode.getHostname())
                                                                                              .build();
                         storageNodes.add(storageNodeMsg);
-                    }*/
+                    }
+                    /*System.out.println("entering store chunk in controller!!");
                     List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
                     ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
                             ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(9999)
                                     .setHostname("localhost")
                                     .build();
-                    storageNodes.add(storageNodeMsg);
+                    storageNodes.add(storageNodeMsg);*/
 
                     //return the set of nodes/numbers randomly generated in response
                     ResponsesToClient.StoreChunkResponse.Builder builder = ResponsesToClient.StoreChunkResponse.newBuilder();
                     ResponsesToClient.StoreChunkResponse storeChunkResponse = builder.addAllStorageNodeList(storageNodes).build();
                     storeChunkResponse.writeDelimitedTo(connectionSocket.getOutputStream());
+                    System.out.println("coming out of store chunk in controller");
                 }
 
                 if(msgWrapper.hasAcknowledgeStoreChunkMsg())

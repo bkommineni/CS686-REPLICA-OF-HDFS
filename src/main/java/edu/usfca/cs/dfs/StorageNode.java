@@ -28,10 +28,12 @@ public class StorageNode {
 
     private void start(String[] args) throws Exception
     {
-        if(args[1] != null) {
-            storageNodePort = Integer.parseInt(args[1]);
-            if(args[2] != null)
-                controllerPort = Integer.parseInt(args[2]);
+        if(args.length > 0) {
+            if (args[1] != null) {
+                storageNodePort = Integer.parseInt(args[1]);
+                if (args[2] != null)
+                    controllerPort = Integer.parseInt(args[2]);
+            }
         }
         System.out.println("Enrolling with Controller after entering to network...");
         Socket connSocket = new Socket("localhost",controllerPort);
@@ -174,10 +176,24 @@ public class StorageNode {
 
                 List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> peerList = readinessCheckRequestToSNMsg.getStorageNodeListList();
                 String filename = readinessCheckRequestToSNMsg.getFilename();
+                System.out.println("readinedd to peer filename "+ filename);
                 int chunkId = readinessCheckRequestToSNMsg.getChunkId();
                 String[] tokens = filename.split("/");
                 int noOfTokens = tokens.length;
-                String filePath = absDir.toString() + "/data/"+tokens[noOfTokens-1].split(".")[0]+"Part"+chunkId+".txt";
+                System.out.println(noOfTokens);
+                for (String token : tokens)
+                {
+                    System.out.println(token);
+                }
+                System.out.println("tokens[noOfTokens-1] "+ tokens[noOfTokens-1]);
+                tokens = tokens[noOfTokens-1].split("\\.");
+                noOfTokens = tokens.length;
+                System.out.println(noOfTokens);
+                for (String token : tokens)
+                {
+                    System.out.println(token);
+                }
+                String filePath = absDir.toString() + "/data/"+tokens[0]+"Part"+chunkId+".txt";
 
                 Socket socket = new Socket(peerList.get(0).getHostname(),peerList.get(0).getPort());
 

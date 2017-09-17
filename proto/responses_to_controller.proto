@@ -2,13 +2,6 @@ syntax = "proto3";
 option java_package = "edu.usfca.cs.dfs";
 
 //StorageNode
-message AcknowledgeStoreChunkRequest
-{
-    string filename = 1;
-    int32  chunkId  = 2;
-    int32  port     = 3;
-}
-
 message StorageInfo
 {
     message chunkMetadata
@@ -22,7 +15,6 @@ message StorageInfo
 
 message ResponsesToControllerWrapper {
     oneof msg {
-        AcknowledgeStoreChunkRequest AcknowledgeStoreChunkRequestMsg = 1;
-        StorageInfo StorageInfoMsg = 2;
+        StorageInfo StorageInfoMsg = 1;
     }
 }

@@ -3,12 +3,15 @@ option java_package = "edu.usfca.cs.dfs";
 
 message ReadinessCheckRequestToSN
 {
+    string filename = 1;
+    int32 chunkId   = 2;
     message StorageNode
     {
         int32 port = 1;
+        string hostname = 2;
     }
 
-    repeated StorageNode storageNodeList = 1;
+    repeated StorageNode storageNodeList = 3;
 }
 
 message StoreChunkRequestToSN
@@ -20,6 +23,7 @@ message StoreChunkRequestToSN
     message StorageNode
     {
         int32 port = 1;
+        string hostname = 2;
     }
 
     repeated StorageNode storageNodeList = 4;

@@ -7,6 +7,7 @@ message StoreChunkResponse
     message storageNode
     {
         int32 port = 1;
+        string hostname = 2;
     }
 
     repeated storageNode storageNodeList = 1;
@@ -15,13 +16,17 @@ message StoreChunkResponse
 message RetrieveFileResponseFromCN
 {
     string filename = 1;
-    message storageNode
+    message chunkMetadata
     {
         int32 chunkId = 1;
-        int32 port = 2;
+        message storageNode
+        {
+            int32 port = 1;
+            string hostname = 2;
+        }
+        storageNode node = 2;
     }
-
-    repeated storageNode storageNodeList = 2;
+    repeated chunkMetadata chunkList = 2;
 }
 
 //StorageNode

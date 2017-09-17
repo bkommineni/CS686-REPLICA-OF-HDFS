@@ -7,9 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Controller {
 
@@ -19,15 +17,18 @@ public class Controller {
     */
 
     private int controllerPort = 9998;
-    private List<DataNode> storageNodesList = new ArrayList<>();
+    private Map<String,DataNode> storageNodesList = new HashMap<>();
     private List<FileMetadata> fileMetadatas = new ArrayList<>();
+    private Map<String,Metadata> metadataMap = new HashMap<>();
 
     public static void main(String[] args) throws Exception{
-        new Controller().start();
+        new Controller().start(args);
     }
 
-    private void start() throws Exception
+    private void start(String[] args) throws Exception
     {
+        if(args[1] != null)
+            controllerPort = Integer.parseInt(args[1]);
         String hostname = getHostname();
         System.out.println("Starting controller on " + hostname + " and port: "+ controllerPort + "...");
         ServerSocket serverSocket = new ServerSocket(9998);
@@ -55,7 +56,7 @@ public class Controller {
                 if(msgWrapper.hasEnrollMsg())
                 {
                     //enroll storage node
-                    storageNodesList.add(new DataNode(msgWrapper.getEnrollMsg().getPort()));
+                    storageNodesList.put(msgWrapper.getEnrollMsg().getHostname(),new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                                             .newBuilder().setSuccess(true).build();
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());
@@ -63,16 +64,37 @@ public class Controller {
 
                 if(msgWrapper.hasRetrieveFileRequestMsg())
                 {
-                    System.out.println("here in retrieve file!!");
                     //retrieve file functionality
-                    ResponsesToClient.RetrieveFileResponseFromCN.storageNode storageNode = ResponsesToClient.RetrieveFileResponseFromCN.storageNode.newBuilder()
-                                                                                            .setPort(9999).build();
-                    ResponsesToClient.RetrieveFileResponseFromCN responseFromCN = ResponsesToClient.RetrieveFileResponseFromCN.newBuilder()
+                    List<Metadata> metadatas = new ArrayList<>();
+                    for(String str : metadataMap.keySet())
+                    {
+                        if(str.contains(msgWrapper.getRetrieveFileRequestMsg().getFilename()))
+                        {
+                            metadatas.add(metadataMap.get(str));
+                        }
+                    }
+
+                    List<ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata> chunkMetadatas = new ArrayList<>();
+                    for(Metadata metadata : metadatas)
+                    {
+                        ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode storageNode =
+                                ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode.newBuilder()
+                                .setPort(metadata.getDataNode().getPort())
+                                .setHostname(metadata.getDataNode().getHostname())
+                                .build();
+                        ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata =
+                                ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.newBuilder()
+                                .setChunkId(metadata.getChunkId())
+                                .setNode(storageNode)
+                                .build();
+                        chunkMetadatas.add(chunkMetadata);
+                    }
+                    ResponsesToClient.RetrieveFileResponseFromCN responseFromCN = ResponsesToClient.RetrieveFileResponseFromCN
+                                                                                    .newBuilder()
                                                                                     .setFilename(msgWrapper.getRetrieveFileRequestMsg().getFilename())
-                                                                                    .addStorageNodeList(storageNode)
+                                                                                    .addAllChunkList(chunkMetadatas)
                                                                                     .build();
                     responseFromCN.writeDelimitedTo(connectionSocket.getOutputStream());
-                    System.out.println("out of controller!!!");
                 }
 
                 if(msgWrapper.hasStoreChunkRequestMsg())
@@ -80,15 +102,34 @@ public class Controller {
                     //store file functionality
                     //allocate storage nodes for store file request
                     //when deploying on bass
-                    Random rand = new Random();
-                    int n = rand.nextInt(24) + 1;
-                    System.out.println(n);
-                    //return the set of nodes/numbers generated in response
-                    ResponsesToClient.StoreChunkResponse.storageNode storageNode =
-                            ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(9999).build();
-                    ResponsesToClient.StoreChunkResponse storeChunkResponse =
-                            ResponsesToClient.StoreChunkResponse.newBuilder()
-                            .addStorageNodeList(storageNode).build();
+                    /*Random rand = new Random();
+                    List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
+                    for(int i=0;i<3;i++)
+                    {
+                        int portNum = rand.nextInt(24) + 1;
+                        System.out.println("Port Number : "+portNum);
+                        StringBuffer buffer = new StringBuffer();
+                        if(portNum < 10)
+                            buffer.append("bass0");
+                        else
+                            buffer.append("bass");
+                        DataNode storageNode = storageNodesList.get(buffer.toString()+Integer.toString(portNum));
+                        ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
+                                ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(storageNode.getPort())
+                                                                                             .setHostname(storageNode.getHostname())
+                                                                                             .build();
+                        storageNodes.add(storageNodeMsg);
+                    }*/
+                    List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
+                    ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
+                            ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(9999)
+                                    .setHostname("localhost")
+                                    .build();
+                    storageNodes.add(storageNodeMsg);
+
+                    //return the set of nodes/numbers randomly generated in response
+                    ResponsesToClient.StoreChunkResponse.Builder builder = ResponsesToClient.StoreChunkResponse.newBuilder();
+                    ResponsesToClient.StoreChunkResponse storeChunkResponse = builder.addAllStorageNodeList(storageNodes).build();
                     storeChunkResponse.writeDelimitedTo(connectionSocket.getOutputStream());
                 }
 
@@ -96,11 +137,30 @@ public class Controller {
                 {
                     //acknowledge store chunk
                     //updating blocks and nodes info based on acknowledgement
+                    RequestsToController.AcknowledgeStoreChunk acknowledge = msgWrapper.getAcknowledgeStoreChunkMsg();
+
+                    /*ChunkMetadata chunk = new ChunkMetadata(acknowledge.getFilename(),acknowledge.getChunkId());
+                    ReplicaMetadata replica = new ReplicaMetadata(acknowledge.getFilename(),acknowledge.getChunkId(),
+                            new DataNode(acknowledge.getPort(),acknowledge.getHostname()));
+                    chunk.addReplicaMetadata(replica);
+                    FileMetadata fileMetadata = new FileMetadata(acknowledge.getFilename());
+                    fileMetadata.addChunkMetadata(chunk);
+                    fileMetadatas.add(fileMetadata);*/
+
+                    String key = acknowledge.getFilename() + acknowledge.getChunkId() + acknowledge.getHostname();
+                    if(!metadataMap.containsKey(key))
+                    {
+                        Metadata metadata = new Metadata(acknowledge.getFilename(),acknowledge.getChunkId());
+                        metadata.setDataNode(new DataNode(acknowledge.getPort(),acknowledge.getHostname()));
+                        metadataMap.put(key,metadata);
+                    }
                 }
 
                 if(msgWrapper.hasHeartbeatMsg())
                 {
                     //check info sent on heartbeat and make sure what are active nodes
+
+
                 }
 
             } catch (IOException e) {

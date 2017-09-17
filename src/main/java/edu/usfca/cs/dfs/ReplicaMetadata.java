@@ -7,6 +7,11 @@ public class ReplicaMetadata {
 
     private String filename;
     private int blockId;
-    private int replicaId;
     private DataNode dataNode;
+
+    public ReplicaMetadata(String filename, int blockId, DataNode dataNode) {
+        this.filename = filename;
+        this.blockId = blockId;
+        this.dataNode = dataNode;
+    }
 }

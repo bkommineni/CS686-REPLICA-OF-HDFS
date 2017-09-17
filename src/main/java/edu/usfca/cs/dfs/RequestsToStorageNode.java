@@ -19,25 +19,40 @@ public final class RequestsToStorageNode {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>string filename = 1;</code>
+     */
+    java.lang.String getFilename();
+    /**
+     * <code>string filename = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getFilenameBytes();
+
+    /**
+     * <code>int32 chunkId = 2;</code>
+     */
+    int getChunkId();
+
+    /**
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     java.util.List<edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> 
         getStorageNodeListList();
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode getStorageNodeList(int index);
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     int getStorageNodeListCount();
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     java.util.List<? extends edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNodeOrBuilder> 
         getStorageNodeListOrBuilderList();
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNodeOrBuilder getStorageNodeListOrBuilder(
         int index);
@@ -55,6 +70,8 @@ public final class RequestsToStorageNode {
       super(builder);
     }
     private ReadinessCheckRequestToSN() {
+      filename_ = "";
+      chunkId_ = 0;
       storageNodeList_ = java.util.Collections.emptyList();
     }
 
@@ -87,9 +104,20 @@ public final class RequestsToStorageNode {
               break;
             }
             case 10: {
-              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              filename_ = s;
+              break;
+            }
+            case 16: {
+
+              chunkId_ = input.readInt32();
+              break;
+            }
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
                 storageNodeList_ = new java.util.ArrayList<edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode>();
-                mutable_bitField0_ |= 0x00000001;
+                mutable_bitField0_ |= 0x00000004;
               }
               storageNodeList_.add(
                   input.readMessage(edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.parser(), extensionRegistry));
@@ -103,7 +131,7 @@ public final class RequestsToStorageNode {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           storageNodeList_ = java.util.Collections.unmodifiableList(storageNodeList_);
         }
         this.unknownFields = unknownFields.build();
@@ -130,6 +158,16 @@ public final class RequestsToStorageNode {
        * <code>int32 port = 1;</code>
        */
       int getPort();
+
+      /**
+       * <code>string hostname = 2;</code>
+       */
+      java.lang.String getHostname();
+      /**
+       * <code>string hostname = 2;</code>
+       */
+      com.google.protobuf.ByteString
+          getHostnameBytes();
     }
     /**
      * Protobuf type {@code ReadinessCheckRequestToSN.StorageNode}
@@ -145,6 +183,7 @@ public final class RequestsToStorageNode {
       }
       private StorageNode() {
         port_ = 0;
+        hostname_ = "";
       }
 
       @java.lang.Override
@@ -180,6 +219,12 @@ public final class RequestsToStorageNode {
                 port_ = input.readInt32();
                 break;
               }
+              case 18: {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hostname_ = s;
+                break;
+              }
             }
           }
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -213,6 +258,40 @@ public final class RequestsToStorageNode {
         return port_;
       }
 
+      public static final int HOSTNAME_FIELD_NUMBER = 2;
+      private volatile java.lang.Object hostname_;
+      /**
+       * <code>string hostname = 2;</code>
+       */
+      public java.lang.String getHostname() {
+        java.lang.Object ref = hostname_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hostname_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string hostname = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getHostnameBytes() {
+        java.lang.Object ref = hostname_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          hostname_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
@@ -228,6 +307,9 @@ public final class RequestsToStorageNode {
         if (port_ != 0) {
           output.writeInt32(1, port_);
         }
+        if (!getHostnameBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 2, hostname_);
+        }
         unknownFields.writeTo(output);
       }
 
@@ -239,6 +321,9 @@ public final class RequestsToStorageNode {
         if (port_ != 0) {
           size += com.google.protobuf.CodedOutputStream
             .computeInt32Size(1, port_);
+        }
+        if (!getHostnameBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, hostname_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -258,6 +343,8 @@ public final class RequestsToStorageNode {
         boolean result = true;
         result = result && (getPort()
             == other.getPort());
+        result = result && getHostname()
+            .equals(other.getHostname());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
       }
@@ -271,6 +358,8 @@ public final class RequestsToStorageNode {
         hash = (19 * hash) + getDescriptor().hashCode();
         hash = (37 * hash) + PORT_FIELD_NUMBER;
         hash = (53 * hash) + getPort();
+        hash = (37 * hash) + HOSTNAME_FIELD_NUMBER;
+        hash = (53 * hash) + getHostname().hashCode();
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -402,6 +491,8 @@ public final class RequestsToStorageNode {
           super.clear();
           port_ = 0;
 
+          hostname_ = "";
+
           return this;
         }
 
@@ -425,6 +516,7 @@ public final class RequestsToStorageNode {
         public edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode buildPartial() {
           edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode result = new edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode(this);
           result.port_ = port_;
+          result.hostname_ = hostname_;
           onBuilt();
           return result;
         }
@@ -468,6 +560,10 @@ public final class RequestsToStorageNode {
           if (other == edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.getDefaultInstance()) return this;
           if (other.getPort() != 0) {
             setPort(other.getPort());
+          }
+          if (!other.getHostname().isEmpty()) {
+            hostname_ = other.hostname_;
+            onChanged();
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -521,6 +617,75 @@ public final class RequestsToStorageNode {
           onChanged();
           return this;
         }
+
+        private java.lang.Object hostname_ = "";
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public java.lang.String getHostname() {
+          java.lang.Object ref = hostname_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            hostname_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public com.google.protobuf.ByteString
+            getHostnameBytes() {
+          java.lang.Object ref = hostname_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            hostname_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public Builder setHostname(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          hostname_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public Builder clearHostname() {
+          
+          hostname_ = getDefaultInstance().getHostname();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public Builder setHostnameBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          hostname_ = value;
+          onChanged();
+          return this;
+        }
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
           return super.setUnknownFieldsProto3(unknownFields);
@@ -570,35 +735,79 @@ public final class RequestsToStorageNode {
 
     }
 
-    public static final int STORAGENODELIST_FIELD_NUMBER = 1;
+    private int bitField0_;
+    public static final int FILENAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object filename_;
+    /**
+     * <code>string filename = 1;</code>
+     */
+    public java.lang.String getFilename() {
+      java.lang.Object ref = filename_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        filename_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string filename = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getFilenameBytes() {
+      java.lang.Object ref = filename_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        filename_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CHUNKID_FIELD_NUMBER = 2;
+    private int chunkId_;
+    /**
+     * <code>int32 chunkId = 2;</code>
+     */
+    public int getChunkId() {
+      return chunkId_;
+    }
+
+    public static final int STORAGENODELIST_FIELD_NUMBER = 3;
     private java.util.List<edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> storageNodeList_;
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     public java.util.List<edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> getStorageNodeListList() {
       return storageNodeList_;
     }
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     public java.util.List<? extends edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNodeOrBuilder> 
         getStorageNodeListOrBuilderList() {
       return storageNodeList_;
     }
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     public int getStorageNodeListCount() {
       return storageNodeList_.size();
     }
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     public edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode getStorageNodeList(int index) {
       return storageNodeList_.get(index);
     }
     /**
-     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+     * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
      */
     public edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNodeOrBuilder getStorageNodeListOrBuilder(
         int index) {
@@ -617,8 +826,14 @@ public final class RequestsToStorageNode {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (!getFilenameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, filename_);
+      }
+      if (chunkId_ != 0) {
+        output.writeInt32(2, chunkId_);
+      }
       for (int i = 0; i < storageNodeList_.size(); i++) {
-        output.writeMessage(1, storageNodeList_.get(i));
+        output.writeMessage(3, storageNodeList_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -628,9 +843,16 @@ public final class RequestsToStorageNode {
       if (size != -1) return size;
 
       size = 0;
+      if (!getFilenameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, filename_);
+      }
+      if (chunkId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, chunkId_);
+      }
       for (int i = 0; i < storageNodeList_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, storageNodeList_.get(i));
+          .computeMessageSize(3, storageNodeList_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -648,6 +870,10 @@ public final class RequestsToStorageNode {
       edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN other = (edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN) obj;
 
       boolean result = true;
+      result = result && getFilename()
+          .equals(other.getFilename());
+      result = result && (getChunkId()
+          == other.getChunkId());
       result = result && getStorageNodeListList()
           .equals(other.getStorageNodeListList());
       result = result && unknownFields.equals(other.unknownFields);
@@ -661,6 +887,10 @@ public final class RequestsToStorageNode {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FILENAME_FIELD_NUMBER;
+      hash = (53 * hash) + getFilename().hashCode();
+      hash = (37 * hash) + CHUNKID_FIELD_NUMBER;
+      hash = (53 * hash) + getChunkId();
       if (getStorageNodeListCount() > 0) {
         hash = (37 * hash) + STORAGENODELIST_FIELD_NUMBER;
         hash = (53 * hash) + getStorageNodeListList().hashCode();
@@ -795,9 +1025,13 @@ public final class RequestsToStorageNode {
       }
       public Builder clear() {
         super.clear();
+        filename_ = "";
+
+        chunkId_ = 0;
+
         if (storageNodeListBuilder_ == null) {
           storageNodeList_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
+          bitField0_ = (bitField0_ & ~0x00000004);
         } else {
           storageNodeListBuilder_.clear();
         }
@@ -824,15 +1058,19 @@ public final class RequestsToStorageNode {
       public edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN buildPartial() {
         edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN result = new edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        result.filename_ = filename_;
+        result.chunkId_ = chunkId_;
         if (storageNodeListBuilder_ == null) {
-          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
             storageNodeList_ = java.util.Collections.unmodifiableList(storageNodeList_);
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000004);
           }
           result.storageNodeList_ = storageNodeList_;
         } else {
           result.storageNodeList_ = storageNodeListBuilder_.build();
         }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -874,11 +1112,18 @@ public final class RequestsToStorageNode {
 
       public Builder mergeFrom(edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN other) {
         if (other == edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.getDefaultInstance()) return this;
+        if (!other.getFilename().isEmpty()) {
+          filename_ = other.filename_;
+          onChanged();
+        }
+        if (other.getChunkId() != 0) {
+          setChunkId(other.getChunkId());
+        }
         if (storageNodeListBuilder_ == null) {
           if (!other.storageNodeList_.isEmpty()) {
             if (storageNodeList_.isEmpty()) {
               storageNodeList_ = other.storageNodeList_;
-              bitField0_ = (bitField0_ & ~0x00000001);
+              bitField0_ = (bitField0_ & ~0x00000004);
             } else {
               ensureStorageNodeListIsMutable();
               storageNodeList_.addAll(other.storageNodeList_);
@@ -891,7 +1136,7 @@ public final class RequestsToStorageNode {
               storageNodeListBuilder_.dispose();
               storageNodeListBuilder_ = null;
               storageNodeList_ = other.storageNodeList_;
-              bitField0_ = (bitField0_ & ~0x00000001);
+              bitField0_ = (bitField0_ & ~0x00000004);
               storageNodeListBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getStorageNodeListFieldBuilder() : null;
@@ -928,12 +1173,107 @@ public final class RequestsToStorageNode {
       }
       private int bitField0_;
 
+      private java.lang.Object filename_ = "";
+      /**
+       * <code>string filename = 1;</code>
+       */
+      public java.lang.String getFilename() {
+        java.lang.Object ref = filename_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          filename_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string filename = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getFilenameBytes() {
+        java.lang.Object ref = filename_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          filename_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string filename = 1;</code>
+       */
+      public Builder setFilename(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        filename_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string filename = 1;</code>
+       */
+      public Builder clearFilename() {
+        
+        filename_ = getDefaultInstance().getFilename();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string filename = 1;</code>
+       */
+      public Builder setFilenameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        filename_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int chunkId_ ;
+      /**
+       * <code>int32 chunkId = 2;</code>
+       */
+      public int getChunkId() {
+        return chunkId_;
+      }
+      /**
+       * <code>int32 chunkId = 2;</code>
+       */
+      public Builder setChunkId(int value) {
+        
+        chunkId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 chunkId = 2;</code>
+       */
+      public Builder clearChunkId() {
+        
+        chunkId_ = 0;
+        onChanged();
+        return this;
+      }
+
       private java.util.List<edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> storageNodeList_ =
         java.util.Collections.emptyList();
       private void ensureStorageNodeListIsMutable() {
-        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
           storageNodeList_ = new java.util.ArrayList<edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode>(storageNodeList_);
-          bitField0_ |= 0x00000001;
+          bitField0_ |= 0x00000004;
          }
       }
 
@@ -941,7 +1281,7 @@ public final class RequestsToStorageNode {
           edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode, edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.Builder, edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNodeOrBuilder> storageNodeListBuilder_;
 
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public java.util.List<edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> getStorageNodeListList() {
         if (storageNodeListBuilder_ == null) {
@@ -951,7 +1291,7 @@ public final class RequestsToStorageNode {
         }
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public int getStorageNodeListCount() {
         if (storageNodeListBuilder_ == null) {
@@ -961,7 +1301,7 @@ public final class RequestsToStorageNode {
         }
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode getStorageNodeList(int index) {
         if (storageNodeListBuilder_ == null) {
@@ -971,7 +1311,7 @@ public final class RequestsToStorageNode {
         }
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public Builder setStorageNodeList(
           int index, edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode value) {
@@ -988,7 +1328,7 @@ public final class RequestsToStorageNode {
         return this;
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public Builder setStorageNodeList(
           int index, edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.Builder builderForValue) {
@@ -1002,7 +1342,7 @@ public final class RequestsToStorageNode {
         return this;
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public Builder addStorageNodeList(edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode value) {
         if (storageNodeListBuilder_ == null) {
@@ -1018,7 +1358,7 @@ public final class RequestsToStorageNode {
         return this;
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public Builder addStorageNodeList(
           int index, edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode value) {
@@ -1035,7 +1375,7 @@ public final class RequestsToStorageNode {
         return this;
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public Builder addStorageNodeList(
           edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.Builder builderForValue) {
@@ -1049,7 +1389,7 @@ public final class RequestsToStorageNode {
         return this;
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public Builder addStorageNodeList(
           int index, edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.Builder builderForValue) {
@@ -1063,7 +1403,7 @@ public final class RequestsToStorageNode {
         return this;
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public Builder addAllStorageNodeList(
           java.lang.Iterable<? extends edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> values) {
@@ -1078,12 +1418,12 @@ public final class RequestsToStorageNode {
         return this;
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public Builder clearStorageNodeList() {
         if (storageNodeListBuilder_ == null) {
           storageNodeList_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
+          bitField0_ = (bitField0_ & ~0x00000004);
           onChanged();
         } else {
           storageNodeListBuilder_.clear();
@@ -1091,7 +1431,7 @@ public final class RequestsToStorageNode {
         return this;
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public Builder removeStorageNodeList(int index) {
         if (storageNodeListBuilder_ == null) {
@@ -1104,14 +1444,14 @@ public final class RequestsToStorageNode {
         return this;
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.Builder getStorageNodeListBuilder(
           int index) {
         return getStorageNodeListFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNodeOrBuilder getStorageNodeListOrBuilder(
           int index) {
@@ -1121,7 +1461,7 @@ public final class RequestsToStorageNode {
         }
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public java.util.List<? extends edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNodeOrBuilder> 
            getStorageNodeListOrBuilderList() {
@@ -1132,14 +1472,14 @@ public final class RequestsToStorageNode {
         }
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.Builder addStorageNodeListBuilder() {
         return getStorageNodeListFieldBuilder().addBuilder(
             edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.getDefaultInstance());
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.Builder addStorageNodeListBuilder(
           int index) {
@@ -1147,7 +1487,7 @@ public final class RequestsToStorageNode {
             index, edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.getDefaultInstance());
       }
       /**
-       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 1;</code>
+       * <code>repeated .ReadinessCheckRequestToSN.StorageNode storageNodeList = 3;</code>
        */
       public java.util.List<edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.Builder> 
            getStorageNodeListBuilderList() {
@@ -1160,7 +1500,7 @@ public final class RequestsToStorageNode {
           storageNodeListBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode, edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.Builder, edu.usfca.cs.dfs.RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNodeOrBuilder>(
                   storageNodeList_,
-                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  ((bitField0_ & 0x00000004) == 0x00000004),
                   getParentForChildren(),
                   isClean());
           storageNodeList_ = null;
@@ -1371,6 +1711,16 @@ public final class RequestsToStorageNode {
        * <code>int32 port = 1;</code>
        */
       int getPort();
+
+      /**
+       * <code>string hostname = 2;</code>
+       */
+      java.lang.String getHostname();
+      /**
+       * <code>string hostname = 2;</code>
+       */
+      com.google.protobuf.ByteString
+          getHostnameBytes();
     }
     /**
      * Protobuf type {@code StoreChunkRequestToSN.StorageNode}
@@ -1386,6 +1736,7 @@ public final class RequestsToStorageNode {
       }
       private StorageNode() {
         port_ = 0;
+        hostname_ = "";
       }
 
       @java.lang.Override
@@ -1421,6 +1772,12 @@ public final class RequestsToStorageNode {
                 port_ = input.readInt32();
                 break;
               }
+              case 18: {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hostname_ = s;
+                break;
+              }
             }
           }
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -1454,6 +1811,40 @@ public final class RequestsToStorageNode {
         return port_;
       }
 
+      public static final int HOSTNAME_FIELD_NUMBER = 2;
+      private volatile java.lang.Object hostname_;
+      /**
+       * <code>string hostname = 2;</code>
+       */
+      public java.lang.String getHostname() {
+        java.lang.Object ref = hostname_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hostname_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string hostname = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getHostnameBytes() {
+        java.lang.Object ref = hostname_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          hostname_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
@@ -1469,6 +1860,9 @@ public final class RequestsToStorageNode {
         if (port_ != 0) {
           output.writeInt32(1, port_);
         }
+        if (!getHostnameBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 2, hostname_);
+        }
         unknownFields.writeTo(output);
       }
 
@@ -1480,6 +1874,9 @@ public final class RequestsToStorageNode {
         if (port_ != 0) {
           size += com.google.protobuf.CodedOutputStream
             .computeInt32Size(1, port_);
+        }
+        if (!getHostnameBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, hostname_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -1499,6 +1896,8 @@ public final class RequestsToStorageNode {
         boolean result = true;
         result = result && (getPort()
             == other.getPort());
+        result = result && getHostname()
+            .equals(other.getHostname());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
       }
@@ -1512,6 +1911,8 @@ public final class RequestsToStorageNode {
         hash = (19 * hash) + getDescriptor().hashCode();
         hash = (37 * hash) + PORT_FIELD_NUMBER;
         hash = (53 * hash) + getPort();
+        hash = (37 * hash) + HOSTNAME_FIELD_NUMBER;
+        hash = (53 * hash) + getHostname().hashCode();
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -1643,6 +2044,8 @@ public final class RequestsToStorageNode {
           super.clear();
           port_ = 0;
 
+          hostname_ = "";
+
           return this;
         }
 
@@ -1666,6 +2069,7 @@ public final class RequestsToStorageNode {
         public edu.usfca.cs.dfs.RequestsToStorageNode.StoreChunkRequestToSN.StorageNode buildPartial() {
           edu.usfca.cs.dfs.RequestsToStorageNode.StoreChunkRequestToSN.StorageNode result = new edu.usfca.cs.dfs.RequestsToStorageNode.StoreChunkRequestToSN.StorageNode(this);
           result.port_ = port_;
+          result.hostname_ = hostname_;
           onBuilt();
           return result;
         }
@@ -1709,6 +2113,10 @@ public final class RequestsToStorageNode {
           if (other == edu.usfca.cs.dfs.RequestsToStorageNode.StoreChunkRequestToSN.StorageNode.getDefaultInstance()) return this;
           if (other.getPort() != 0) {
             setPort(other.getPort());
+          }
+          if (!other.getHostname().isEmpty()) {
+            hostname_ = other.hostname_;
+            onChanged();
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -1759,6 +2167,75 @@ public final class RequestsToStorageNode {
         public Builder clearPort() {
           
           port_ = 0;
+          onChanged();
+          return this;
+        }
+
+        private java.lang.Object hostname_ = "";
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public java.lang.String getHostname() {
+          java.lang.Object ref = hostname_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            hostname_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public com.google.protobuf.ByteString
+            getHostnameBytes() {
+          java.lang.Object ref = hostname_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            hostname_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public Builder setHostname(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          hostname_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public Builder clearHostname() {
+          
+          hostname_ = getDefaultInstance().getHostname();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string hostname = 2;</code>
+         */
+        public Builder setHostnameBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          hostname_ = value;
           onChanged();
           return this;
         }
@@ -4417,23 +4894,24 @@ public final class RequestsToStorageNode {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\036requests_to_storage_node.proto\"y\n\031Read" +
-      "inessCheckRequestToSN\022?\n\017storageNodeList" +
-      "\030\001 \003(\0132&.ReadinessCheckRequestToSN.Stora" +
-      "geNode\032\033\n\013StorageNode\022\014\n\004port\030\001 \001(\005\"\247\001\n\025" +
-      "StoreChunkRequestToSN\022\020\n\010filename\030\001 \001(\t\022" +
-      "\017\n\007chunkId\030\002 \001(\005\022\021\n\tchunkData\030\003 \001(\014\022;\n\017s" +
-      "torageNodeList\030\004 \003(\0132\".StoreChunkRequest" +
-      "ToSN.StorageNode\032\033\n\013StorageNode\022\014\n\004port\030" +
-      "\001 \001(\005\"<\n\027RetrieveFileRequestToSN\022\020\n\010file" +
-      "name\030\001 \001(\t\022\017\n\007chunkId\030\002 \001(\005\"\345\001\n\034Requests",
-      "ToStorageNodeWrapper\022B\n\034readinessCheckRe" +
-      "questToSNMsg\030\001 \001(\0132\032.ReadinessCheckReque" +
-      "stToSNH\000\022:\n\030storeChunkRequestToSNMsg\030\002 \001" +
-      "(\0132\026.StoreChunkRequestToSNH\000\022>\n\032retrieve" +
-      "FileRequestToSNMsg\030\003 \001(\0132\030.RetrieveFileR" +
-      "equestToSNH\000B\005\n\003msgB\022\n\020edu.usfca.cs.dfsb" +
-      "\006proto3"
+      "\n\036requests_to_storage_node.proto\"\256\001\n\031Rea" +
+      "dinessCheckRequestToSN\022\020\n\010filename\030\001 \001(\t" +
+      "\022\017\n\007chunkId\030\002 \001(\005\022?\n\017storageNodeList\030\003 \003" +
+      "(\0132&.ReadinessCheckRequestToSN.StorageNo" +
+      "de\032-\n\013StorageNode\022\014\n\004port\030\001 \001(\005\022\020\n\010hostn" +
+      "ame\030\002 \001(\t\"\271\001\n\025StoreChunkRequestToSN\022\020\n\010f" +
+      "ilename\030\001 \001(\t\022\017\n\007chunkId\030\002 \001(\005\022\021\n\tchunkD" +
+      "ata\030\003 \001(\014\022;\n\017storageNodeList\030\004 \003(\0132\".Sto" +
+      "reChunkRequestToSN.StorageNode\032-\n\013Storag" +
+      "eNode\022\014\n\004port\030\001 \001(\005\022\020\n\010hostname\030\002 \001(\t\"<\n",
+      "\027RetrieveFileRequestToSN\022\020\n\010filename\030\001 \001" +
+      "(\t\022\017\n\007chunkId\030\002 \001(\005\"\345\001\n\034RequestsToStorag" +
+      "eNodeWrapper\022B\n\034readinessCheckRequestToS" +
+      "NMsg\030\001 \001(\0132\032.ReadinessCheckRequestToSNH\000" +
+      "\022:\n\030storeChunkRequestToSNMsg\030\002 \001(\0132\026.Sto" +
+      "reChunkRequestToSNH\000\022>\n\032retrieveFileRequ" +
+      "estToSNMsg\030\003 \001(\0132\030.RetrieveFileRequestTo" +
+      "SNH\000B\005\n\003msgB\022\n\020edu.usfca.cs.dfsb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4452,13 +4930,13 @@ public final class RequestsToStorageNode {
     internal_static_ReadinessCheckRequestToSN_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ReadinessCheckRequestToSN_descriptor,
-        new java.lang.String[] { "StorageNodeList", });
+        new java.lang.String[] { "Filename", "ChunkId", "StorageNodeList", });
     internal_static_ReadinessCheckRequestToSN_StorageNode_descriptor =
       internal_static_ReadinessCheckRequestToSN_descriptor.getNestedTypes().get(0);
     internal_static_ReadinessCheckRequestToSN_StorageNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ReadinessCheckRequestToSN_StorageNode_descriptor,
-        new java.lang.String[] { "Port", });
+        new java.lang.String[] { "Port", "Hostname", });
     internal_static_StoreChunkRequestToSN_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_StoreChunkRequestToSN_fieldAccessorTable = new
@@ -4470,7 +4948,7 @@ public final class RequestsToStorageNode {
     internal_static_StoreChunkRequestToSN_StorageNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_StoreChunkRequestToSN_StorageNode_descriptor,
-        new java.lang.String[] { "Port", });
+        new java.lang.String[] { "Port", "Hostname", });
     internal_static_RetrieveFileRequestToSN_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_RetrieveFileRequestToSN_fieldAccessorTable = new

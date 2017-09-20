@@ -1,9 +1,8 @@
 package edu.usfca.cs.dfs;
 
 import com.google.protobuf.ByteString;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,14 +10,20 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StorageNode {
 
     private int controllerPort = 9998;
     private String controllerPortHostName = "localhost";
     private int storageNodePort = 9999;
+    private Map<String,StorageNodeMetadata> storageNodeMetadataMap = new HashMap<>();
 
     public static void main(String[] args) 
     throws Exception
@@ -96,6 +101,7 @@ public class StorageNode {
 
                     byte[] bytes = storeChunkRequestToSN.getChunkData().toByteArray();
 
+                    /*Storing Chunk data on local file system of Node*/
                     int i=0;
                     String blockFile = absDir.toString() + "/data/" + storeChunkRequestToSN.getFilename() + "Part" + storeChunkRequestToSN.getChunkId() +".txt";
                     FileWriter writer = new FileWriter(blockFile);
@@ -105,6 +111,23 @@ public class StorageNode {
                         i++;
                     }
                     writer.close();
+
+                    /*Calculating Checksum and adding all the chunkInfo(filename,chunkId,Checksum) to metadata Map of Storage Node*/
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+                    FileInputStream fis = new FileInputStream(blockFile);
+
+                    byte[] dataBytes = new byte[1024];
+
+                    int nread = 0;
+                    while ((nread = fis.read(dataBytes)) != -1) {
+                        md.update(dataBytes, 0, nread);
+                    };
+                    byte[] mdbytes = md.digest();
+                    StorageNodeMetadata metadata = new StorageNodeMetadata(storeChunkRequestToSN.getFilename(),storeChunkRequestToSN.getChunkId());
+                    metadata.setChecksum(mdbytes);
+                    String key = storeChunkRequestToSN.getFilename()+ Integer.toString(storeChunkRequestToSN.getChunkId());
+                    storageNodeMetadataMap.put(key,metadata);
+
 
                     ResponsesToClient.AcknowledgeStoreChunkToClient acknowledgeStoreChunkToClient = ResponsesToClient.AcknowledgeStoreChunkToClient.newBuilder()
                                                                                                     .setSuccess(true).build();
@@ -153,7 +176,13 @@ public class StorageNode {
                 }
 
 
-            } catch (IOException e) {
+            }
+            catch (NoSuchAlgorithmException e)
+            {
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
         }

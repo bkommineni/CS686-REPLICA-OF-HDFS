@@ -18,9 +18,10 @@ public class Controller {
     */
 
     private int controllerPort = 9998;
-    private Map<String,DataNode> storageNodesList = new HashMap<>();
+    private Map<Integer,DataNode> storageNodesList = new HashMap<>();
     private List<FileMetadata> fileMetadatas = new ArrayList<>();
     private Map<String,Metadata> metadataMap = new HashMap<>();
+    private int counter = 0;
 
     public static void main(String[] args) throws Exception{
         new Controller().start(args);
@@ -59,7 +60,8 @@ public class Controller {
                 if(msgWrapper.hasEnrollMsg())
                 {
                     //enroll storage node
-                    storageNodesList.put(msgWrapper.getEnrollMsg().getHostname(),new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
+                    counter++;
+                    storageNodesList.put(counter,new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                                             .newBuilder().setSuccess(true).build();
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());
@@ -108,10 +110,11 @@ public class Controller {
                     System.out.println("entering store chunk in controller!!");
                     Random rand = new Random();
                     List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
+                    int noOfStorageNodes = storageNodesList.size();
                     for(int i=0;i<3;i++)
                     {
-                        int portNum = rand.nextInt(24) + 1;
-                        System.out.println("Port Number : "+portNum);
+                        int portNum = rand.nextInt() + 1;
+                        System.out.println("Node Number : "+portNum);
                         StringBuffer buffer = new StringBuffer();
                         if(portNum < 10)
                             buffer.append("bass0");

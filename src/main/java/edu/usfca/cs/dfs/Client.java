@@ -22,7 +22,7 @@ public class Client {
         int controllerPort = 9998;
         String controllerHostname = InetAddress.getLocalHost().getHostName();
 
-        controllerHostname = args[0]+"cs.usfca.edu";
+        controllerHostname = args[0]+".cs.usfca.edu";
         controllerPort = Integer.parseInt(args[1]);
 
 

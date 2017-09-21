@@ -13,10 +13,7 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StorageNode {
 
@@ -24,6 +21,8 @@ public class StorageNode {
     private String controllerPortHostName = "localhost";
     private int storageNodePort = 9999;
     private Map<String,StorageNodeMetadata> storageNodeMetadataMap = new HashMap<>();
+    private Map<String,StorageNodeMetadata> dataStoredInLastFiveSeconds = new HashMap<>();
+    private Socket connSocket = null;
 
     public static void main(String[] args) 
     throws Exception
@@ -41,7 +40,7 @@ public class StorageNode {
             }
         }
         System.out.println("Enrolling with Controller after entering to network...");
-        Socket connSocket = new Socket(controllerPortHostName,controllerPort);
+        connSocket = new Socket(controllerPortHostName,controllerPort);
         RequestsToController.Enroll enroll = RequestsToController.Enroll.newBuilder()
                                                         .setPort(storageNodePort)
                                                         .setHostname(getHostname())
@@ -55,13 +54,55 @@ public class StorageNode {
         ResponsesToStorageNode.AcknowledgeEnrollment response = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                         .parseDelimitedFrom(connSocket.getInputStream());
         System.out.println("Successfully enrolled with Controller!!");
-        connSocket.close();
+
         System.out.println("Starting Storage Node on : "+ storageNodePort);
         if(response.getSuccess())
         {
             ServerSocket serverSocket = new ServerSocket(storageNodePort);
             System.out.println("Listening...");
             while (true) {
+                TimerTask task = new TimerTask()
+                {
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            List<RequestsToController.Heartbeat.ChunkMetadata> chunkMetadataList = new ArrayList<>();
+                            for (String key : dataStoredInLastFiveSeconds.keySet()) {
+                                StorageNodeMetadata metadata = dataStoredInLastFiveSeconds.get(key);
+                                RequestsToController.Heartbeat.ChunkMetadata chunkMetadata = RequestsToController.Heartbeat.ChunkMetadata.newBuilder()
+                                        .setChunkId(metadata.getChunkId())
+                                        .setFilename(metadata.getFilename()).build();
+                                chunkMetadataList.add(chunkMetadata);
+                            }
+                            RequestsToController.Heartbeat.storageNode storageNode = RequestsToController.Heartbeat.storageNode.newBuilder()
+                                    .setPort(storageNodePort)
+                                    .setHostname(getHostname()).build();
+
+                            RequestsToController.Heartbeat heartbeat = RequestsToController.Heartbeat.newBuilder()
+                                    .addAllMetadata(chunkMetadataList)
+                                    .setSN(storageNode)
+                                    .build();
+                            RequestsToController.RequestsToControllerWrapper wrapper = RequestsToController.RequestsToControllerWrapper.newBuilder()
+                                    .setHeartbeatMsg(heartbeat).build();
+
+                            wrapper.writeDelimitedTo(connSocket.getOutputStream());
+                        }
+                        catch (UnknownHostException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                Timer timer = new Timer();
+                long delay = 0;
+                long intervalPeriod = 5 * 1000;
+                timer.scheduleAtFixedRate(task,delay,intervalPeriod);
                 Socket socket = serverSocket.accept();
                 new Thread(new Request(socket)).start();
             }
@@ -127,6 +168,7 @@ public class StorageNode {
                     metadata.setChecksum(mdbytes);
                     String key = storeChunkRequestToSN.getFilename()+ Integer.toString(storeChunkRequestToSN.getChunkId());
                     storageNodeMetadataMap.put(key,metadata);
+                    dataStoredInLastFiveSeconds.put(key,metadata);
 
 
                     ResponsesToClient.AcknowledgeStoreChunkToClient acknowledgeStoreChunkToClient = ResponsesToClient.AcknowledgeStoreChunkToClient.newBuilder()

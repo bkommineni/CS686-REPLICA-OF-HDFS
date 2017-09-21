@@ -13,6 +13,11 @@ message RetrieveFileRequest
     string filename = 1;
 }
 
+message ListOfActiveNodesRequest
+{
+
+}
+
 //StorageNode
 message Enroll
 {
@@ -22,8 +27,13 @@ message Enroll
 
 message Heartbeat
 {
-    int32 port = 1;
-    string hostname = 2;
+    message storageNode
+    {
+        int32 port = 1;
+        string hostname = 2;
+    }
+
+    storageNode SN = 1;
 
     message ChunkMetadata
     {
@@ -31,23 +41,15 @@ message Heartbeat
         int32  chunkId  = 2;
     }
 
-    repeated ChunkMetadata metadata = 3;
-}
-
-message AcknowledgeStoreChunk
-{
-    string filename = 1;
-    int32  chunkId  = 2;
-    int32  port     = 3;
-    string hostname = 4;
+    repeated ChunkMetadata metadata = 2;
 }
 
 message RequestsToControllerWrapper {
     oneof msg {
         StoreChunkRequest storeChunkRequestMsg = 1;
         RetrieveFileRequest retrieveFileRequestMsg = 2;
-        AcknowledgeStoreChunk acknowledgeStoreChunkMsg = 3;
-        Enroll enrollMsg = 4;
-        Heartbeat heartbeatMsg = 5;
+        Enroll enrollMsg = 3;
+        Heartbeat heartbeatMsg = 4;
+        ListOfActiveNodesRequest listOfActiveNodes = 5;
     }
 }

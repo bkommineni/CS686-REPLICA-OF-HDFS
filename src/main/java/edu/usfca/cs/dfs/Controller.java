@@ -18,21 +18,27 @@ public class Controller {
     */
 
     private int controllerPort = 9998;
-    private Map<Integer,DataNode> storageNodesList = new HashMap<>();
+    private Map<String,DataNode> storageNodesList = new HashMap<>();
     private List<FileMetadata> fileMetadatas = new ArrayList<>();
     private Map<String,Metadata> metadataMap = new HashMap<>();
     private int counter = 0;
+    private int noOfStorageNodesDeployed = 0;
+    private boolean statusStorageNodes[] = null;
 
     public static void main(String[] args) throws Exception{
         new Controller().start(args);
     }
 
+    /**/
     private void start(String[] args) throws Exception
     {
         if(args.length > 0 ) {
-            if (args[1] != null)
-                controllerPort = Integer.parseInt(args[1]);
+            if (args[0] != null)
+                controllerPort = Integer.parseInt(args[0]);
+            if(args[1] != null)
+                noOfStorageNodesDeployed = Integer.parseInt(args[1]);
         }
+        statusStorageNodes = new boolean[noOfStorageNodesDeployed];
         String hostname = getHostname();
         System.out.println("Starting controller on " + hostname + " and port: "+ controllerPort + "...");
         ServerSocket serverSocket = new ServerSocket(9998);
@@ -60,8 +66,8 @@ public class Controller {
                 if(msgWrapper.hasEnrollMsg())
                 {
                     //enroll storage node
-                    counter++;
-                    storageNodesList.put(counter,new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
+                    storageNodesList.put(msgWrapper.getEnrollMsg().getHostname(),new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
+                    statusStorageNodes[msgWrapper.getEnrollMsg().getPort()] = true;
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                                             .newBuilder().setSuccess(true).build();
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());
@@ -110,30 +116,28 @@ public class Controller {
                     System.out.println("entering store chunk in controller!!");
                     Random rand = new Random();
                     List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
-                    int noOfStorageNodes = storageNodesList.size();
-                    for(int i=0;i<3;i++)
+
+                    int count = 1;
+                    while(count <= 3)
                     {
-                        int portNum = rand.nextInt() + 1;
-                        System.out.println("Node Number : "+portNum);
-                        StringBuffer buffer = new StringBuffer();
-                        if(portNum < 10)
-                            buffer.append("bass0");
-                        else
-                            buffer.append("bass");
-                        DataNode storageNode = storageNodesList.get(buffer.toString()+Integer.toString(portNum)+".cs.usfca.edu");
-                        ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
-                                ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(storageNode.getPort())
-                                                                                             .setHostname(storageNode.getHostname())
-                                                                                             .build();
-                        storageNodes.add(storageNodeMsg);
+                        int nodeNum = rand.nextInt(noOfStorageNodesDeployed) + 1;
+                        if(statusStorageNodes[nodeNum])
+                        {
+                            System.out.println("Node Number : " + nodeNum);
+                            StringBuilder builder = new StringBuilder();
+                            if (nodeNum < 10)
+                                builder.append("bass0");
+                            else
+                                builder.append("bass");
+                            DataNode storageNode = storageNodesList.get(builder.toString() + Integer.toString(nodeNum) + ".cs.usfca.edu");
+                            ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
+                                    ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(storageNode.getPort())
+                                            .setHostname(storageNode.getHostname())
+                                            .build();
+                            storageNodes.add(storageNodeMsg);
+                            count++;
+                        }
                     }
-                    /*System.out.println("entering store chunk in controller!!");
-                    List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
-                    ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
-                            ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(9999)
-                                    .setHostname("localhost")
-                                    .build();
-                    storageNodes.add(storageNodeMsg);*/
 
                     //return the set of nodes/numbers randomly generated in response
                     ResponsesToClient.StoreChunkResponse.Builder builder = ResponsesToClient.StoreChunkResponse.newBuilder();
@@ -142,34 +146,50 @@ public class Controller {
                     System.out.println("coming out of store chunk in controller");
                 }
 
-                if(msgWrapper.hasAcknowledgeStoreChunkMsg())
-                {
-                    //acknowledge store chunk
-                    //updating blocks and nodes info based on acknowledgement
-                    RequestsToController.AcknowledgeStoreChunk acknowledge = msgWrapper.getAcknowledgeStoreChunkMsg();
-
-                    /*ChunkMetadata chunk = new ChunkMetadata(acknowledge.getFilename(),acknowledge.getChunkId());
-                    ReplicaMetadata replica = new ReplicaMetadata(acknowledge.getFilename(),acknowledge.getChunkId(),
-                            new DataNode(acknowledge.getPort(),acknowledge.getHostname()));
-                    chunk.addReplicaMetadata(replica);
-                    FileMetadata fileMetadata = new FileMetadata(acknowledge.getFilename());
-                    fileMetadata.addChunkMetadata(chunk);
-                    fileMetadatas.add(fileMetadata);*/
-
-                    String key = acknowledge.getFilename() + acknowledge.getChunkId() + acknowledge.getHostname();
-                    if(!metadataMap.containsKey(key))
-                    {
-                        Metadata metadata = new Metadata(acknowledge.getFilename(),acknowledge.getChunkId());
-                        metadata.setDataNode(new DataNode(acknowledge.getPort(),acknowledge.getHostname()));
-                        metadataMap.put(key,metadata);
-                    }
-                }
-
                 if(msgWrapper.hasHeartbeatMsg())
                 {
                     //check info sent on heartbeat and make sure what are active nodes
+                    int size = msgWrapper.getHeartbeatMsg().getMetadataList().size();
+                    RequestsToController.Heartbeat.storageNode storageNode = RequestsToController.Heartbeat.storageNode.newBuilder()
+                                                                                .setHostname(msgWrapper.getHeartbeatMsg().getSN().getHostname())
+                                                                                .setPort(msgWrapper.getHeartbeatMsg().getSN().getPort())
+                                                                                .build();
+                    for(int i=0;i<size;i++)
+                    {
+                        RequestsToController.Heartbeat.ChunkMetadata chunkMetadata = msgWrapper.getHeartbeatMsg().getMetadataList().get(i);
+                        String key = chunkMetadata.getFilename() + chunkMetadata.getChunkId() + storageNode.getHostname();
+                        if(!metadataMap.containsKey(key))
+                        {
+                            Metadata metadata = new Metadata(chunkMetadata.getFilename(),chunkMetadata.getChunkId());
+                            metadata.setDataNode(new DataNode(storageNode.getPort(),storageNode.getHostname()));
+                            metadataMap.put(key,metadata);
+                        }
+                    }
 
-
+                }
+                if(msgWrapper.hasListOfActiveNodes())
+                {
+                    List<ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> storageNodes = new ArrayList<>();
+                    for(int i=0;i<statusStorageNodes.length;i++)
+                    {
+                        if(statusStorageNodes[i])
+                        {
+                            StringBuilder builder = new StringBuilder();
+                            if (i < 10)
+                                builder.append("bass0");
+                            else
+                                builder.append("bass");
+                            DataNode storageNode = storageNodesList.get(builder.toString() + Integer.toString(i) + ".cs.usfca.edu");
+                            ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode storageNodeMsg =
+                                    ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.newBuilder().setPort(storageNode.getPort())
+                                            .setHostname(storageNode.getHostname())
+                                            .build();
+                            storageNodes.add(storageNodeMsg);
+                        }
+                    }
+                    ResponsesToClient.ListOfActiveStorageNodesResponseFromCN list = ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.newBuilder()
+                                                                                    .addAllActiveStorageNodes(storageNodes).build();
+                    list.writeDelimitedTo(connectionSocket.getOutputStream());
                 }
 
             } catch (IOException e) {

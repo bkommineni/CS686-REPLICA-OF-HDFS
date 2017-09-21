@@ -135,19 +135,6 @@ public class StorageNode {
                                                                         .setAcknowledgeStoreChunkToClientMsg(acknowledgeStoreChunkToClient).build();
 
                     wrapper.writeDelimitedTo(connectionSocket.getOutputStream());
-
-                    //Send Response to controller after store to update metadata info
-                    RequestsToController.AcknowledgeStoreChunk acknowledgeStoreChunk = RequestsToController.AcknowledgeStoreChunk
-                                                                                                    .newBuilder()
-                                                                                                    .setChunkId(storeChunkRequestToSN.getChunkId())
-                                                                                                    .setFilename(storeChunkRequestToSN.getFilename())
-                                                                                                    .setPort(storageNodePort)
-                                                                                                    .setHostname(InetAddress.getLocalHost().getHostName())
-                                                                                                    .build();
-                    RequestsToController.RequestsToControllerWrapper wrapper1 = RequestsToController.RequestsToControllerWrapper.newBuilder()
-                                                                                    .setAcknowledgeStoreChunkMsg(acknowledgeStoreChunk).build();
-                    Socket socket = new Socket(controllerPortHostName,controllerPort);
-                    wrapper1.writeDelimitedTo(socket.getOutputStream());
                 }
 
                 if(requestsWrapper.hasRetrieveFileRequestToSNMsg())
@@ -174,8 +161,6 @@ public class StorageNode {
                                                                                         .setSuccess(true).build();
                     readinessToClient.writeDelimitedTo(connectionSocket.getOutputStream());
                 }
-
-
             }
             catch (NoSuchAlgorithmException e)
             {
@@ -205,7 +190,7 @@ public class StorageNode {
 
                 List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> peerList = readinessCheckRequestToSNMsg.getStorageNodeListList();
                 String filename = readinessCheckRequestToSNMsg.getFilename();
-                System.out.println("readinedd to peer filename "+ filename);
+                System.out.println("readiness to peer filename "+ filename);
                 int chunkId = readinessCheckRequestToSNMsg.getChunkId();
                 String[] tokens = filename.split("/");
                 int noOfTokens = tokens.length;

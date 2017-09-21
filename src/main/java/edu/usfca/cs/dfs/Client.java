@@ -128,7 +128,6 @@ public class Client {
 
         else if(args[2].equals("retrieve")) {
             //RetrieveFileRequest to Controller
-            //String mergedFile = absDir.toString() + "/clientDirectory/FileM.txt";
             String currPath = ".";
             Path p = Paths.get(currPath);
             Path absDir = p.toAbsolutePath();
@@ -179,6 +178,17 @@ public class Client {
             }
 
             writer.close();
+        }
+        else if(args[2].equals("list"))
+        {
+            Socket socket2 = new Socket(controllerHostname,controllerPort);
+            RequestsToController.ListOfActiveNodesRequest listOfActiveNodesRequest = RequestsToController.ListOfActiveNodesRequest
+                                                                                        .newBuilder().build();
+            RequestsToController.RequestsToControllerWrapper wrapper = RequestsToController.RequestsToControllerWrapper
+                                                                        .newBuilder()
+                                                                        .setListOfActiveNodes(listOfActiveNodesRequest)
+                                                                        .build();
+            wrapper.writeDelimitedTo(socket2.getOutputStream());
         }
     }
 

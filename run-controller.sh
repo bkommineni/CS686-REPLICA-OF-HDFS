@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-#Taking latest changes from git and updating project folder on stargate
-cd /home4/bkommineni/Documents/courses/cs686/p1-bkommineni
-
-git pull origin master
-
 #Controller (bass01)
 cd Documents/courses/cs686/p1-bkommineni;
 /usr/local/maven/bin/mvn compile package;

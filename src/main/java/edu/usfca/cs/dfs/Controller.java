@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Controller {
 
@@ -22,8 +23,71 @@ public class Controller {
     private List<FileMetadata> fileMetadatas = new ArrayList<>();
     private Map<String,Metadata> metadataMap = new HashMap<>();
     private int counter = 0;
-    private int noOfStorageNodesDeployed = 0;
+    private int noOfStorageNodesDeployed = 24;
     private boolean statusStorageNodes[] = null;
+    private enum StorageNodes
+    {
+        bass01,bass02,bass03,bass04,bass05,bass06,bass07,bass08,bass09,
+        bass10,bass11,bass12,bass13,bass14,bass15,bass16,bass17,bass18,
+        bass19,bass20,bass21,bass22,bass23,bass24;
+
+        int getIndexForStorageNode()
+        {
+            switch (this)
+            {
+                case bass01:
+                    return 1;
+                case bass02:
+                    return 2;
+                case bass03:
+                    return 3;
+                case bass04:
+                    return 4;
+                case bass05:
+                    return 5;
+                case bass06:
+                    return 6;
+                case bass07:
+                    return 7;
+                case bass08:
+                    return 8;
+                case bass09:
+                    return 9;
+                case bass10:
+                    return 10;
+                case bass11:
+                    return 11;
+                case bass12:
+                    return 12;
+                case bass13:
+                    return 13;
+                case bass14:
+                    return 14;
+                case bass15:
+                    return 15;
+                case bass16:
+                    return 16;
+                case bass17:
+                    return 17;
+                case bass18:
+                    return 18;
+                case bass19:
+                    return 19;
+                case bass20:
+                    return 20;
+                case bass21:
+                    return 21;
+                case bass22:
+                    return 22;
+                case bass23:
+                    return 23;
+                case bass24:
+                    return 24;
+                default:
+                    throw new AssertionError("Unknown operations " + this);
+            }
+        }
+    }
 
     public static void main(String[] args) throws Exception{
         new Controller().start(args);
@@ -35,8 +99,8 @@ public class Controller {
         if(args.length > 0 ) {
             if (args[0] != null)
                 controllerPort = Integer.parseInt(args[0]);
-            if(args[1] != null)
-                noOfStorageNodesDeployed = Integer.parseInt(args[1]);
+            /*if(args[1] != null)
+                noOfStorageNodesDeployed = Integer.parseInt(args[1]);*/
         }
         statusStorageNodes = new boolean[noOfStorageNodesDeployed];
         String hostname = getHostname();
@@ -67,7 +131,7 @@ public class Controller {
                 {
                     //enroll storage node
                     storageNodesList.put(msgWrapper.getEnrollMsg().getHostname(),new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
-                    statusStorageNodes[msgWrapper.getEnrollMsg().getPort()] = true;
+                    statusStorageNodes[StorageNodes.valueOf(msgWrapper.getEnrollMsg().getHostname()).getIndexForStorageNode()] = true;
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                                             .newBuilder().setSuccess(true).build();
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());
@@ -120,7 +184,7 @@ public class Controller {
                     int count = 1;
                     while(count <= 3)
                     {
-                        int nodeNum = rand.nextInt(noOfStorageNodesDeployed) + 1;
+                        int nodeNum = ThreadLocalRandom.current().nextInt(1, 24);
                         if(statusStorageNodes[nodeNum])
                         {
                             System.out.println("Node Number : " + nodeNum);

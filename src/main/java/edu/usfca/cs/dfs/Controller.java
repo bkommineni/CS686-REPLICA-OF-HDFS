@@ -130,8 +130,10 @@ public class Controller {
                 if(msgWrapper.hasEnrollMsg())
                 {
                     //enroll storage node
-                    storageNodesList.put(msgWrapper.getEnrollMsg().getHostname(),new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
-                    statusStorageNodes[StorageNodes.valueOf(msgWrapper.getEnrollMsg().getHostname()).getIndexForStorageNode()] = true;
+                    String hostname = msgWrapper.getEnrollMsg().getHostname();
+                    String[] tokens = hostname.split(".");
+                    storageNodesList.put(hostname,new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
+                    statusStorageNodes[StorageNodes.valueOf(tokens[0]).getIndexForStorageNode()] = true;
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                                             .newBuilder().setSuccess(true).build();
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());

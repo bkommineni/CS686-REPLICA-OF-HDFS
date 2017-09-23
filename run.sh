@@ -13,7 +13,6 @@ mv /home4/bkommineni/Documents/courses/cs686/p1-bkommineni/target/dfs-1.0-jar-wi
 cd ~/Documents/courses/cs686/p1-bkommineni;
 java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Controller 9999 &
 "
-
 #Storage Nodes (bass02:bass10)
 for i in `seq 2 10`;
 do
@@ -22,7 +21,6 @@ cd Documents/courses/cs686/p1-bkommineni;
 java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.StorageNode bass01 9999 &
 "
 done
-
 #Client
 ssh bass11 "
 cd Documents/courses/cs686/p1-bkommineni;

@@ -22,5 +22,5 @@ done
 #Client
 ssh bass21 "
 cd ~/Documents/courses/cs686/p1-bkommineni/target/;
-java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Client bass01 9999 store clientDirectory/File1.txt > client.out 2>&1 &
+java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Client bass01 9999 store ~/Documents/courses/cs686/p1-bkommineni/clientDirectory/File1.txt > client.out 2>&1 &
 "

@@ -14,12 +14,18 @@ cd ~/Documents/courses/cs686/p1-bkommineni;
 java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Controller 9999 &
 "
 #Storage Nodes (bass02:bass10)
-for i in `seq 2 10`;
-do
-ssh $(i < 10 ?  bass0${i} : ssh bass${i})"
-cd Documents/courses/cs686/p1-bkommineni;
-java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.StorageNode bass01 9999 &
-"
+for i in `seq 2 10`; do
+	b = "bass"
+	z = 0
+	if [$i -lt 10]; then
+	b = $b$z$i
+	else
+	b = $b$i
+	fi
+	ssh b "
+	cd Documents/courses/cs686/p1-bkommineni;
+	java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.StorageNode bass01 9999 &
+	"
 done
 #Client
 ssh bass11 "

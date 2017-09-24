@@ -262,10 +262,15 @@ public class StorageNode {
                     ResponsesToStorageNode.AcknowledgeReadinessToSN acknowledgeReadinessToSN = ResponsesToStorageNode.AcknowledgeReadinessToSN
                             .parseDelimitedFrom(socket.getInputStream());
                     if (acknowledgeReadinessToSN.getSuccess()) {
+                        File file = new File(filePath);
+                        if(!file.exists())
+                        {
+                            wait(100000);
+                        }
                         RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSN.newBuilder()
                                 .setFilename(filename)
                                 .setChunkId(chunkId)
-                                .setChunkData(ByteString.copyFrom(Files.readAllBytes(new File(filePath).toPath())))
+                                .setChunkData(ByteString.copyFrom(Files.readAllBytes(file.toPath())))
                                 .build();
                         RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper
                                 .newBuilder()
@@ -276,6 +281,10 @@ public class StorageNode {
 
             }
             catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            catch (InterruptedException e)
             {
                 e.printStackTrace();
             }

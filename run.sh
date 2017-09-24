@@ -24,13 +24,13 @@ java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Controller $port > c
 
 for node in ${node_list[@]};do
 	ssh $node "
-	cd ~/Documents/courses/cs686/p1-bkommineni/target/;
+	cd ~/Documents/courses/cs686/p1-bkommineni;
 	rm storage_${node}.out;
 	java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.StorageNode bass01 $port 9999 > storage_${node}.out 2>&1 &
 	"
 done
 
 ssh bass23 "
-cd ~/Documents/courses/cs686/p1-bkommineni/target/;
+cd ~/Documents/courses/cs686/p1-bkommineni;
 rm client.out;
 java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Client bass01 $port store ~/Documents/courses/cs686/p1-bkommineni/clientDirectory/File1.txt > client.out 2>&1 &"

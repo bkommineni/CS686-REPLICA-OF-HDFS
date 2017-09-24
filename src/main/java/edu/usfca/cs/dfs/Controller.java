@@ -184,10 +184,11 @@ public class Controller {
                     List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
 
                     int count = 1;
+                    List<Integer> nodenums = new ArrayList<>();
                     while(count <= 3)
                     {
                         int nodeNum = ThreadLocalRandom.current().nextInt(1, 24);
-                        if(statusStorageNodes[nodeNum])
+                        if(statusStorageNodes[nodeNum] && (!nodenums.contains(nodeNum)))
                         {
                             System.out.println("Node Number : " + nodeNum);
                             StringBuilder builder = new StringBuilder();

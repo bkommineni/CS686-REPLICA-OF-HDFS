@@ -134,7 +134,7 @@ public class Client {
             String fileRequired = args[3];
             String[] tokens = fileRequired.split("/");
             int length = tokens.length;
-            String filename  = tokens[length-1].split(".")[0];
+            String filename  = tokens[length-1].split("\\.")[0];
             String mergedFile = absDir.toString() + "/retrievedFilesDirectory/"+filename + ".txt";
             FileWriter writer = new FileWriter(mergedFile);
             RequestsToController.RetrieveFileRequest retrieveFileRequest = RequestsToController.RetrieveFileRequest.newBuilder()

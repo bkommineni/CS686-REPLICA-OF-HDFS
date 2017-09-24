@@ -131,7 +131,7 @@ public class Controller {
                 {
                     //enroll storage node
                     String hostname = msgWrapper.getEnrollMsg().getHostname();
-                    String[] tokens = hostname.split(".");
+                    String[] tokens = hostname.split("\\.");
                     storageNodesList.put(hostname,new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
                     statusStorageNodes[StorageNodes.valueOf(tokens[0]).getIndexForStorageNode()] = true;
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment

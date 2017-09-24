@@ -6,6 +6,9 @@ port=$1
 #Killing all the deployed servers
 ./kill_all.sh
 
+#pull the existing repository for latest changes
+git pull origin master
+
 #Controller (bass01)
 ssh bass01 "
 cd ~/Documents/courses/cs686/p1-bkommineni;

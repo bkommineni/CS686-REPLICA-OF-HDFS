@@ -130,6 +130,7 @@ public class Controller {
                 if(msgWrapper.hasEnrollMsg())
                 {
                     //enroll storage node
+                    System.out.println("Received enrollment request from storage node");
                     String hostname = msgWrapper.getEnrollMsg().getHostname();
                     String[] tokens = hostname.split("\\.");
                     storageNodesList.put(hostname,new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
@@ -137,11 +138,13 @@ public class Controller {
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                                             .newBuilder().setSuccess(true).build();
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());
+                    System.out.println("Enrollment done!And acknowedged storage node with response");
                 }
 
                 if(msgWrapper.hasRetrieveFileRequestMsg())
                 {
                     //retrieve file functionality
+                    System.out.println("Received retrieve file request from client");
                     List<Metadata> metadatas = new ArrayList<>();
                     for(String str : metadataMap.keySet())
                     {
@@ -172,6 +175,7 @@ public class Controller {
                                                                                     .addAllChunkList(chunkMetadatas)
                                                                                     .build();
                     responseFromCN.writeDelimitedTo(connectionSocket.getOutputStream());
+                    System.out.println("Responded with list of three distict storage nodes to client for retrieve file request");
                 }
 
                 if(msgWrapper.hasStoreChunkRequestMsg())
@@ -179,8 +183,7 @@ public class Controller {
                     //store file functionality
                     //allocate storage nodes for store file request
                     //when deploying on bass
-                    System.out.println("entering store chunk in controller!!");
-                    Random rand = new Random();
+                    System.out.println("Received store chunk request from client");
                     List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
 
                     int count = 1;
@@ -210,12 +213,13 @@ public class Controller {
                     ResponsesToClient.StoreChunkResponse.Builder builder = ResponsesToClient.StoreChunkResponse.newBuilder();
                     ResponsesToClient.StoreChunkResponse storeChunkResponse = builder.addAllStorageNodeList(storageNodes).build();
                     storeChunkResponse.writeDelimitedTo(connectionSocket.getOutputStream());
-                    System.out.println("coming out of store chunk in controller");
+                    System.out.println("Responded with list of three distict storage nodes to client for store chunk request");
                 }
 
                 if(msgWrapper.hasHeartbeatMsg())
                 {
                     //check info sent on heartbeat and make sure what are active nodes
+                    System.out.println("Received heartbeat message from storage node " + msgWrapper.getHeartbeatMsg().getSN().getHostname());
                     int size = msgWrapper.getHeartbeatMsg().getMetadataList().size();
                     RequestsToController.Heartbeat.storageNode storageNode = RequestsToController.Heartbeat.storageNode.newBuilder()
                                                                                 .setHostname(msgWrapper.getHeartbeatMsg().getSN().getHostname())
@@ -232,10 +236,12 @@ public class Controller {
                             metadataMap.put(key,metadata);
                         }
                     }
+                    System.out.println("Updated info from heartbeat message in memory");
 
                 }
                 if(msgWrapper.hasListOfActiveNodes())
                 {
+                    System.out.println("Received request for list of active storage nodes");
                     List<ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> storageNodes = new ArrayList<>();
                     for(int i=0;i<statusStorageNodes.length;i++)
                     {
@@ -257,6 +263,7 @@ public class Controller {
                     ResponsesToClient.ListOfActiveStorageNodesResponseFromCN list = ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.newBuilder()
                                                                                     .addAllActiveStorageNodes(storageNodes).build();
                     list.writeDelimitedTo(connectionSocket.getOutputStream());
+                    System.out.println("Responded with a list of active storage nodes");
                 }
 
             } catch (IOException e) {

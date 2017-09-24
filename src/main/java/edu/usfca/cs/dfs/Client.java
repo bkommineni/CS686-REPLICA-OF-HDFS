@@ -13,28 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
-    private static Socket socket = null;
-    private static Socket socket1 = null;
+
     public static void main(String[] args) throws Exception{
 
 
-        //Socket socket = null;
-        //Socket socket1 = null;
-        int controllerPort = 9998;
-        String controllerHostname = InetAddress.getLocalHost().getHostName();
+        Socket socket = null;
+        Socket socket1 = null;
 
-        controllerHostname = args[0]+".cs.usfca.edu";
-        controllerPort = Integer.parseInt(args[1]);
+
+        String controllerHostname = args[0]+".cs.usfca.edu";
+        int controllerPort = Integer.parseInt(args[1]);
 
 
         if(args[2].equals("store")) {
 
             //chunking functionality
-            /*String currPath = ".";
-            Path p = Paths.get(currPath);
-            Path absDir = p.toAbsolutePath();
-            String filePath = absDir.toString() + "/clientDirectory/File1.txt";*/
-            System.out.println("storeeee");
             String filePath = args[3];
             int filePart = 1;
             List<byte[]> blocks = chunking(filePath);
@@ -42,12 +35,8 @@ public class Client {
             for (byte[] block : blocks) {
                 //sending block to Controller with blockInfo
                 //StoreChunk request to Controller
-                System.out.println("controller hostname "+controllerHostname+"controller port "+controllerPort);
+                System.out.println("controller hostname "+ controllerHostname+"controller port "+controllerPort);
                 socket = new Socket(controllerHostname, controllerPort);
-                System.out.println("controller hostname"+controllerHostname);
-                /*String[] tokens = filePath.split("/");
-                int noOfTokens = tokens.length;
-                String filename = tokens[noOfTokens-1].split(".")[0];*/
                 String filename = args[3];
                 RequestsToController.StoreChunkRequest storeChunk
                         = RequestsToController.StoreChunkRequest.newBuilder()

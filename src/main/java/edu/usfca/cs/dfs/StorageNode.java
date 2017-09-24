@@ -201,57 +201,79 @@ public class StorageNode {
                     ResponsesToClient.AcknowledgeReadinessToClient readinessToClient = ResponsesToClient.AcknowledgeReadinessToClient.newBuilder()
                                                                                         .setSuccess(true).build();
                     readinessToClient.writeDelimitedTo(connectionSocket.getOutputStream());
-
+                    System.out.println("Sent acknowledgement for readiness check to client");
                     RequestsToStorageNode.ReadinessCheckRequestToSN readinessCheckRequestToSNMsg = requestsWrapper.getReadinessCheckRequestToSNMsg();
-
-
-
-                    while (readinessCheckRequestToSNMsg.getStorageNodeListList().size() > 0)
-                    {
-                        List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> peerList = readinessCheckRequestToSNMsg.getStorageNodeListList();
-                        String filename = readinessCheckRequestToSNMsg.getFilename();
-                        int chunkId = readinessCheckRequestToSNMsg.getChunkId();
-                        String[] tokens = filename.split("/");
-                        int noOfTokens = tokens.length;
-                        tokens = tokens[noOfTokens - 1].split("\\.");
-
-                        String filePath = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId + ".txt";
-
-                        Socket socket = new Socket(peerList.get(0).getHostname(), peerList.get(0).getPort());
-                        List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> peers = new ArrayList<>();
-                        if(peerList.size() > 1)
-                        {
-                            for (int i = 1; i < peerList.size(); i++) {
-                                peers.add(peerList.get(i));
-                            }
-                        }
-                        RequestsToStorageNode.ReadinessCheckRequestToSN.Builder builder = RequestsToStorageNode.ReadinessCheckRequestToSN.newBuilder();
-                        builder.addAllStorageNodeList(peers);
-                        RequestsToStorageNode.RequestsToStorageNodeWrapper requestsToStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
-                                .setReadinessCheckRequestToSNMsg(builder).build();
-                        requestsToStorageNodeWrapper.writeDelimitedTo(socket.getOutputStream());
-                        System.out.println("Waiting for response from peer Storage Node");
-                        ResponsesToStorageNode.AcknowledgeReadinessToSN acknowledgeReadinessToSN = ResponsesToStorageNode.AcknowledgeReadinessToSN
-                                .parseDelimitedFrom(socket.getInputStream());
-                        if (acknowledgeReadinessToSN.getSuccess()) {
-                            RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSN.newBuilder()
-                                    .setFilename(filename)
-                                    .setChunkId(chunkId)
-                                    .setChunkData(ByteString.copyFrom(Files.readAllBytes(new File(filePath).toPath())))
-                                    .build();
-                            RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper
-                                    .newBuilder()
-                                    .setStoreChunkRequestToSNMsg(storeChunkRequestToSN).build();
-                            wrapper.writeDelimitedTo(socket.getOutputStream());
-                        }
-                    }
-
+                    System.out.println("Another Thread which sends request to other storage nodes in list ");
+                    new ReadinessCheckRequestToPeer(readinessCheckRequestToSNMsg).run();
                 }
-                System.out.println("Sent acknowledgement for readiness check to client");
+
             }
             catch (NoSuchAlgorithmException e)
             {
                 e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class ReadinessCheckRequestToPeer implements Runnable
+    {
+        RequestsToStorageNode.ReadinessCheckRequestToSN readinessCheckRequestToSNMsg = null;
+        public ReadinessCheckRequestToPeer(RequestsToStorageNode.ReadinessCheckRequestToSN readinessCheckRequestToSNMsg) {
+            this.readinessCheckRequestToSNMsg = readinessCheckRequestToSNMsg;
+        }
+
+        @Override
+        public void run() {
+            try
+            {
+                String currPath = ".";
+                Path p = Paths.get(currPath);
+                Path absDir = p.toAbsolutePath();
+
+                while (readinessCheckRequestToSNMsg.getStorageNodeListList().size() > 0)
+                {
+                    List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> peerList = readinessCheckRequestToSNMsg.getStorageNodeListList();
+                    String filename = readinessCheckRequestToSNMsg.getFilename();
+                    int chunkId = readinessCheckRequestToSNMsg.getChunkId();
+                    String[] tokens = filename.split("/");
+                    int noOfTokens = tokens.length;
+                    tokens = tokens[noOfTokens - 1].split("\\.");
+
+                    String filePath = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId + ".txt";
+
+                    Socket socket = new Socket(peerList.get(0).getHostname(), peerList.get(0).getPort());
+                    List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> peers = new ArrayList<>();
+                    if(peerList.size() > 1)
+                    {
+                        for (int i = 1; i < peerList.size(); i++) {
+                            peers.add(peerList.get(i));
+                        }
+                    }
+                    RequestsToStorageNode.ReadinessCheckRequestToSN.Builder builder = RequestsToStorageNode.ReadinessCheckRequestToSN.newBuilder();
+                    builder.addAllStorageNodeList(peers);
+                    RequestsToStorageNode.RequestsToStorageNodeWrapper requestsToStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
+                            .setReadinessCheckRequestToSNMsg(builder).build();
+                    requestsToStorageNodeWrapper.writeDelimitedTo(socket.getOutputStream());
+                    System.out.println("Waiting for response from peer Storage Node");
+                    ResponsesToStorageNode.AcknowledgeReadinessToSN acknowledgeReadinessToSN = ResponsesToStorageNode.AcknowledgeReadinessToSN
+                            .parseDelimitedFrom(socket.getInputStream());
+                    if (acknowledgeReadinessToSN.getSuccess()) {
+                        RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSN.newBuilder()
+                                .setFilename(filename)
+                                .setChunkId(chunkId)
+                                .setChunkData(ByteString.copyFrom(Files.readAllBytes(new File(filePath).toPath())))
+                                .build();
+                        RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper
+                                .newBuilder()
+                                .setStoreChunkRequestToSNMsg(storeChunkRequestToSN).build();
+                        wrapper.writeDelimitedTo(socket.getOutputStream());
+                    }
+                }
+
             }
             catch (IOException e)
             {

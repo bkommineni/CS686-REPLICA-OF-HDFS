@@ -233,6 +233,7 @@ public class StorageNode {
                 Path absDir = p.toAbsolutePath();
 
                 List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> peerList = readinessCheckRequestToSNMsg.getStorageNodeListList();
+		System.out.println(peerList);
                 String filename = readinessCheckRequestToSNMsg.getFilename();
                 System.out.println("readiness to peer filename "+ filename);
                 int chunkId = readinessCheckRequestToSNMsg.getChunkId();

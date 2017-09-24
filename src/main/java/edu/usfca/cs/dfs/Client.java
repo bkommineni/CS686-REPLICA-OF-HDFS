@@ -79,7 +79,8 @@ public class Client {
                 }
                 RequestsToStorageNode.ReadinessCheckRequestToSN.Builder builder = RequestsToStorageNode.ReadinessCheckRequestToSN.newBuilder()
                                                                                     .setFilename(filename)
-                                                                                    .setChunkId(filePart);
+                                                                                    .setChunkId(filePart)
+										    .addAllStorageNodeList(storageNodeList);
 
                 RequestsToStorageNode.RequestsToStorageNodeWrapper requestsToStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
                         .setReadinessCheckRequestToSNMsg(builder).build();

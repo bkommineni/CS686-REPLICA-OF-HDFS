@@ -13,12 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
-
+    private static Socket socket = null;
+    private static Socket socket1 = null;
     public static void main(String[] args) throws Exception{
 
 
-        Socket socket = null;
-        Socket socket1 = null;
+        //Socket socket = null;
+        //Socket socket1 = null;
         int controllerPort = 9998;
         String controllerHostname = InetAddress.getLocalHost().getHostName();
 

@@ -36,7 +36,9 @@ public class StorageNode {
             if (args[0] != null) {
                 controllerPortHostName = args[0] + ".cs.usfca.edu";
                 if (args[1] != null)
-                    storageNodePort = Integer.parseInt(args[1]);
+                    controllerPort = Integer.parseInt(args[1]);
+			if(args[2] != null)
+				storageNodePort = Integer.parseInt(args[2]);
             }
         }
         System.out.println("Enrolling with Controller after entering to network...");

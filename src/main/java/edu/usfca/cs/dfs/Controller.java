@@ -105,7 +105,7 @@ public class Controller {
         statusStorageNodes = new boolean[noOfStorageNodesDeployed];
         String hostname = getHostname();
         System.out.println("Starting controller on " + hostname + " and port: "+ controllerPort + "...");
-        ServerSocket serverSocket = new ServerSocket(9998);
+        ServerSocket serverSocket = new ServerSocket(controllerPort);
         System.out.println("Listening...");
         while (true)
         {

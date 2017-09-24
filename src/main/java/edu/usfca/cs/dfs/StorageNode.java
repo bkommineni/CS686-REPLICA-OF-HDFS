@@ -205,9 +205,9 @@ public class StorageNode {
                     RequestsToStorageNode.ReadinessCheckRequestToSN readinessCheckRequestToSNMsg = requestsWrapper.getReadinessCheckRequestToSNMsg();
 
 
+
                     while (readinessCheckRequestToSNMsg.getStorageNodeListList().size() > 0)
                     {
-
                         List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> peerList = readinessCheckRequestToSNMsg.getStorageNodeListList();
                         String filename = readinessCheckRequestToSNMsg.getFilename();
                         int chunkId = readinessCheckRequestToSNMsg.getChunkId();

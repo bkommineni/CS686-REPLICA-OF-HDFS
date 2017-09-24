@@ -41,6 +41,7 @@ public class Client {
             for (byte[] block : blocks) {
                 //sending block to Controller with blockInfo
                 //StoreChunk request to Controller
+                System.out.println("controller hostname "+controllerHostname+"controller port "+controllerPort);
                 socket = new Socket(controllerHostname, controllerPort);
                 System.out.println("controller hostname"+controllerHostname);
                 /*String[] tokens = filePath.split("/");

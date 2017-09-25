@@ -140,12 +140,18 @@ public class StorageNode {
                     //Process the Request
                     System.out.println("Received Store chunk request from Client..");
                     RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = requestsWrapper.getStoreChunkRequestToSNMsg();
-                    System.out.println("Storing file name: " + storeChunkRequestToSN.getFilename() + "Chunk Id: " + storeChunkRequestToSN.getChunkId());
+                    System.out.println("Storing file name: " + storeChunkRequestToSN.getFilename() + " Chunk Id: " + storeChunkRequestToSN.getChunkId());
+                    String filename = storeChunkRequestToSN.getFilename();
+                    int chunkId = storeChunkRequestToSN.getChunkId();
+                    String[] tokens = filename.split("/");
+                    int noOfTokens = tokens.length;
+                    tokens = tokens[noOfTokens - 1].split("\\.");
+
                     byte[] bytes = storeChunkRequestToSN.getChunkData().toByteArray();
 
                     /*Storing Chunk data on local file system of Node*/
                     int i=0;
-                    String blockFile = absDir.toString() + "/data/" + storeChunkRequestToSN.getFilename() + "Part" + storeChunkRequestToSN.getChunkId() +".txt";
+                    String blockFile = tokens[0] + "/data/" + tokens[0] + "Part" + chunkId + ".txt";
                     FileWriter writer = new FileWriter(blockFile);
                     while(i < bytes.length)
                     {

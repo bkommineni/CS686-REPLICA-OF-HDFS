@@ -75,7 +75,7 @@ public class Client {
                         .setReadinessCheckRequestToSNMsg(builder).build();
 
 
-                System.out.println("Sending readinessCheck request to Storage Node...");
+                System.out.println("Sending readinessCheck request to Storage Node..."+socket1.getInetAddress()+socket1.getPort()+socket1.getLocalPort());
                 requestsToStorageNodeWrapper.writeDelimitedTo(socket1.getOutputStream());
 
                 //Received response from Storage Node-1 regarding Readiness Check
@@ -99,7 +99,7 @@ public class Client {
                     RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
                             .setStoreChunkRequestToSNMsg(storeChunkRequestToSN).build();
 
-                    System.out.println("Sending store chunk request to Storage Node...");
+                    System.out.println("Sending store chunk request to Storage Node..."+socket1.getInetAddress()+" "+socket1.getPort()+socket1.getLocalPort());
                     wrapper.writeDelimitedTo(socket1.getOutputStream());
                     System.out.println("Waiting for store chunk response from Storage Node...");
 

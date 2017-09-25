@@ -23,6 +23,7 @@ public class StorageNode {
     private Map<String,StorageNodeMetadata> storageNodeMetadataMap = new HashMap<>();
     private Map<String,StorageNodeMetadata> dataStoredInLastFiveSeconds = new HashMap<>();
     private Socket connSocket = null;
+    private Socket socket = null;
 
     public static void main(String[] args) 
     throws Exception
@@ -63,7 +64,7 @@ public class StorageNode {
             ServerSocket serverSocket = new ServerSocket(storageNodePort);
             System.out.println("Listening...");
             while (true) {
-                TimerTask task = new TimerTask()
+                /*TimerTask task = new TimerTask()
                 {
                     @Override
                     public void run()
@@ -104,9 +105,12 @@ public class StorageNode {
                 Timer timer = new Timer();
                 long delay = 0;
                 long intervalPeriod = 5 * 1000;
-                timer.scheduleAtFixedRate(task,delay,intervalPeriod);
-                Socket socket = serverSocket.accept();
+                timer.scheduleAtFixedRate(task,delay,intervalPeriod);*/
+		System.out.println("storage node waiting...");
+                socket = serverSocket.accept();
+		System.out.println(socket.getInetAddress());
                 new Thread(new Request(socket)).start();
+		System.out.println("Thread created for handling request");
             }
         }
     }
@@ -130,7 +134,7 @@ public class StorageNode {
                 Path absDir = p.toAbsolutePath();
                 RequestsToStorageNode.RequestsToStorageNodeWrapper requestsWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper
                                                                                     .parseDelimitedFrom(connectionSocket.getInputStream());
-
+		System.out.println("Inside Thread....");
                 if(requestsWrapper.hasStoreChunkRequestToSNMsg())
                 {
                     //Process the Request
@@ -263,9 +267,9 @@ public class StorageNode {
                             .parseDelimitedFrom(socket.getInputStream());
                     if (acknowledgeReadinessToSN.getSuccess()) {
                         File file = new File(filePath);
-                        if(!file.exists())
+                        while(!file.exists())
                         {
-                            wait(100000);
+                            Thread.sleep(10000);
                         }
                         RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSN.newBuilder()
                                 .setFilename(filename)

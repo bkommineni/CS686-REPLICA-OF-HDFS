@@ -4,7 +4,6 @@ import com.google.protobuf.ByteString;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,11 +14,6 @@ import java.util.List;
 public class Client {
 
     public static void main(String[] args) throws Exception{
-
-
-        Socket socket = null;
-        Socket socket1 = null;
-
 
         String controllerHostname = args[0]+".cs.usfca.edu";
         int controllerPort = Integer.parseInt(args[1]);
@@ -36,7 +30,7 @@ public class Client {
                 //sending block to Controller with blockInfo
                 //StoreChunk request to Controller
                 System.out.println("controller hostname "+ controllerHostname+"controller port "+controllerPort);
-                socket = new Socket(controllerHostname, controllerPort);
+                Socket socket = new Socket(controllerHostname, controllerPort);
                 String filename = args[3];
                 RequestsToController.StoreChunkRequest storeChunk
                         = RequestsToController.StoreChunkRequest.newBuilder()
@@ -56,7 +50,7 @@ public class Client {
                 socket.close();
 
                 //ReadinessCheck request to Storage Node-1
-                socket1 = new Socket(response.getStorageNodeList(0).getHostname(), response.getStorageNodeList(0).getPort());
+                Socket socket1 = new Socket(response.getStorageNodeList(0).getHostname(), response.getStorageNodeList(0).getPort());
 
                 List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> storageNodeList = new ArrayList<>();
                 for(int i=1;i<response.getStorageNodeListList().size();i++)
@@ -83,10 +77,11 @@ public class Client {
 
                 System.out.println("Received readinessCheck response from Storage Node...");
 
-
+                socket1.close();
                 if (acknowledgeReadinessToClient.getSuccess()) {
                     //sends chunkMetadata and data to Storage Nodes in pipeline fashion for storage
                     //StoreChunkRequest to Storage Node
+                    Socket socket2 = new Socket(response.getStorageNodeList(0).getHostname(),response.getStorageNodeList(0).getPort());
                     RequestsToStorageNode.StoreChunkRequestToSN.StorageNode storageNode = RequestsToStorageNode.StoreChunkRequestToSN.StorageNode.newBuilder()
                             .setPort(response.getStorageNodeList(0).getPort()).build();
 
@@ -99,11 +94,11 @@ public class Client {
                     RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
                             .setStoreChunkRequestToSNMsg(storeChunkRequestToSN).build();
 
-                    System.out.println("Sending store chunk request to Storage Node..."+socket1.getInetAddress()+" "+socket1.getPort()+socket1.getLocalPort());
-                    wrapper.writeDelimitedTo(socket1.getOutputStream());
+                    System.out.println("Sending store chunk request to Storage Node..."+socket2.getInetAddress()+" "+socket2.getPort()+socket2.getLocalPort());
+                    wrapper.writeDelimitedTo(socket2.getOutputStream());
                     System.out.println("Waiting for store chunk response from Storage Node...");
 
-                    ResponsesToClient.ResponsesToClientWrapper responsesToClientWrapper = ResponsesToClient.ResponsesToClientWrapper.parseDelimitedFrom(socket1.getInputStream());
+                    ResponsesToClient.ResponsesToClientWrapper responsesToClientWrapper = ResponsesToClient.ResponsesToClientWrapper.parseDelimitedFrom(socket2.getInputStream());
 
                     if (responsesToClientWrapper.hasAcknowledgeStoreChunkToClientMsg()) {
                         if (responsesToClientWrapper.getAcknowledgeStoreChunkToClientMsg().getSuccess())
@@ -111,7 +106,7 @@ public class Client {
                         else
                             System.out.println("Received response from Storage Node!!fail");
                     }
-                    socket1.close();
+                    socket2.close();
                 }
                 filePart = filePart + 1;
             }
@@ -134,7 +129,7 @@ public class Client {
                     .build();
             RequestsToController.RequestsToControllerWrapper requestsToControllerWrapper1 = RequestsToController.RequestsToControllerWrapper.newBuilder().setRetrieveFileRequestMsg(retrieveFileRequest).build();
             System.out.println("Sending RetrieveFile request to Controller...");
-            socket = new Socket(controllerHostname, controllerPort);
+            Socket socket = new Socket(controllerHostname, controllerPort);
             requestsToControllerWrapper1.writeDelimitedTo(socket.getOutputStream());
 
             //Response from Controller with Storage Nodes list which host the replicas of chunks of given file
@@ -152,7 +147,7 @@ public class Client {
                         .build();
                 RequestsToStorageNode.RequestsToStorageNodeWrapper toStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
                         .setRetrieveFileRequestToSNMsg(requestToSN).build();
-                socket1 = new Socket(chunkMetadata.getNode().getHostname(),chunkMetadata.getNode().getPort());
+                Socket socket1 = new Socket(chunkMetadata.getNode().getHostname(),chunkMetadata.getNode().getPort());
                 System.out.println("Sending RetrieveFile request to Storage Node...");
                 toStorageNodeWrapper.writeDelimitedTo(socket1.getOutputStream());
                 System.out.println("Waiting for RetrieveFile response from Storage Node...");

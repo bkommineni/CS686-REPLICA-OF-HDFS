@@ -14,9 +14,9 @@ ssh bass01 "
 cd ~/Documents/courses/cs686/p1-bkommineni;
 /usr/local/maven/bin/mvn compile package;
 cd ~/Documents/courses/cs686/p1-bkommineni/target/;
-rm controller.out
-mv dfs-1.0-jar-with-dependencies.jar ~/Documents/courses/cs686/p1-bkommineni/dfs-1.0-jar-with-dependencies.jar
-cd ~/Documents/courses/cs686/p1-bkommineni
+mv dfs-1.0-jar-with-dependencies.jar ~/Documents/courses/cs686/p1-bkommineni/dfs-1.0-jar-with-dependencies.jar;
+cd ~/Documents/courses/cs686/p1-bkommineni;
+rm controller.out;
 java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Controller $port > controller.out 2>&1 &
 "
 

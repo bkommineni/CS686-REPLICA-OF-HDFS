@@ -52,21 +52,24 @@ public class Client {
                 //ReadinessCheck request to Storage Node-1
                 Socket socket1 = new Socket(response.getStorageNodeList(0).getHostname(), response.getStorageNodeList(0).getPort());
 
-                List<RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode> storageNodeList = new ArrayList<>();
+                List<RequestsToStorageNode.ReadinessCheckRequestToSNFromClient.StorageNode> storageNodeList = new ArrayList<>();
                 for(int i=1;i<response.getStorageNodeListList().size();i++)
                 {
 
-                    RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode readinessCheck = RequestsToStorageNode.ReadinessCheckRequestToSN.StorageNode.newBuilder()
+                    RequestsToStorageNode.ReadinessCheckRequestToSNFromClient.StorageNode readinessCheck = RequestsToStorageNode.ReadinessCheckRequestToSNFromClient.StorageNode.newBuilder()
                             .setPort(response.getStorageNodeListList().get(i).getPort()).setHostname(response.getStorageNodeListList().get(i).getHostname()).build();
                     storageNodeList.add(readinessCheck);
                 }
-                RequestsToStorageNode.ReadinessCheckRequestToSN.Builder builder = RequestsToStorageNode.ReadinessCheckRequestToSN.newBuilder()
+                RequestsToStorageNode.ReadinessCheckRequestToSNFromClient.Builder builder = RequestsToStorageNode.ReadinessCheckRequestToSNFromClient.newBuilder()
                                                                                     .setFilename(filename)
                                                                                     .setChunkId(filePart)
 										    .addAllStorageNodeList(storageNodeList);
 
+                RequestsToStorageNode.ReadinessCheckRequestToSN requestToSN = RequestsToStorageNode.ReadinessCheckRequestToSN.newBuilder()
+                                                                                .setReadinessCheckRequestToSNFromClientMsg(builder).build();
+
                 RequestsToStorageNode.RequestsToStorageNodeWrapper requestsToStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
-                        .setReadinessCheckRequestToSNMsg(builder).build();
+                        .setReadinessCheckRequestToSNMsg(requestToSN).build();
 
 
                 System.out.println("Sending readinessCheck request to Storage Node..."+socket1.getInetAddress()+socket1.getPort()+socket1.getLocalPort());
@@ -82,17 +85,20 @@ public class Client {
                     //sends chunkMetadata and data to Storage Nodes in pipeline fashion for storage
                     //StoreChunkRequest to Storage Node
                     Socket socket2 = new Socket(response.getStorageNodeList(0).getHostname(),response.getStorageNodeList(0).getPort());
-                    RequestsToStorageNode.StoreChunkRequestToSN.StorageNode storageNode = RequestsToStorageNode.StoreChunkRequestToSN.StorageNode.newBuilder()
+                    RequestsToStorageNode.StoreChunkRequestToSNFromClient.StorageNode storageNode = RequestsToStorageNode.StoreChunkRequestToSNFromClient.StorageNode.newBuilder()
                             .setPort(response.getStorageNodeList(0).getPort()).build();
 
 
-                    RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSN.newBuilder()
+                    RequestsToStorageNode.StoreChunkRequestToSNFromClient storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSNFromClient.newBuilder()
                             .addStorageNodeList(storageNode)
                             .setChunkId(filePart)
                             .setFilename(filename)
                             .setChunkData(ByteString.copyFrom(block)).build();
+
+                    RequestsToStorageNode.StoreChunkRequestToSN chunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSN.newBuilder()
+                                                                                    .setStoreChunkRequestToSNFromClientMsg(storeChunkRequestToSN).build();
                     RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
-                            .setStoreChunkRequestToSNMsg(storeChunkRequestToSN).build();
+                            .setStoreChunkRequestToSNMsg(chunkRequestToSN).build();
 
                     System.out.println("Sending store chunk request to Storage Node..."+socket2.getInetAddress()+" "+socket2.getPort()+socket2.getLocalPort());
                     wrapper.writeDelimitedTo(socket2.getOutputStream());

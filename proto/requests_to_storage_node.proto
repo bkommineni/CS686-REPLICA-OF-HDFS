@@ -1,7 +1,7 @@
 syntax = "proto3";
 option java_package = "edu.usfca.cs.dfs";
 
-message ReadinessCheckRequestToSN
+message ReadinessCheckRequestToSNFromClient
 {
     string filename = 1;
     int32 chunkId   = 2;
@@ -14,7 +14,20 @@ message ReadinessCheckRequestToSN
     repeated StorageNode storageNodeList = 3;
 }
 
-message StoreChunkRequestToSN
+message ReadinessCheckRequestToSNFromSN
+{
+    string filename = 1;
+    int32 chunkId   = 2;
+    message StorageNode
+    {
+        int32 port = 1;
+        string hostname = 2;
+    }
+
+    repeated StorageNode storageNodeList = 3;
+}
+
+message StoreChunkRequestToSNFromClient
 {
     string filename = 1;
     int32 chunkId   = 2;
@@ -29,6 +42,39 @@ message StoreChunkRequestToSN
     repeated StorageNode storageNodeList = 4;
 }
 
+message StoreChunkRequestToSNFromSN
+{
+    string filename = 1;
+    int32 chunkId   = 2;
+    bytes chunkData = 3;
+
+    message StorageNode
+    {
+        int32 port = 1;
+        string hostname = 2;
+    }
+
+    repeated StorageNode storageNodeList = 4;
+}
+
+message StoreChunkRequestToSN
+{
+    oneof msg
+    {
+        StoreChunkRequestToSNFromSN storeChunkRequestToSNFromSNMsg = 1;
+        StoreChunkRequestToSNFromClient storeChunkRequestToSNFromClientMsg = 2;
+    }
+}
+
+message ReadinessCheckRequestToSN
+{
+    oneof msg
+    {
+        ReadinessCheckRequestToSNFromSN readinessCheckRequestToSNFromSNMsg = 1;
+        ReadinessCheckRequestToSNFromClient readinessCheckRequestToSNFromClientMsg = 2;
+    }
+}
+
 message RetrieveFileRequestToSN
 {
     string filename = 1;
@@ -40,5 +86,6 @@ message RequestsToStorageNodeWrapper {
         ReadinessCheckRequestToSN readinessCheckRequestToSNMsg = 1;
         StoreChunkRequestToSN storeChunkRequestToSNMsg = 2;
         RetrieveFileRequestToSN retrieveFileRequestToSNMsg = 3;
+        ReadinessCheckRequestToSNFromSN readinessCheckRequestToSNFromSNMsg = 4;
     }
 }

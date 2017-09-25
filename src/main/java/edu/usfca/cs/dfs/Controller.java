@@ -191,6 +191,8 @@ public class Controller {
                     while(count <= 3)
                     {
                         int nodeNum = ThreadLocalRandom.current().nextInt(1, 24);
+			//System.out.println("nodenums list : "+nodenums);
+			//System.out.println("boolean "+nodenums.contains(nodeNum));
                         if(statusStorageNodes[nodeNum] && (!nodenums.contains(nodeNum)))
                         {
                             System.out.println("Node Number : " + nodeNum);
@@ -205,6 +207,7 @@ public class Controller {
                                             .setHostname(storageNode.getHostname())
                                             .build();
                             storageNodes.add(storageNodeMsg);
+			    nodenums.add(nodeNum);
                             count++;
                         }
                     }

@@ -151,7 +151,9 @@ public class StorageNode {
 
                     /*Storing Chunk data on local file system of Node*/
                     int i=0;
-                    String blockFile = tokens[0] + "/data/" + tokens[0] + "Part" + chunkId + ".txt";
+		    String hostname = getHostname();
+                    String[] tokens1 = hostname.split("\\.");
+                    String blockFile = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId +"_"+ tokens1[0] +".txt";
                     FileWriter writer = new FileWriter(blockFile);
                     while(i < bytes.length)
                     {
@@ -273,10 +275,11 @@ public class StorageNode {
                             .parseDelimitedFrom(socket.getInputStream());
                     if (acknowledgeReadinessToSN.getSuccess()) {
                         File file = new File(filePath);
-                        while(!file.exists())
+                        /*while(!file.exists())
                         {
-                            Thread.sleep(10000);
-                        }
+                            Thread.sleep(1000);
+                        }*/
+			System.out.println("Store chunk request to peer storage node...  "+socket.getLocalPort()+" "+socket.getPort());
                         RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSN.newBuilder()
                                 .setFilename(filename)
                                 .setChunkId(chunkId)
@@ -286,6 +289,7 @@ public class StorageNode {
                                 .newBuilder()
                                 .setStoreChunkRequestToSNMsg(storeChunkRequestToSN).build();
                         wrapper.writeDelimitedTo(socket.getOutputStream());
+			System.out.println("Received store chunk response from peer storage node...")
                     }
                 }
 

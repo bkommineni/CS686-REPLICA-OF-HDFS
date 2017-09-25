@@ -17,6 +17,8 @@ cd ~/Documents/courses/cs686/p1-bkommineni/target/;
 mv dfs-1.0-jar-with-dependencies.jar ~/Documents/courses/cs686/p1-bkommineni/dfs-1.0-jar-with-dependencies.jar;
 cd ~/Documents/courses/cs686/p1-bkommineni;
 rm controller.out;
+rm -rf data;
+mkdir data;
 java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Controller $port > controller.out 2>&1 &
 "
 
@@ -26,6 +28,8 @@ for node in ${node_list[@]};do
 	ssh $node "
 	cd ~/Documents/courses/cs686/p1-bkommineni;
 	rm storage_${node}.out;
+	rm -rf data;
+	mkdir data;
 	java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.StorageNode bass01 $port 9999 > storage_${node}.out 2>&1 &
 	"
 done
@@ -33,4 +37,6 @@ done
 ssh bass23 "
 cd ~/Documents/courses/cs686/p1-bkommineni;
 rm client.out;
+rm -rf data;
+mkdir data;
 java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Client bass01 $port store ~/Documents/courses/cs686/p1-bkommineni/clientDirectory/File1.txt > client.out 2>&1 &"

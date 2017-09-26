@@ -163,7 +163,10 @@ public class StorageNode {
                         tokens = tokens[noOfTokens - 1].split("\\.");
                         bytes =  storeChunkRequestToSNFromSN.getChunkData().toByteArray();
                     }
-
+                    for(int i=0;i<tokens.length;i++)
+		    {
+		    	System.out.println(tokens[i]);
+		    }
                     /*Storing Chunk data on local file system of Node*/
                     int i=0;
 		            String hostname = getHostname();
@@ -291,8 +294,9 @@ public class StorageNode {
                         String[] tokens = filename.split("/");
                         int noOfTokens = tokens.length;
                         tokens = tokens[noOfTokens - 1].split("\\.");
-
-                        String filePath = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId + ".txt";
+			String hostname = getHostname();
+			String[] tokens1 = hostname.split("\\.");
+                        String filePath = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId + "_" + tokens1[0] + ".txt";
 
                         Socket socket = new Socket(peerList.get(0).getHostname(), peerList.get(0).getPort());
                         List<RequestsToStorageNode.ReadinessCheckRequestToSNFromSN.StorageNode> peers = new ArrayList<>();
@@ -351,8 +355,13 @@ public class StorageNode {
                         String[] tokens = filename.split("/");
                         int noOfTokens = tokens.length;
                         tokens = tokens[noOfTokens - 1].split("\\.");
-
-                        String filePath = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId + ".txt";
+			String hostname = getHostname();
+                    	String[] tokens1 = hostname.split("\\.");
+                        for(int i=0;i<tokens.length;i++)
+			{
+				System.out.println(tokens[i]);
+			}
+                        String filePath = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId + "_" + tokens1[0] +".txt";
 
                         Socket socket = new Socket(peerList.get(0).getHostname(), peerList.get(0).getPort());
                         List<RequestsToStorageNode.ReadinessCheckRequestToSNFromSN.StorageNode> peers = new ArrayList<>();
@@ -378,10 +387,10 @@ public class StorageNode {
                                 .parseDelimitedFrom(socket.getInputStream());
                         if (acknowledgeReadinessToSN.getSuccess()) {
                             File file = new File(filePath);
-                        /*while(!file.exists())
-                        {
-                            Thread.sleep(1000);
-                        }*/
+                            while(!file.exists())
+                            {
+                              Thread.sleep(1000);
+                            }
                             System.out.println("Store chunk request to peer storage node...  "+socket.getLocalPort()+" "+socket.getPort());
                             RequestsToStorageNode.StoreChunkRequestToSNFromSN storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSNFromSN.newBuilder()
                                     .setFilename(filename)
@@ -406,6 +415,10 @@ public class StorageNode {
             {
                 e.printStackTrace();
             }
+	    catch (InterruptedException e)
+	    {
+		e.printStackTrace();
+	    }
         }
     }
 

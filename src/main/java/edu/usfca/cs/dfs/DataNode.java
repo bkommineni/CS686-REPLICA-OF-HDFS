@@ -7,6 +7,8 @@ public class DataNode {
 
     private int port;
     private String hostname;
+    private long  diskspaceUsed;
+    private long  diskCapacity;
 
     public DataNode(int port,String hostname) {
         this.port = port;
@@ -27,5 +29,21 @@ public class DataNode {
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+
+    public long getDiskspaceUsed() {
+        return diskspaceUsed;
+    }
+
+    public void setDiskspaceUsed(long diskspaceUsed) {
+        this.diskspaceUsed = diskspaceUsed;
+    }
+
+    public long getDiskCapacity() {
+        return diskCapacity;
+    }
+
+    public void setDiskCapacity(long diskCapacity) {
+        this.diskCapacity = diskCapacity;
     }
 }

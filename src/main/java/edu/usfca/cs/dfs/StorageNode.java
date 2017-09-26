@@ -10,7 +10,6 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -24,6 +23,7 @@ public class StorageNode {
     private Map<String,StorageNodeMetadata> dataStoredInLastFiveSeconds = new HashMap<>();
     private Socket connSocket = null;
     private Socket socket = null;
+    private String dataDirectory = "/home2/bkommineni/";
 
     public static void main(String[] args) 
     throws Exception
@@ -126,9 +126,6 @@ public class StorageNode {
         {
             try
             {
-                String currPath = ".";
-                Path p = Paths.get(currPath);
-                Path absDir = p.toAbsolutePath();
                 RequestsToStorageNode.RequestsToStorageNodeWrapper requestsWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper
                                                                                     .parseDelimitedFrom(connectionSocket.getInputStream());
                 if(requestsWrapper.hasStoreChunkRequestToSNMsg())
@@ -138,8 +135,6 @@ public class StorageNode {
                     RequestsToStorageNode.StoreChunkRequestToSN storeChunkRequestToSN = requestsWrapper.getStoreChunkRequestToSNMsg();
                     String filename = null;
                     int chunkId = 0;
-                    String[] tokens = null;
-                    int noOfTokens ;
 
                     byte[] bytes = null;
 
@@ -148,9 +143,6 @@ public class StorageNode {
                         RequestsToStorageNode.StoreChunkRequestToSNFromClient storeChunkRequestToSNFromClient = storeChunkRequestToSN.getStoreChunkRequestToSNFromClientMsg();
                         filename = storeChunkRequestToSNFromClient.getFilename();
                         chunkId  = storeChunkRequestToSNFromClient.getChunkId();
-                        tokens   =  filename.split("/");
-                        noOfTokens = tokens.length;
-                        tokens = tokens[noOfTokens - 1].split("\\.");
                         bytes =  storeChunkRequestToSNFromClient.getChunkData().toByteArray();
                     }
                     else if(storeChunkRequestToSN.hasStoreChunkRequestToSNFromSNMsg())
@@ -158,20 +150,21 @@ public class StorageNode {
                         RequestsToStorageNode.StoreChunkRequestToSNFromSN storeChunkRequestToSNFromSN = storeChunkRequestToSN.getStoreChunkRequestToSNFromSNMsg();
                         filename = storeChunkRequestToSNFromSN.getFilename();
                         chunkId  = storeChunkRequestToSNFromSN.getChunkId();
-                        tokens   =  filename.split("/");
-                        noOfTokens = tokens.length;
-                        tokens = tokens[noOfTokens - 1].split("\\.");
                         bytes =  storeChunkRequestToSNFromSN.getChunkData().toByteArray();
                     }
-                    for(int i=0;i<tokens.length;i++)
-		    {
-		    	System.out.println(tokens[i]);
-		    }
+
                     /*Storing Chunk data on local file system of Node*/
+                    String blockFile = null;
+                    if((filename != null) && filename.endsWith(".txt"))
+                    {
+                        filename = filename.split("\\.")[0];
+                        blockFile = dataDirectory + filename + "Part" + chunkId +".txt";
+                    }
+                    else
+                    {
+                        blockFile = dataDirectory + filename + "Part" + chunkId;
+                    }
                     int i=0;
-		            String hostname = getHostname();
-                    String[] tokens1 = hostname.split("\\.");
-                    String blockFile = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId +"_"+ tokens1[0] +".txt";
                     FileWriter writer = new FileWriter(blockFile);
                     while(i < bytes.length)
                     {
@@ -214,10 +207,18 @@ public class StorageNode {
                 {
                     System.out.println("Received Retrieve file request from Client");
                     RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = requestsWrapper.getRetrieveFileRequestToSNMsg();
-                    String filepath = absDir.toString() + "/data/";
-                    String[] tokens = requestToSN.getFilename().split("/");
-                    int length = tokens.length;
-                    byte[] chunkData = Files.readAllBytes(new File(filepath+ tokens[length-1].split(".")[0]+"Part"+requestToSN.getChunkId()+".txt").toPath());
+                    String filename  = requestToSN.getFilename();
+                    byte[] chunkData = null;
+                    if((filename != null) && filename.endsWith(".txt"))
+                    {
+                        filename = filename.split("\\.")[0];
+                        chunkData = Files.readAllBytes(new File(dataDirectory + filename +"Part"+requestToSN.getChunkId()+".txt").toPath());
+                    }
+                    else
+                    {
+                        chunkData = Files.readAllBytes(new File(dataDirectory + filename +"Part"+requestToSN.getChunkId()).toPath());
+                    }
+
 
                     ResponsesToClient.RetrieveFileResponseFromSN response = ResponsesToClient.RetrieveFileResponseFromSN.newBuilder()
                                                                             .setChecksum(0)
@@ -291,12 +292,16 @@ public class StorageNode {
                         List<RequestsToStorageNode.ReadinessCheckRequestToSNFromClient.StorageNode> peerList = requestToSNFromClient.getStorageNodeListList();
                         String filename = requestToSNFromClient.getFilename();
                         int chunkId = requestToSNFromClient.getChunkId();
-                        String[] tokens = filename.split("/");
-                        int noOfTokens = tokens.length;
-                        tokens = tokens[noOfTokens - 1].split("\\.");
-			String hostname = getHostname();
-			String[] tokens1 = hostname.split("\\.");
-                        String filePath = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId + "_" + tokens1[0] + ".txt";
+                        String filepath = null;
+                        if((filename != null) && filename.endsWith(".txt"))
+                        {
+                            filename = filename.split("\\.")[0];
+                            filepath = dataDirectory + filename + "Part" + chunkId + ".txt";
+                        }
+                        else
+                        {
+                            filepath = dataDirectory + filename + "Part" + chunkId;
+                        }
 
                         Socket socket = new Socket(peerList.get(0).getHostname(), peerList.get(0).getPort());
                         List<RequestsToStorageNode.ReadinessCheckRequestToSNFromSN.StorageNode> peers = new ArrayList<>();
@@ -321,11 +326,11 @@ public class StorageNode {
                         ResponsesToStorageNode.AcknowledgeReadinessToSN acknowledgeReadinessToSN = ResponsesToStorageNode.AcknowledgeReadinessToSN
                                 .parseDelimitedFrom(socket.getInputStream());
                         if (acknowledgeReadinessToSN.getSuccess()) {
-                            File file = new File(filePath);
-                        /*while(!file.exists())
-                        {
-                            Thread.sleep(1000);
-                        }*/
+                            File file = new File(filepath);
+                            while(!file.exists())
+                            {
+                                Thread.sleep(1000);
+                            }
                             System.out.println("Store chunk request to peer storage node...  "+socket.getLocalPort()+" "+socket.getPort());
                             RequestsToStorageNode.StoreChunkRequestToSNFromSN storeChunkRequestToSN = RequestsToStorageNode.StoreChunkRequestToSNFromSN.newBuilder()
                                     .setFilename(filename)
@@ -352,16 +357,16 @@ public class StorageNode {
                         List<RequestsToStorageNode.ReadinessCheckRequestToSNFromSN.StorageNode> peerList = requestToSNFromSN.getStorageNodeListList();
                         String filename = requestToSNFromSN.getFilename();
                         int chunkId = requestToSNFromSN.getChunkId();
-                        String[] tokens = filename.split("/");
-                        int noOfTokens = tokens.length;
-                        tokens = tokens[noOfTokens - 1].split("\\.");
-			String hostname = getHostname();
-                    	String[] tokens1 = hostname.split("\\.");
-                        for(int i=0;i<tokens.length;i++)
-			{
-				System.out.println(tokens[i]);
-			}
-                        String filePath = absDir.toString() + "/data/" + tokens[0] + "Part" + chunkId + "_" + tokens1[0] +".txt";
+                        String filepath = null;
+                        if((filename != null) && filename.endsWith(".txt"))
+                        {
+                            filename = filename.split("\\.")[0];
+                            filepath = dataDirectory + filename + "Part" + chunkId + ".txt";
+                        }
+                        else
+                        {
+                            filepath = dataDirectory + filename + "Part" + chunkId;
+                        }
 
                         Socket socket = new Socket(peerList.get(0).getHostname(), peerList.get(0).getPort());
                         List<RequestsToStorageNode.ReadinessCheckRequestToSNFromSN.StorageNode> peers = new ArrayList<>();
@@ -386,7 +391,7 @@ public class StorageNode {
                         ResponsesToStorageNode.AcknowledgeReadinessToSN acknowledgeReadinessToSN = ResponsesToStorageNode.AcknowledgeReadinessToSN
                                 .parseDelimitedFrom(socket.getInputStream());
                         if (acknowledgeReadinessToSN.getSuccess()) {
-                            File file = new File(filePath);
+                            File file = new File(filepath);
                             while(!file.exists())
                             {
                               Thread.sleep(1000);
@@ -407,18 +412,15 @@ public class StorageNode {
                         }
                     }
                 }
-
-
-
             }
             catch (IOException e)
             {
                 e.printStackTrace();
             }
-	    catch (InterruptedException e)
-	    {
-		e.printStackTrace();
-	    }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 

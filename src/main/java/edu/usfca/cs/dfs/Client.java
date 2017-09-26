@@ -15,7 +15,7 @@ public class Client {
 
     public static void main(String[] args) throws Exception{
 
-        String controllerHostname = args[0]+".cs.usfca.edu";
+        String controllerHostname = args[0];
         int controllerPort = Integer.parseInt(args[1]);
 
 
@@ -32,6 +32,8 @@ public class Client {
                 System.out.println("controller hostname "+ controllerHostname+"controller port "+controllerPort);
                 Socket socket = new Socket(controllerHostname, controllerPort);
                 String filename = args[3];
+                String[] tokens = filename.split("/");
+                filename = tokens[tokens.length - 1];
                 RequestsToController.StoreChunkRequest storeChunk
                         = RequestsToController.StoreChunkRequest.newBuilder()
                         .setChunkId(filePart)

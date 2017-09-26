@@ -2,12 +2,16 @@ package edu.usfca.cs.dfs;
 
 import com.google.protobuf.Message;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -18,76 +22,12 @@ public class Controller {
     1 Enroll request
     */
 
-    private int controllerPort = 9998;
+    private int controllerPort;
     private Map<String,DataNode> storageNodesList = new HashMap<>();
-    private List<FileMetadata> fileMetadatas = new ArrayList<>();
     private Map<String,Metadata> metadataMap = new HashMap<>();
-    private int counter = 0;
-    private int noOfStorageNodesDeployed = 24;
-    private boolean statusStorageNodes[] = null;
-    private enum StorageNodes
-    {
-        bass01,bass02,bass03,bass04,bass05,bass06,bass07,bass08,bass09,
-        bass10,bass11,bass12,bass13,bass14,bass15,bass16,bass17,bass18,
-        bass19,bass20,bass21,bass22,bass23,bass24;
-
-        int getIndexForStorageNode()
-        {
-            switch (this)
-            {
-                case bass01:
-                    return 1;
-                case bass02:
-                    return 2;
-                case bass03:
-                    return 3;
-                case bass04:
-                    return 4;
-                case bass05:
-                    return 5;
-                case bass06:
-                    return 6;
-                case bass07:
-                    return 7;
-                case bass08:
-                    return 8;
-                case bass09:
-                    return 9;
-                case bass10:
-                    return 10;
-                case bass11:
-                    return 11;
-                case bass12:
-                    return 12;
-                case bass13:
-                    return 13;
-                case bass14:
-                    return 14;
-                case bass15:
-                    return 15;
-                case bass16:
-                    return 16;
-                case bass17:
-                    return 17;
-                case bass18:
-                    return 18;
-                case bass19:
-                    return 19;
-                case bass20:
-                    return 20;
-                case bass21:
-                    return 21;
-                case bass22:
-                    return 22;
-                case bass23:
-                    return 23;
-                case bass24:
-                    return 24;
-                default:
-                    throw new AssertionError("Unknown operations " + this);
-            }
-        }
-    }
+    private Map<String,Boolean>  statusStorageNodesMap = new HashMap<>();
+    private Map<Integer,String>  storageNodeMapToNum  = new HashMap<>();
+    int counter = 0;
 
     public static void main(String[] args) throws Exception{
         new Controller().start(args);
@@ -99,10 +39,21 @@ public class Controller {
         if(args.length > 0 ) {
             if (args[0] != null)
                 controllerPort = Integer.parseInt(args[0]);
-            /*if(args[1] != null)
-                noOfStorageNodesDeployed = Integer.parseInt(args[1]);*/
         }
-        statusStorageNodes = new boolean[noOfStorageNodesDeployed];
+        /*Setting up the nodes using nodes list from config file*/
+
+        String currPath = ".";
+        Path p = Paths.get(currPath);
+        Path absDir = p.toAbsolutePath();
+        String configPath = absDir.toString() + "/config/Storage-nodes-list.txt";
+        BufferedReader reader = new BufferedReader(new FileReader(configPath));
+        String str = null;
+        while ((str = reader.readLine()) != null)
+        {
+            statusStorageNodesMap.put(str,false);
+            storageNodeMapToNum.put(++counter,str);
+        }
+
         String hostname = getHostname();
         System.out.println("Starting controller on " + hostname + " and port: "+ controllerPort + "...");
         ServerSocket serverSocket = new ServerSocket(controllerPort);
@@ -132,9 +83,9 @@ public class Controller {
                     //enroll storage node
                     System.out.println("Received enrollment request from storage node");
                     String hostname = msgWrapper.getEnrollMsg().getHostname();
-                    String[] tokens = hostname.split("\\.");
                     storageNodesList.put(hostname,new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
-                    statusStorageNodes[StorageNodes.valueOf(tokens[0]).getIndexForStorageNode()] = true;
+                    //setting storage node to active
+                    statusStorageNodesMap.put(hostname,true);
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                                             .newBuilder().setSuccess(true).build();
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());
@@ -190,25 +141,20 @@ public class Controller {
                     List<Integer> nodenums = new ArrayList<>();
                     while(count <= 3)
                     {
-                        int nodeNum = ThreadLocalRandom.current().nextInt(1, 24);
-			//System.out.println("nodenums list : "+nodenums);
-			//System.out.println("boolean "+nodenums.contains(nodeNum));
-                        if(statusStorageNodes[nodeNum] && (!nodenums.contains(nodeNum)))
+                        int nodeNum = ThreadLocalRandom.current().nextInt(1, storageNodeMapToNum.size());
+                        if(storageNodeMapToNum.get(nodeNum) != null)
                         {
-                            System.out.println("Node Number : " + nodeNum);
-                            StringBuilder builder = new StringBuilder();
-                            if (nodeNum < 10)
-                                builder.append("bass0");
-                            else
-                                builder.append("bass");
-                            DataNode storageNode = storageNodesList.get(builder.toString() + Integer.toString(nodeNum) + ".cs.usfca.edu");
-                            ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
-                                    ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(storageNode.getPort())
-                                            .setHostname(storageNode.getHostname())
-                                            .build();
-                            storageNodes.add(storageNodeMsg);
-			    nodenums.add(nodeNum);
-                            count++;
+                            if (statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)) && (!nodenums.contains(nodeNum))) {
+                                System.out.println("Node Number : " + nodeNum);
+                                DataNode storageNode = storageNodesList.get(storageNodeMapToNum.get(nodeNum));
+                                ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
+                                        ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(storageNode.getPort())
+                                                .setHostname(storageNode.getHostname())
+                                                .build();
+                                storageNodes.add(storageNodeMsg);
+                                nodenums.add(nodeNum);
+                                count++;
+                            }
                         }
                     }
 
@@ -246,16 +192,11 @@ public class Controller {
                 {
                     System.out.println("Received request for list of active storage nodes");
                     List<ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> storageNodes = new ArrayList<>();
-                    for(int i=0;i<statusStorageNodes.length;i++)
+                    for(String str : statusStorageNodesMap.keySet())
                     {
-                        if(statusStorageNodes[i])
+                        if(statusStorageNodesMap.get(str))
                         {
-                            StringBuilder builder = new StringBuilder();
-                            if (i < 10)
-                                builder.append("bass0");
-                            else
-                                builder.append("bass");
-                            DataNode storageNode = storageNodesList.get(builder.toString() + Integer.toString(i) + ".cs.usfca.edu");
+                            DataNode storageNode = storageNodesList.get(str);
                             ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode storageNodeMsg =
                                     ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.newBuilder().setPort(storageNode.getPort())
                                             .setHostname(storageNode.getHostname())

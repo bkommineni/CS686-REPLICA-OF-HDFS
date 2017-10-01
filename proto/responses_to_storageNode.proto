@@ -13,10 +13,16 @@ message AcknowledgeReadinessToSN
     bool success = 1;
 }
 
+message AcknowledgeStoreChunkToSN
+{
+    bool success = 1;
+}
+
 message ResponsesToStorageNodeWrapper {
     oneof msg {
         AcknowledgeEnrollment AcknowledgeEnrollmentMsg = 1;
         AcknowledgeReadinessToSN AcknowledgeReadinessToSNMsg = 2;
+        AcknowledgeStoreChunkToSN AcknowledgeStoreChunkToSNMsg = 3;
     }
 }
 

@@ -13,7 +13,10 @@ import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class Controller {
 
@@ -22,12 +25,14 @@ public class Controller {
     1 Enroll request
     */
 
+    public static final Logger logger = LoggerFactory.getLogger(Controller.class);
     private int controllerPort;
     private Map<String,DataNode> storageNodesList = new HashMap<>();
     private Map<String,Metadata> metadataMap = new HashMap<>();
     private Map<String,Boolean>  statusStorageNodesMap = new HashMap<>();
     private Map<Integer,String>  storageNodeMapToNum  = new HashMap<>();
-    int counter = 1;
+
+    private static final int REPLICATION_FACTOR = 2;
 
     public static void main(String[] args) throws Exception{
         new Controller().start(args);
@@ -48,6 +53,7 @@ public class Controller {
         String configPath = absDir.toString() + "/config/Storage-nodes-list.txt";
         BufferedReader reader = new BufferedReader(new FileReader(configPath));
         String str = null;
+        int counter = 1;
         while ((str = reader.readLine()) != null)
         {
             statusStorageNodesMap.put(str,false);
@@ -56,9 +62,9 @@ public class Controller {
         }
 
         String hostname = getHostname();
-        System.out.println("Starting controller on " + hostname + " and port: "+ controllerPort + "...");
+        logger.info("Starting controller on " + hostname + " and port: "+ controllerPort + "...");
         ServerSocket serverSocket = new ServerSocket(controllerPort);
-        System.out.println("Listening...");
+        logger.info("Listening...");
         while (true)
         {
             Socket socket = serverSocket.accept();
@@ -78,26 +84,41 @@ public class Controller {
             try {
                 RequestsToController.RequestsToControllerWrapper msgWrapper = RequestsToController.RequestsToControllerWrapper
                                                                                 .parseDelimitedFrom(connectionSocket.getInputStream());
+                InetAddress inetAddress = connectionSocket.getInetAddress();
+                int port = connectionSocket.getPort();
 
                 if(msgWrapper.hasEnrollMsg())
                 {
                     //enroll storage node
-                    System.out.println("Received enrollment request from storage node");
+
                     String hostname = msgWrapper.getEnrollMsg().getHostname();
-                    storageNodesList.put(hostname,new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
+                    logger.info("Received enrollment request from storage node {} from port {}",hostname,port);
                     //setting storage node to active
-                    statusStorageNodesMap.put(hostname,true);
+                    if(hostname.contains("Bhargavis-MacBook-Pro.local"))
+                    {
+                        statusStorageNodesMap.put(hostname+msgWrapper.getEnrollMsg().getPort(),true);
+                        storageNodesList.put(hostname+msgWrapper.getEnrollMsg().getPort(),
+                                new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
+                    }
+                    else
+                    {
+                        statusStorageNodesMap.put(hostname,true);
+                        storageNodesList.put(hostname,
+                                new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
+                    }
+
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                                             .newBuilder().setSuccess(true).build();
-		    System.out.println("enrolled host : "+hostname);
+		            logger.info("enrolled host : {}",hostname);
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());
-                    System.out.println("Enrollment done!And acknowedged storage node with response");
+                    logger.info("Enrollment done!And acknowedged storage node with response");
+                    connectionSocket.close();
                 }
 
                 if(msgWrapper.hasRetrieveFileRequestMsg())
                 {
                     //retrieve file functionality
-                    System.out.println("Received retrieve file request from client");
+                    logger.info("Received retrieve file request from client {} from port {}",inetAddress,port);
                     List<Metadata> metadatas = new ArrayList<>();
                     for(String str : metadataMap.keySet())
                     {
@@ -128,7 +149,8 @@ public class Controller {
                                                                                     .addAllChunkList(chunkMetadatas)
                                                                                     .build();
                     responseFromCN.writeDelimitedTo(connectionSocket.getOutputStream());
-                    System.out.println("Responded with list of three distict storage nodes to client for retrieve file request");
+                    logger.info("Responded with list of three distinct storage nodes to client for retrieve file request");
+                    connectionSocket.close();
                 }
 
                 if(msgWrapper.hasStoreChunkRequestMsg())
@@ -136,28 +158,26 @@ public class Controller {
                     //store file functionality
                     //allocate storage nodes for store file request
                     //when deploying on bass
-                    System.out.println("Received store chunk request from client");
+                    logger.info("Received store chunk request from client {} from port {}",inetAddress,port);
                     List<ResponsesToClient.StoreChunkResponse.storageNode> storageNodes = new ArrayList<>();
 
                     int count = 1;
                     List<Integer> nodenums = new ArrayList<>();
-		    for(int num : storageNodeMapToNum.keySet())
-                        {
-                                System.out.println(storageNodeMapToNum.get(num));
-                        }	
-                    while(count <= 3)
+		            for(int num : storageNodeMapToNum.keySet())
                     {
-			Random r = new Random();
-			int nodeNum = r.nextInt(storageNodeMapToNum.size())+1;
-                        //int nodeNum = ThreadLocalRandom.current().nextInt(1, storageNodeMapToNum.size());
-			//System.out.println(nodeNum + " "+"while loop");
+                            logger.debug(storageNodeMapToNum.get(num));
+                    }
+                    while(count <= REPLICATION_FACTOR)
+                    {
+			            Random r = new Random();
+			            int nodeNum = r.nextInt(storageNodeMapToNum.size())+1;
+			            logger.debug(nodeNum + " "+"while loop");
                         if(storageNodeMapToNum.get(nodeNum) != null)
                         {
-			    //System.out.println("if loop...."+nodeNum+"--"+statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum))+"--"+nodenums.contains(nodeNum));
+			                logger.debug("if loop...."+nodeNum+"--"+statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum))+"--"+nodenums.contains(nodeNum));
                             if (statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)) && (!nodenums.contains(nodeNum))) {
-                                System.out.println("Node Number : " + nodeNum);
+                                logger.info("Replica Node Number {} Replica Node hostname {} " ,nodeNum,storageNodeMapToNum.get(nodeNum));
                                 DataNode storageNode = storageNodesList.get(storageNodeMapToNum.get(nodeNum));
-				System.out.println("Node hostname : " + storageNodeMapToNum.get(nodeNum));
                                 ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
                                         ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(storageNode.getPort())
                                                 .setHostname(storageNode.getHostname())
@@ -173,13 +193,14 @@ public class Controller {
                     ResponsesToClient.StoreChunkResponse.Builder builder = ResponsesToClient.StoreChunkResponse.newBuilder();
                     ResponsesToClient.StoreChunkResponse storeChunkResponse = builder.addAllStorageNodeList(storageNodes).build();
                     storeChunkResponse.writeDelimitedTo(connectionSocket.getOutputStream());
-                    System.out.println("Responded with list of three distict storage nodes to client for store chunk request");
+                    logger.info("Responded with list of three distinct storage nodes to client for store chunk request");
+                    connectionSocket.close();
                 }
 
                 if(msgWrapper.hasHeartbeatMsg())
                 {
                     //check info sent on heartbeat and make sure what are active nodes
-                    System.out.println("Received heartbeat message from storage node " + msgWrapper.getHeartbeatMsg().getSN().getHostname());
+                    logger.info("Received heartbeat message from storage node {} from port {}" , msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
                     int size = msgWrapper.getHeartbeatMsg().getMetadataList().size();
                     RequestsToController.Heartbeat.storageNode storageNode = RequestsToController.Heartbeat.storageNode.newBuilder()
                                                                                 .setHostname(msgWrapper.getHeartbeatMsg().getSN().getHostname())
@@ -196,12 +217,13 @@ public class Controller {
                             metadataMap.put(key,metadata);
                         }
                     }
-                    System.out.println("Updated info from heartbeat message in memory");
+                    logger.info("Updated info from heartbeat message in memory");
+                    connectionSocket.close();
 
                 }
                 if(msgWrapper.hasListOfActiveNodes())
                 {
-                    System.out.println("Received request for list of active storage nodes");
+                    logger.info("Received request for list of active storage nodes from client {} from port {}",inetAddress,port);
                     List<ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> storageNodes = new ArrayList<>();
                     for(String str : statusStorageNodesMap.keySet())
                     {
@@ -218,11 +240,12 @@ public class Controller {
                     ResponsesToClient.ListOfActiveStorageNodesResponseFromCN list = ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.newBuilder()
                                                                                     .addAllActiveStorageNodes(storageNodes).build();
                     list.writeDelimitedTo(connectionSocket.getOutputStream());
-                    System.out.println("Responded with a list of active storage nodes");
+                    logger.info("Responded with a list of active storage nodes");
+                    connectionSocket.close();
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Exception caught : {}",ExceptionUtils.getStackTrace(e));
             }
         }
     }

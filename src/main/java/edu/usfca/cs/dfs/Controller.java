@@ -27,7 +27,7 @@ public class Controller {
     private Map<String,Metadata> metadataMap = new HashMap<>();
     private Map<String,Boolean>  statusStorageNodesMap = new HashMap<>();
     private Map<Integer,String>  storageNodeMapToNum  = new HashMap<>();
-    int counter = 0;
+    int counter = 1;
 
     public static void main(String[] args) throws Exception{
         new Controller().start(args);
@@ -51,7 +51,8 @@ public class Controller {
         while ((str = reader.readLine()) != null)
         {
             statusStorageNodesMap.put(str,false);
-            storageNodeMapToNum.put(++counter,str);
+            storageNodeMapToNum.put(counter,str);
+	    counter = (counter + 1);
         }
 
         String hostname = getHostname();
@@ -88,6 +89,7 @@ public class Controller {
                     statusStorageNodesMap.put(hostname,true);
                     ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
                                                                                             .newBuilder().setSuccess(true).build();
+		    System.out.println("enrolled host : "+hostname);
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());
                     System.out.println("Enrollment done!And acknowedged storage node with response");
                 }
@@ -139,14 +141,23 @@ public class Controller {
 
                     int count = 1;
                     List<Integer> nodenums = new ArrayList<>();
+		    for(int num : storageNodeMapToNum.keySet())
+                        {
+                                System.out.println(storageNodeMapToNum.get(num));
+                        }	
                     while(count <= 3)
                     {
-                        int nodeNum = ThreadLocalRandom.current().nextInt(1, storageNodeMapToNum.size());
+			Random r = new Random();
+			int nodeNum = r.nextInt(storageNodeMapToNum.size())+1;
+                        //int nodeNum = ThreadLocalRandom.current().nextInt(1, storageNodeMapToNum.size());
+			//System.out.println(nodeNum + " "+"while loop");
                         if(storageNodeMapToNum.get(nodeNum) != null)
                         {
+			    //System.out.println("if loop...."+nodeNum+"--"+statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum))+"--"+nodenums.contains(nodeNum));
                             if (statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)) && (!nodenums.contains(nodeNum))) {
                                 System.out.println("Node Number : " + nodeNum);
                                 DataNode storageNode = storageNodesList.get(storageNodeMapToNum.get(nodeNum));
+				System.out.println("Node hostname : " + storageNodeMapToNum.get(nodeNum));
                                 ResponsesToClient.StoreChunkResponse.storageNode storageNodeMsg =
                                         ResponsesToClient.StoreChunkResponse.storageNode.newBuilder().setPort(storageNode.getPort())
                                                 .setHostname(storageNode.getHostname())

@@ -20,4 +20,3 @@ bass20.cs.usfca.edu
 bass21.cs.usfca.edu
 bass22.cs.usfca.edu
 bass23.cs.usfca.edu
-bass24.cs.usfca.edu

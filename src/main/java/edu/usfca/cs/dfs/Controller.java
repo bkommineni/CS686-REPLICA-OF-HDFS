@@ -120,13 +120,27 @@ public class Controller {
                     //retrieve file functionality
                     logger.info("Received retrieve file request from client {} from port {}",inetAddress,port);
                     List<Metadata> metadatas = new ArrayList<>();
+                    String filename = msgWrapper.getRetrieveFileRequestMsg().getFilename();
                     for(String str : metadataMap.keySet())
                     {
-                        if(str.contains(msgWrapper.getRetrieveFileRequestMsg().getFilename()))
+                        if(filename.contains(".txt"))
                         {
-                            metadatas.add(metadataMap.get(str));
+                            String tokens[] = filename.split("\\.");
+                            if(str.contains(tokens[0]))
+                            {
+                                metadatas.add(metadataMap.get(str));
+                            }
                         }
+                        else
+                        {
+                            if(str.contains(filename))
+                            {
+                                metadatas.add(metadataMap.get(str));
+                            }
+                        }
+
                     }
+                    logger.info("metadatas {}",metadatas);
 
                     List<ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata> chunkMetadatas = new ArrayList<>();
                     for(Metadata metadata : metadatas)
@@ -210,6 +224,7 @@ public class Controller {
                     {
                         RequestsToController.Heartbeat.ChunkMetadata chunkMetadata = msgWrapper.getHeartbeatMsg().getMetadataList().get(i);
                         String key = chunkMetadata.getFilename() + chunkMetadata.getChunkId() + storageNode.getHostname();
+                        logger.info("metadata map key {}",key);
                         if(!metadataMap.containsKey(key))
                         {
                             Metadata metadata = new Metadata(chunkMetadata.getFilename(),chunkMetadata.getChunkId());
@@ -217,7 +232,7 @@ public class Controller {
                             metadataMap.put(key,metadata);
                         }
                     }
-                    logger.info("Updated info from heartbeat message in memory from SN {} from port {}",msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
+                    logger.debug("Updated info from heartbeat message in memory from SN {} from port {}",msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
                     connectionSocket.close();
 
                 }

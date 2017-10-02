@@ -36,4 +36,13 @@ public class Metadata {
     public void setDataNode(DataNode dataNode) {
         this.dataNode = dataNode;
     }
+
+    @Override
+    public String toString() {
+        return "Metadata{" +
+                "filename='" + filename + '\'' +
+                ", chunkId=" + chunkId +
+                ", dataNode=" + dataNode +
+                '}';
+    }
 }

@@ -103,7 +103,7 @@ public class StorageNode {
                                     .setHeartbeatMsg(heartbeat).build();
 
                             wrapper.writeDelimitedTo(controllerSocket.getOutputStream());
-                            controllerSocket.close();
+                            //controllerSocket.close();
                         }
                         catch (UnknownHostException e)
                         {
@@ -248,7 +248,7 @@ public class StorageNode {
                         chunkData = Files.readAllBytes(new File(dataDirectory + filename +"Part"+requestToSN.getChunkId()).toPath());
                     }
 
-
+                    logger.info("chunk data {}",chunkData);
                     ResponsesToClient.RetrieveFileResponseFromSN response = ResponsesToClient.RetrieveFileResponseFromSN.newBuilder()
                             .setChecksum(0)
                             .setFilename(requestToSN.getFilename())

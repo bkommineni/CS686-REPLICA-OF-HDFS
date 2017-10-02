@@ -151,7 +151,7 @@ public class Client {
             String filename  = tokens[length-1].split("\\.")[0];
             String mergedFile = absDir.toString() + "/retrievedFilesDirectory/"+filename + ".txt";
             RequestsToController.RetrieveFileRequest retrieveFileRequest = RequestsToController.RetrieveFileRequest.newBuilder()
-                    .setFilename(filename)
+                    .setFilename(filename+".txt")
                     .build();
             RequestsToController.RequestsToControllerWrapper requestsToControllerWrapper1 = RequestsToController.RequestsToControllerWrapper.newBuilder().setRetrieveFileRequestMsg(retrieveFileRequest).build();
             logger.info("Sending RetrieveFile request to Controller {} to port {}",controllerHostname,controllerPort);
@@ -164,11 +164,16 @@ public class Client {
             logger.info("Received RetrieveFile response from Controller...");
             socket.close();
 
+            //List<Thread> threads = new ArrayList<>();
+
             for (ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata : responseFromCN.getChunkListList()) {
-                new Thread(new ChunkRetrieveWorker(chunkMetadata)).start();
+                Thread thread = new Thread(new ChunkRetrieveWorker(chunkMetadata));
+                thread.start();
+                thread.join();
             }
 
             FileWriter writer = new FileWriter(mergedFile);
+            logger.info("byte array size {}",listOfChunks.size());
             for(int i=0;i<listOfChunks.size();i++)
             {
                 byte[] temp = listOfChunks.get(i);
@@ -202,7 +207,8 @@ public class Client {
 
         @Override
         public void run() {
-            try {
+            try
+            {
                 RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = RequestsToStorageNode.RetrieveFileRequestToSN.newBuilder()
                         .setChunkId(chunkMetadata.getChunkId())
                         .setFilename(chunkMetadata.getFilename())
@@ -218,7 +224,8 @@ public class Client {
                 ResponsesToClient.RetrieveFileResponseFromSN responseFromSN = ResponsesToClient.RetrieveFileResponseFromSN.parseDelimitedFrom(socket1.getInputStream());
                 logger.info("Received RetrieveFile response from Storage Node...");
                 byte[] temp = responseFromSN.getChunkData().toByteArray();
-                listOfChunks.add(chunkMetadata.getChunkId(),temp);
+                listOfChunks.add(temp);
+                System.out.println("list of chunks {}"+ listOfChunks);
                 socket1.close();
             }
             catch (IOException e)

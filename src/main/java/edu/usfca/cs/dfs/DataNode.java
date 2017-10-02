@@ -46,4 +46,12 @@ public class DataNode {
     public void setDiskCapacity(long diskCapacity) {
         this.diskCapacity = diskCapacity;
     }
+
+    @Override
+    public String toString() {
+        return "DataNode{" +
+                "port=" + port +
+                ", hostname='" + hostname + '\'' +
+                '}';
+    }
 }

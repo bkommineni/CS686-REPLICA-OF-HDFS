@@ -32,7 +32,7 @@ public class Controller {
     private Map<String,Boolean>  statusStorageNodesMap = new HashMap<>();
     private Map<Integer,String>  storageNodeMapToNum  = new HashMap<>();
 
-    private static final int REPLICATION_FACTOR = 2;
+    private static final int REPLICATION_FACTOR = 3;
 
     public static void main(String[] args) throws Exception{
         new Controller().start(args);

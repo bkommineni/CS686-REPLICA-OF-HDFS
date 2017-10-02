@@ -1366,35 +1366,25 @@ public final class ResponsesToClient {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string filename = 1;</code>
-     */
-    java.lang.String getFilename();
-    /**
-     * <code>string filename = 1;</code>
-     */
-    com.google.protobuf.ByteString
-        getFilenameBytes();
-
-    /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     java.util.List<edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata> 
         getChunkListList();
     /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata getChunkList(int index);
     /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     int getChunkListCount();
     /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     java.util.List<? extends edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadataOrBuilder> 
         getChunkListOrBuilderList();
     /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadataOrBuilder getChunkListOrBuilder(
         int index);
@@ -1412,7 +1402,6 @@ public final class ResponsesToClient {
       super(builder);
     }
     private RetrieveFileResponseFromCN() {
-      filename_ = "";
       chunkList_ = java.util.Collections.emptyList();
     }
 
@@ -1445,15 +1434,9 @@ public final class ResponsesToClient {
               break;
             }
             case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              filename_ = s;
-              break;
-            }
-            case 18: {
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 chunkList_ = new java.util.ArrayList<edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata>();
-                mutable_bitField0_ |= 0x00000002;
+                mutable_bitField0_ |= 0x00000001;
               }
               chunkList_.add(
                   input.readMessage(edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.parser(), extensionRegistry));
@@ -1467,7 +1450,7 @@ public final class ResponsesToClient {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           chunkList_ = java.util.Collections.unmodifiableList(chunkList_);
         }
         this.unknownFields = unknownFields.build();
@@ -1491,20 +1474,30 @@ public final class ResponsesToClient {
         com.google.protobuf.MessageOrBuilder {
 
       /**
-       * <code>int32 chunkId = 1;</code>
+       * <code>string filename = 1;</code>
+       */
+      java.lang.String getFilename();
+      /**
+       * <code>string filename = 1;</code>
+       */
+      com.google.protobuf.ByteString
+          getFilenameBytes();
+
+      /**
+       * <code>int32 chunkId = 2;</code>
        */
       int getChunkId();
 
       /**
-       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
        */
       boolean hasNode();
       /**
-       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
        */
       edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode getNode();
       /**
-       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
        */
       edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNodeOrBuilder getNodeOrBuilder();
     }
@@ -1521,6 +1514,7 @@ public final class ResponsesToClient {
         super(builder);
       }
       private chunkMetadata() {
+        filename_ = "";
         chunkId_ = 0;
       }
 
@@ -1552,12 +1546,18 @@ public final class ResponsesToClient {
                 }
                 break;
               }
-              case 8: {
+              case 10: {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                filename_ = s;
+                break;
+              }
+              case 16: {
 
                 chunkId_ = input.readInt32();
                 break;
               }
-              case 18: {
+              case 26: {
                 edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode.Builder subBuilder = null;
                 if (node_ != null) {
                   subBuilder = node_.toBuilder();
@@ -2179,31 +2179,65 @@ public final class ResponsesToClient {
 
       }
 
-      public static final int CHUNKID_FIELD_NUMBER = 1;
+      public static final int FILENAME_FIELD_NUMBER = 1;
+      private volatile java.lang.Object filename_;
+      /**
+       * <code>string filename = 1;</code>
+       */
+      public java.lang.String getFilename() {
+        java.lang.Object ref = filename_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          filename_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string filename = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getFilenameBytes() {
+        java.lang.Object ref = filename_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          filename_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      public static final int CHUNKID_FIELD_NUMBER = 2;
       private int chunkId_;
       /**
-       * <code>int32 chunkId = 1;</code>
+       * <code>int32 chunkId = 2;</code>
        */
       public int getChunkId() {
         return chunkId_;
       }
 
-      public static final int NODE_FIELD_NUMBER = 2;
+      public static final int NODE_FIELD_NUMBER = 3;
       private edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode node_;
       /**
-       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
        */
       public boolean hasNode() {
         return node_ != null;
       }
       /**
-       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
        */
       public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode getNode() {
         return node_ == null ? edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode.getDefaultInstance() : node_;
       }
       /**
-       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+       * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
        */
       public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNodeOrBuilder getNodeOrBuilder() {
         return getNode();
@@ -2221,11 +2255,14 @@ public final class ResponsesToClient {
 
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
+        if (!getFilenameBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, filename_);
+        }
         if (chunkId_ != 0) {
-          output.writeInt32(1, chunkId_);
+          output.writeInt32(2, chunkId_);
         }
         if (node_ != null) {
-          output.writeMessage(2, getNode());
+          output.writeMessage(3, getNode());
         }
         unknownFields.writeTo(output);
       }
@@ -2235,13 +2272,16 @@ public final class ResponsesToClient {
         if (size != -1) return size;
 
         size = 0;
+        if (!getFilenameBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, filename_);
+        }
         if (chunkId_ != 0) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(1, chunkId_);
+            .computeInt32Size(2, chunkId_);
         }
         if (node_ != null) {
           size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(2, getNode());
+            .computeMessageSize(3, getNode());
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -2259,6 +2299,8 @@ public final class ResponsesToClient {
         edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata other = (edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata) obj;
 
         boolean result = true;
+        result = result && getFilename()
+            .equals(other.getFilename());
         result = result && (getChunkId()
             == other.getChunkId());
         result = result && (hasNode() == other.hasNode());
@@ -2277,6 +2319,8 @@ public final class ResponsesToClient {
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (37 * hash) + FILENAME_FIELD_NUMBER;
+        hash = (53 * hash) + getFilename().hashCode();
         hash = (37 * hash) + CHUNKID_FIELD_NUMBER;
         hash = (53 * hash) + getChunkId();
         if (hasNode()) {
@@ -2412,6 +2456,8 @@ public final class ResponsesToClient {
         }
         public Builder clear() {
           super.clear();
+          filename_ = "";
+
           chunkId_ = 0;
 
           if (nodeBuilder_ == null) {
@@ -2442,6 +2488,7 @@ public final class ResponsesToClient {
 
         public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata buildPartial() {
           edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata result = new edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata(this);
+          result.filename_ = filename_;
           result.chunkId_ = chunkId_;
           if (nodeBuilder_ == null) {
             result.node_ = node_;
@@ -2489,6 +2536,10 @@ public final class ResponsesToClient {
 
         public Builder mergeFrom(edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata other) {
           if (other == edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.getDefaultInstance()) return this;
+          if (!other.getFilename().isEmpty()) {
+            filename_ = other.filename_;
+            onChanged();
+          }
           if (other.getChunkId() != 0) {
             setChunkId(other.getChunkId());
           }
@@ -2522,15 +2573,84 @@ public final class ResponsesToClient {
           return this;
         }
 
+        private java.lang.Object filename_ = "";
+        /**
+         * <code>string filename = 1;</code>
+         */
+        public java.lang.String getFilename() {
+          java.lang.Object ref = filename_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            filename_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>string filename = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+            getFilenameBytes() {
+          java.lang.Object ref = filename_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            filename_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string filename = 1;</code>
+         */
+        public Builder setFilename(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          filename_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string filename = 1;</code>
+         */
+        public Builder clearFilename() {
+          
+          filename_ = getDefaultInstance().getFilename();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string filename = 1;</code>
+         */
+        public Builder setFilenameBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          filename_ = value;
+          onChanged();
+          return this;
+        }
+
         private int chunkId_ ;
         /**
-         * <code>int32 chunkId = 1;</code>
+         * <code>int32 chunkId = 2;</code>
          */
         public int getChunkId() {
           return chunkId_;
         }
         /**
-         * <code>int32 chunkId = 1;</code>
+         * <code>int32 chunkId = 2;</code>
          */
         public Builder setChunkId(int value) {
           
@@ -2539,7 +2659,7 @@ public final class ResponsesToClient {
           return this;
         }
         /**
-         * <code>int32 chunkId = 1;</code>
+         * <code>int32 chunkId = 2;</code>
          */
         public Builder clearChunkId() {
           
@@ -2552,13 +2672,13 @@ public final class ResponsesToClient {
         private com.google.protobuf.SingleFieldBuilderV3<
             edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode.Builder, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNodeOrBuilder> nodeBuilder_;
         /**
-         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
          */
         public boolean hasNode() {
           return nodeBuilder_ != null || node_ != null;
         }
         /**
-         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
          */
         public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode getNode() {
           if (nodeBuilder_ == null) {
@@ -2568,7 +2688,7 @@ public final class ResponsesToClient {
           }
         }
         /**
-         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
          */
         public Builder setNode(edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode value) {
           if (nodeBuilder_ == null) {
@@ -2584,7 +2704,7 @@ public final class ResponsesToClient {
           return this;
         }
         /**
-         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
          */
         public Builder setNode(
             edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode.Builder builderForValue) {
@@ -2598,7 +2718,7 @@ public final class ResponsesToClient {
           return this;
         }
         /**
-         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
          */
         public Builder mergeNode(edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode value) {
           if (nodeBuilder_ == null) {
@@ -2616,7 +2736,7 @@ public final class ResponsesToClient {
           return this;
         }
         /**
-         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
          */
         public Builder clearNode() {
           if (nodeBuilder_ == null) {
@@ -2630,7 +2750,7 @@ public final class ResponsesToClient {
           return this;
         }
         /**
-         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
          */
         public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode.Builder getNodeBuilder() {
           
@@ -2638,7 +2758,7 @@ public final class ResponsesToClient {
           return getNodeFieldBuilder().getBuilder();
         }
         /**
-         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
          */
         public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNodeOrBuilder getNodeOrBuilder() {
           if (nodeBuilder_ != null) {
@@ -2649,7 +2769,7 @@ public final class ResponsesToClient {
           }
         }
         /**
-         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 2;</code>
+         * <code>.RetrieveFileResponseFromCN.chunkMetadata.storageNode node = 3;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNode.Builder, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.storageNodeOrBuilder> 
@@ -2713,70 +2833,35 @@ public final class ResponsesToClient {
 
     }
 
-    private int bitField0_;
-    public static final int FILENAME_FIELD_NUMBER = 1;
-    private volatile java.lang.Object filename_;
-    /**
-     * <code>string filename = 1;</code>
-     */
-    public java.lang.String getFilename() {
-      java.lang.Object ref = filename_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        filename_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string filename = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getFilenameBytes() {
-      java.lang.Object ref = filename_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        filename_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int CHUNKLIST_FIELD_NUMBER = 2;
+    public static final int CHUNKLIST_FIELD_NUMBER = 1;
     private java.util.List<edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata> chunkList_;
     /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     public java.util.List<edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata> getChunkListList() {
       return chunkList_;
     }
     /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     public java.util.List<? extends edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadataOrBuilder> 
         getChunkListOrBuilderList() {
       return chunkList_;
     }
     /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     public int getChunkListCount() {
       return chunkList_.size();
     }
     /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata getChunkList(int index) {
       return chunkList_.get(index);
     }
     /**
-     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+     * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
      */
     public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadataOrBuilder getChunkListOrBuilder(
         int index) {
@@ -2795,11 +2880,8 @@ public final class ResponsesToClient {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getFilenameBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, filename_);
-      }
       for (int i = 0; i < chunkList_.size(); i++) {
-        output.writeMessage(2, chunkList_.get(i));
+        output.writeMessage(1, chunkList_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -2809,12 +2891,9 @@ public final class ResponsesToClient {
       if (size != -1) return size;
 
       size = 0;
-      if (!getFilenameBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, filename_);
-      }
       for (int i = 0; i < chunkList_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, chunkList_.get(i));
+          .computeMessageSize(1, chunkList_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -2832,8 +2911,6 @@ public final class ResponsesToClient {
       edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN other = (edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN) obj;
 
       boolean result = true;
-      result = result && getFilename()
-          .equals(other.getFilename());
       result = result && getChunkListList()
           .equals(other.getChunkListList());
       result = result && unknownFields.equals(other.unknownFields);
@@ -2847,8 +2924,6 @@ public final class ResponsesToClient {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + FILENAME_FIELD_NUMBER;
-      hash = (53 * hash) + getFilename().hashCode();
       if (getChunkListCount() > 0) {
         hash = (37 * hash) + CHUNKLIST_FIELD_NUMBER;
         hash = (53 * hash) + getChunkListList().hashCode();
@@ -2983,11 +3058,9 @@ public final class ResponsesToClient {
       }
       public Builder clear() {
         super.clear();
-        filename_ = "";
-
         if (chunkListBuilder_ == null) {
           chunkList_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
           chunkListBuilder_.clear();
         }
@@ -3014,18 +3087,15 @@ public final class ResponsesToClient {
       public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN buildPartial() {
         edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN result = new edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN(this);
         int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        result.filename_ = filename_;
         if (chunkListBuilder_ == null) {
-          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
             chunkList_ = java.util.Collections.unmodifiableList(chunkList_);
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ = (bitField0_ & ~0x00000001);
           }
           result.chunkList_ = chunkList_;
         } else {
           result.chunkList_ = chunkListBuilder_.build();
         }
-        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -3067,15 +3137,11 @@ public final class ResponsesToClient {
 
       public Builder mergeFrom(edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN other) {
         if (other == edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.getDefaultInstance()) return this;
-        if (!other.getFilename().isEmpty()) {
-          filename_ = other.filename_;
-          onChanged();
-        }
         if (chunkListBuilder_ == null) {
           if (!other.chunkList_.isEmpty()) {
             if (chunkList_.isEmpty()) {
               chunkList_ = other.chunkList_;
-              bitField0_ = (bitField0_ & ~0x00000002);
+              bitField0_ = (bitField0_ & ~0x00000001);
             } else {
               ensureChunkListIsMutable();
               chunkList_.addAll(other.chunkList_);
@@ -3088,7 +3154,7 @@ public final class ResponsesToClient {
               chunkListBuilder_.dispose();
               chunkListBuilder_ = null;
               chunkList_ = other.chunkList_;
-              bitField0_ = (bitField0_ & ~0x00000002);
+              bitField0_ = (bitField0_ & ~0x00000001);
               chunkListBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getChunkListFieldBuilder() : null;
@@ -3125,81 +3191,12 @@ public final class ResponsesToClient {
       }
       private int bitField0_;
 
-      private java.lang.Object filename_ = "";
-      /**
-       * <code>string filename = 1;</code>
-       */
-      public java.lang.String getFilename() {
-        java.lang.Object ref = filename_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          filename_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string filename = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getFilenameBytes() {
-        java.lang.Object ref = filename_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          filename_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string filename = 1;</code>
-       */
-      public Builder setFilename(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        filename_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string filename = 1;</code>
-       */
-      public Builder clearFilename() {
-        
-        filename_ = getDefaultInstance().getFilename();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string filename = 1;</code>
-       */
-      public Builder setFilenameBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        filename_ = value;
-        onChanged();
-        return this;
-      }
-
       private java.util.List<edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata> chunkList_ =
         java.util.Collections.emptyList();
       private void ensureChunkListIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
           chunkList_ = new java.util.ArrayList<edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata>(chunkList_);
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
          }
       }
 
@@ -3207,7 +3204,7 @@ public final class ResponsesToClient {
           edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.Builder, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadataOrBuilder> chunkListBuilder_;
 
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public java.util.List<edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata> getChunkListList() {
         if (chunkListBuilder_ == null) {
@@ -3217,7 +3214,7 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public int getChunkListCount() {
         if (chunkListBuilder_ == null) {
@@ -3227,7 +3224,7 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata getChunkList(int index) {
         if (chunkListBuilder_ == null) {
@@ -3237,7 +3234,7 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public Builder setChunkList(
           int index, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata value) {
@@ -3254,7 +3251,7 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public Builder setChunkList(
           int index, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.Builder builderForValue) {
@@ -3268,7 +3265,7 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public Builder addChunkList(edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata value) {
         if (chunkListBuilder_ == null) {
@@ -3284,7 +3281,7 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public Builder addChunkList(
           int index, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata value) {
@@ -3301,7 +3298,7 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public Builder addChunkList(
           edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.Builder builderForValue) {
@@ -3315,7 +3312,7 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public Builder addChunkList(
           int index, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.Builder builderForValue) {
@@ -3329,7 +3326,7 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public Builder addAllChunkList(
           java.lang.Iterable<? extends edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata> values) {
@@ -3344,12 +3341,12 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public Builder clearChunkList() {
         if (chunkListBuilder_ == null) {
           chunkList_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000001);
           onChanged();
         } else {
           chunkListBuilder_.clear();
@@ -3357,7 +3354,7 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public Builder removeChunkList(int index) {
         if (chunkListBuilder_ == null) {
@@ -3370,14 +3367,14 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.Builder getChunkListBuilder(
           int index) {
         return getChunkListFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadataOrBuilder getChunkListOrBuilder(
           int index) {
@@ -3387,7 +3384,7 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public java.util.List<? extends edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadataOrBuilder> 
            getChunkListOrBuilderList() {
@@ -3398,14 +3395,14 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.Builder addChunkListBuilder() {
         return getChunkListFieldBuilder().addBuilder(
             edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.getDefaultInstance());
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.Builder addChunkListBuilder(
           int index) {
@@ -3413,7 +3410,7 @@ public final class ResponsesToClient {
             index, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.getDefaultInstance());
       }
       /**
-       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 2;</code>
+       * <code>repeated .RetrieveFileResponseFromCN.chunkMetadata chunkList = 1;</code>
        */
       public java.util.List<edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.Builder> 
            getChunkListBuilderList() {
@@ -3426,7 +3423,7 @@ public final class ResponsesToClient {
           chunkListBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.Builder, edu.usfca.cs.dfs.ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadataOrBuilder>(
                   chunkList_,
-                  ((bitField0_ & 0x00000002) == 0x00000002),
+                  ((bitField0_ & 0x00000001) == 0x00000001),
                   getParentForChildren(),
                   isClean());
           chunkList_ = null;
@@ -8049,10 +8046,10 @@ public final class ResponsesToClient {
       "kResponse\0228\n\017storageNodeList\030\001 \003(\0132\037.Sto" +
       "reChunkResponse.storageNode\032-\n\013storageNo" +
       "de\022\014\n\004port\030\001 \001(\005\022\020\n\010hostname\030\002 \001(\t\"\203\002\n\032R" +
-      "etrieveFileResponseFromCN\022\020\n\010filename\030\001 " +
-      "\001(\t\022<\n\tchunkList\030\002 \003(\0132).RetrieveFileRes" +
-      "ponseFromCN.chunkMetadata\032\224\001\n\rchunkMetad" +
-      "ata\022\017\n\007chunkId\030\001 \001(\005\022C\n\004node\030\002 \001(\01325.Ret" +
+      "etrieveFileResponseFromCN\022<\n\tchunkList\030\001" +
+      " \003(\0132).RetrieveFileResponseFromCN.chunkM" +
+      "etadata\032\246\001\n\rchunkMetadata\022\020\n\010filename\030\001 " +
+      "\001(\t\022\017\n\007chunkId\030\002 \001(\005\022C\n\004node\030\003 \001(\01325.Ret" +
       "rieveFileResponseFromCN.chunkMetadata.st" +
       "orageNode\032-\n\013storageNode\022\014\n\004port\030\001 \001(\005\022\020",
       "\n\010hostname\030\002 \001(\t\"\250\001\n&ListOfActiveStorage" +
@@ -8105,13 +8102,13 @@ public final class ResponsesToClient {
     internal_static_RetrieveFileResponseFromCN_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_RetrieveFileResponseFromCN_descriptor,
-        new java.lang.String[] { "Filename", "ChunkList", });
+        new java.lang.String[] { "ChunkList", });
     internal_static_RetrieveFileResponseFromCN_chunkMetadata_descriptor =
       internal_static_RetrieveFileResponseFromCN_descriptor.getNestedTypes().get(0);
     internal_static_RetrieveFileResponseFromCN_chunkMetadata_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_RetrieveFileResponseFromCN_chunkMetadata_descriptor,
-        new java.lang.String[] { "ChunkId", "Node", });
+        new java.lang.String[] { "Filename", "ChunkId", "Node", });
     internal_static_RetrieveFileResponseFromCN_chunkMetadata_storageNode_descriptor =
       internal_static_RetrieveFileResponseFromCN_chunkMetadata_descriptor.getNestedTypes().get(0);
     internal_static_RetrieveFileResponseFromCN_chunkMetadata_storageNode_fieldAccessorTable = new

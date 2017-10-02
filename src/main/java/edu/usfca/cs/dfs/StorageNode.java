@@ -68,20 +68,21 @@ public class StorageNode {
         ResponsesToStorageNode.AcknowledgeEnrollment response = ResponsesToStorageNode.AcknowledgeEnrollment
                 .parseDelimitedFrom(controllerSocket.getInputStream());
         logger.info("Successfully enrolled with Controller!!");
-
+        controllerSocket.close();
         logger.info("Starting Storage Node on port {} with data directory on {}",storageNodePort,dataDirectory);
         if(response.getSuccess())
         {
             ServerSocket serverSocket = new ServerSocket(storageNodePort);
             logger.info("Listening...");
             while (true) {
-                /*TimerTask task = new TimerTask()
+                TimerTask task = new TimerTask()
                 {
                     @Override
                     public void run()
                     {
                         try
                         {
+                            controllerSocket = new Socket(controllerPortHostName,controllerPort);
                             List<RequestsToController.Heartbeat.ChunkMetadata> chunkMetadataList = new ArrayList<>();
                             for (String key : dataStoredInLastFiveSeconds.keySet()) {
                                 StorageNodeMetadata metadata = dataStoredInLastFiveSeconds.get(key);
@@ -102,6 +103,7 @@ public class StorageNode {
                                     .setHeartbeatMsg(heartbeat).build();
 
                             wrapper.writeDelimitedTo(controllerSocket.getOutputStream());
+                            controllerSocket.close();
                         }
                         catch (UnknownHostException e)
                         {
@@ -116,7 +118,7 @@ public class StorageNode {
                 Timer timer = new Timer();
                 long delay = 0;
                 long intervalPeriod = 5 * 1000;
-                timer.scheduleAtFixedRate(task,delay,intervalPeriod);*/
+                timer.scheduleAtFixedRate(task,delay,intervalPeriod);
                 connSocket = serverSocket.accept();
                 new Thread(new Request(connSocket)).start();
             }
@@ -176,12 +178,10 @@ public class StorageNode {
                     {
                         filename = filename.split("\\.")[0];
                         blockFile = dataDirectory + filename + "Part" + chunkId +".txt";
-                        logger.info("if blockfile {} ",blockFile);
                     }
                     else
                     {
                         blockFile = dataDirectory + filename + "Part" + chunkId;
-                        logger.info("else blockfile {} ",blockFile);
                     }
                     int i=0;
                     FileWriter writer = new FileWriter(blockFile);
@@ -461,7 +461,7 @@ public class StorageNode {
                             File file = new File(filepath);
                             while(!file.exists())
                             {
-                                logger.info("inside while sleeping till file is present looking for file {}",filepath);
+                                logger.debug("inside while sleeping till file is present looking for file {}",filepath);
                                 Thread.sleep(1000);
                             }
                             logger.info("Store chunk request(SN-SN) to peer SN {} to port {} ",hostname,socket1.getPort());

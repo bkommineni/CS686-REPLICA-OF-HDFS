@@ -4,6 +4,7 @@ import com.google.protobuf.ByteString;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,12 +12,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Client {
     
     public static final Logger logger = LoggerFactory.getLogger(Client.class);
+    private static List<byte[]> listOfChunks = new ArrayList<>();
 
     public static void main(String[] args) throws Exception{
 
@@ -136,7 +139,8 @@ public class Client {
         }
 
 
-        else if(args[2].equals("retrieve")) {
+        else if(args[2].equals("retrieve"))
+        {
             //RetrieveFileRequest to Controller
             String currPath = ".";
             Path p = Paths.get(currPath);
@@ -146,7 +150,6 @@ public class Client {
             int length = tokens.length;
             String filename  = tokens[length-1].split("\\.")[0];
             String mergedFile = absDir.toString() + "/retrievedFilesDirectory/"+filename + ".txt";
-            FileWriter writer = new FileWriter(mergedFile);
             RequestsToController.RetrieveFileRequest retrieveFileRequest = RequestsToController.RetrieveFileRequest.newBuilder()
                     .setFilename(filename)
                     .build();
@@ -162,31 +165,19 @@ public class Client {
             socket.close();
 
             for (ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata : responseFromCN.getChunkListList()) {
-                //chunkid needs to be get form controller node response but now as it is not fully implemented
-                //needs to change it later
-                RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = RequestsToStorageNode.RetrieveFileRequestToSN.newBuilder()
-                        .setChunkId(chunkMetadata.getChunkId())
-                        .setFilename(responseFromCN.getFilename())
-                        .build();
-                RequestsToStorageNode.RequestsToStorageNodeWrapper toStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
-                        .setRetrieveFileRequestToSNMsg(requestToSN).build();
-                Socket socket1 = new Socket(chunkMetadata.getNode().getHostname(),chunkMetadata.getNode().getPort());
-                logger.info("Sending RetrieveFile request to Storage Node {} to port {}",socket1.getInetAddress(),socket1.getPort());
-                toStorageNodeWrapper.writeDelimitedTo(socket1.getOutputStream());
-                logger.info("Waiting for RetrieveFile response from Storage Node...");
+                new Thread(new ChunkRetrieveWorker(chunkMetadata)).start();
+            }
 
-
-                ResponsesToClient.RetrieveFileResponseFromSN responseFromSN = ResponsesToClient.RetrieveFileResponseFromSN.parseDelimitedFrom(socket1.getInputStream());
-                logger.info("Received RetrieveFile response from Storage Node...");
-                byte[] temp = responseFromSN.getChunkData().toByteArray();
+            FileWriter writer = new FileWriter(mergedFile);
+            for(int i=0;i<listOfChunks.size();i++)
+            {
+                byte[] temp = listOfChunks.get(i);
                 int k = 0;
                 while (k < temp.length) {
                     writer.write(temp[k]);
                     k++;
                 }
-                socket1.close();
             }
-
             writer.close();
         }
         else if(args[2].equals("list"))
@@ -199,6 +190,41 @@ public class Client {
                                                                         .setListOfActiveNodes(listOfActiveNodesRequest)
                                                                         .build();
             wrapper.writeDelimitedTo(socket2.getOutputStream());
+        }
+    }
+
+    public static class ChunkRetrieveWorker implements Runnable
+    {
+        ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata;
+        public ChunkRetrieveWorker(ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata ) {
+            this.chunkMetadata = chunkMetadata;
+        }
+
+        @Override
+        public void run() {
+            try {
+                RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = RequestsToStorageNode.RetrieveFileRequestToSN.newBuilder()
+                        .setChunkId(chunkMetadata.getChunkId())
+                        .setFilename(chunkMetadata.getFilename())
+                        .build();
+                RequestsToStorageNode.RequestsToStorageNodeWrapper toStorageNodeWrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
+                        .setRetrieveFileRequestToSNMsg(requestToSN).build();
+                Socket socket1 = new Socket(chunkMetadata.getNode().getHostname(), chunkMetadata.getNode().getPort());
+                logger.info("Sending RetrieveFile request to Storage Node {} to port {}", socket1.getInetAddress(), socket1.getPort());
+                toStorageNodeWrapper.writeDelimitedTo(socket1.getOutputStream());
+                logger.info("Waiting for RetrieveFile response from Storage Node...");
+
+
+                ResponsesToClient.RetrieveFileResponseFromSN responseFromSN = ResponsesToClient.RetrieveFileResponseFromSN.parseDelimitedFrom(socket1.getInputStream());
+                logger.info("Received RetrieveFile response from Storage Node...");
+                byte[] temp = responseFromSN.getChunkData().toByteArray();
+                listOfChunks.add(chunkMetadata.getChunkId(),temp);
+                socket1.close();
+            }
+            catch (IOException e)
+            {
+                logger.error("Exception caught {}", ExceptionUtils.getStackTrace(e));
+            }
         }
     }
 

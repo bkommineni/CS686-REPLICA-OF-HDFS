@@ -15,18 +15,18 @@ message StoreChunkResponse
 
 message RetrieveFileResponseFromCN
 {
-    string filename = 1;
     message chunkMetadata
     {
-        int32 chunkId = 1;
+        string filename = 1;
+        int32 chunkId = 2;
         message storageNode
         {
             int32 port = 1;
             string hostname = 2;
         }
-        storageNode node = 2;
+        storageNode node = 3;
     }
-    repeated chunkMetadata chunkList = 2;
+    repeated chunkMetadata chunkList = 1;
 }
 
 message ListOfActiveStorageNodesResponseFromCN

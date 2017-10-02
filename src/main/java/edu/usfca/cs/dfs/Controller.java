@@ -139,13 +139,13 @@ public class Controller {
                         ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata =
                                 ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata.newBuilder()
                                 .setChunkId(metadata.getChunkId())
+                                .setFilename(msgWrapper.getRetrieveFileRequestMsg().getFilename())
                                 .setNode(storageNode)
                                 .build();
                         chunkMetadatas.add(chunkMetadata);
                     }
                     ResponsesToClient.RetrieveFileResponseFromCN responseFromCN = ResponsesToClient.RetrieveFileResponseFromCN
                                                                                     .newBuilder()
-                                                                                    .setFilename(msgWrapper.getRetrieveFileRequestMsg().getFilename())
                                                                                     .addAllChunkList(chunkMetadatas)
                                                                                     .build();
                     responseFromCN.writeDelimitedTo(connectionSocket.getOutputStream());
@@ -217,7 +217,7 @@ public class Controller {
                             metadataMap.put(key,metadata);
                         }
                     }
-                    logger.info("Updated info from heartbeat message in memory");
+                    logger.info("Updated info from heartbeat message in memory from SN {} from port {}",msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
                     connectionSocket.close();
 
                 }

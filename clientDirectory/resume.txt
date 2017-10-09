@@ -1,0 +1,44 @@
+
+Education:
+•	Masters in Computer Science(MS),
+University of San Francisco (3.68)								            May 2018
+•	Master of Technology (MSc (Tech)) equivalent to (BE) in
+Information Systems, BITS-Pilani, India							            May 2014
+Skills:
+•	Languages: Java, C, Python, MYSQL
+•	Operating Systems: Windows, Linux, MacOS
+•	Technologies: Intellij IDE, Eclipse IDE, Microsoft Visual Studio IDE
+•	Tools: Sonar, Wireshark, Autocad, C++ Performance Validator, ANTLR
+•	Frameworks: Junit, Velocity Template Engine, String Template
+•	Programming Paradigms: Socket Programming, Servlet Programming, Multi-threaded Programming, Design Patterns
+
+Work Experience:
+Software Engineer, Keypoint Technologies						                     July 2014 – Feb 2016
+•	Part of Adaptxt backend core development team. Adaptxt is an Input Method Editor(IME), by Keypoint Technologies
+•	Evaluated performance parameters like RAM usage and response time, of different APIs used in the C++ code base
+•	Developed a suggestion quality testing tool in JAVA to determine the accuracy of suggestions for multiple speaking languages that are supported
+•	Implemented transliteration on the company`s product, Adaptxt
+•	Implemented a proof of concept to integrate POCO libraries into the code base. POCO libraries are based in C++ and facilitate HTTP connections by sending the requests and capturing the responses in embedded software
+•	Enhanced the existing suggestion generation tool for Chinese and Japanese languages
+Intern, Steel wedge Software      					                     			       July 2013 – Dec 2013
+•	Part of the code quality team that used Sonar to identify bugs in the code on various platforms using multiple rule sets in pmd and findbugs
+•	Learnt best java coding practices which assure the quality of code and server side deployment
+Academic Projects:
+Developed Smalltalk Compiler				                                                                              Apr 2017 – May 2017
+•	Built bytecode compiler for a subset of Smalltalk in Java using ANTLR
+Developed a Translator						                                                                Mar 2017 – Apr 2017
+•	Translated a small subset of Java to C in Java using ANTLR, String Template based on understanding and implementation of vtables used in C++.
+Developed ARM Emulator								                     Feb 2017 – Mar 2017
+•	Built the emulator for a subset of ARMv7 instruction set in C
+Developed Java Interpreter                                              					                      Jan 2017 – Feb 2017
+•	Created an interactive shell tool that mimics the behavior of Python interpreter shell using dynamic compilation, class loaders & simple lexical analysis
+Developed Web based Application like Trip Advisor    					                      Aug 2016 – Dec 2016
+•	Users can register for and login to search for hotels based on location and name, book accommodation, save hotel for future reference, find tourist attractions nearby that hotel in specified distance, view reviews, sort reviews based on rating & time, write reviews etc.
+•	Hotel page contains address, location on google maps, link to expedia etc.
+•	Users not registered for application also can access it but with a limited option where they cannot save hotel or write or like a review of hotel and not have a profile which keeps track of their interest
+Implemented Dynamic allocation of IP addresses                                                                                                Jan 2013 – May 2013
+•	Implemented the dynamic allocation functionality of DHCP Server using socket programming in C
+•	Server reserves a set of IP addresses and allocates an IP address for the client when requested for it for a specific period. When the limit of specific address is expired, that can be reallocated again for some other client
+Implemented Clustering Algorithms                                                                                                                      Aug 2012 – Dec 2012
+•	Implemented basic aspects of hierarchical clustering, k-means clustering, distribution based clustering and density based clustering in C for smaller datasets
+Courses: Data Structures & Algorithms, Databases, Principles of Software Development, Operating Systems, Computer Networks, Data Mining, Software Engineering, Arm Assembly, Compilers, Big-Data

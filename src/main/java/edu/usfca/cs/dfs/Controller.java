@@ -128,14 +128,28 @@ public class Controller {
                             String tokens[] = filename.split("\\.");
                             if(str.contains(tokens[0]))
                             {
-                                metadatas.add(metadataMap.get(str));
+                                Metadata metadata = metadataMap.get(str);
+                                if(statusStorageNodesMap.get(metadata.getDataNode().getHostname()+metadata.getDataNode().getPort()))
+                                {
+                                    if(!metadatas.contains(metadata))
+                                    {
+                                        metadatas.add(metadataMap.get(str));
+                                    }
+                                }
                             }
                         }
                         else
                         {
                             if(str.contains(filename))
                             {
-                                metadatas.add(metadataMap.get(str));
+                                Metadata metadata = metadataMap.get(str);
+                                if(statusStorageNodesMap.get(metadata.getDataNode().getHostname()+metadata.getDataNode().getPort()))
+                                {
+                                    if(!metadatas.contains(metadata))
+                                    {
+                                        metadatas.add(metadataMap.get(str));
+                                    }
+                                }
                             }
                         }
 

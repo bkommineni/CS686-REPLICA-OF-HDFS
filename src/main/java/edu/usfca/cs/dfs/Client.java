@@ -9,8 +9,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -19,7 +18,8 @@ import org.slf4j.LoggerFactory;
 public class Client {
     
     public static final Logger logger = LoggerFactory.getLogger(Client.class);
-    private static List<byte[]> listOfChunks = new ArrayList<>();
+    private static SortedMap<Integer,byte[]> listOfChunks;
+    private static final int CHUNK_SIZE = 2000;
 
     public static void main(String[] args) throws Exception{
 
@@ -142,6 +142,7 @@ public class Client {
         else if(args[2].equals("retrieve"))
         {
             //RetrieveFileRequest to Controller
+            listOfChunks = new TreeMap<>();
             String currPath = ".";
             Path p = Paths.get(currPath);
             Path absDir = p.toAbsolutePath();
@@ -164,8 +165,6 @@ public class Client {
             logger.info("Received RetrieveFile response from Controller...");
             socket.close();
 
-            //List<Thread> threads = new ArrayList<>();
-
             for (ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata : responseFromCN.getChunkListList()) {
                 Thread thread = new Thread(new ChunkRetrieveWorker(chunkMetadata));
                 thread.start();
@@ -174,9 +173,9 @@ public class Client {
 
             FileWriter writer = new FileWriter(mergedFile);
             logger.info("byte array size {}",listOfChunks.size());
-            for(int i=0;i<listOfChunks.size();i++)
+            for(int key : listOfChunks.keySet())
             {
-                byte[] temp = listOfChunks.get(i);
+                byte[] temp = listOfChunks.get(key);
                 int k = 0;
                 while (k < temp.length) {
                     writer.write(temp[k]);
@@ -224,7 +223,7 @@ public class Client {
                 ResponsesToClient.RetrieveFileResponseFromSN responseFromSN = ResponsesToClient.RetrieveFileResponseFromSN.parseDelimitedFrom(socket1.getInputStream());
                 logger.info("Received RetrieveFile response from Storage Node...");
                 byte[] temp = responseFromSN.getChunkData().toByteArray();
-                listOfChunks.add(temp);
+                listOfChunks.put(responseFromSN.getChunkId(),temp);
                 System.out.println("list of chunks {}"+ listOfChunks);
                 socket1.close();
             }
@@ -235,23 +234,23 @@ public class Client {
         }
     }
 
-    private static List chunking(String filepath) throws Exception
+    private static List chunking(String filePath) throws Exception
     {
         int i=0;
-        int chunkSize = 2000;
-        byte[] bFile = Files.readAllBytes(new File(filepath).toPath());
+
+        byte[] bFile = Files.readAllBytes(new File(filePath).toPath());
         int fileSize = bFile.length;
 
-        int numBlocks  = (fileSize / chunkSize) ;
-        if((fileSize % chunkSize) != 0)
+        int numBlocks  = (fileSize / CHUNK_SIZE) ;
+        if((fileSize % CHUNK_SIZE) != 0)
             numBlocks = numBlocks + 1;
         logger.info("number of blocks {}", numBlocks);
         List<byte[]> blocks = new ArrayList<>();
 
         while(i < fileSize)
         {
-            byte[] block = new byte[chunkSize];
-            for (int j = 0; j < chunkSize; j++)
+            byte[] block = new byte[CHUNK_SIZE];
+            for (int j = 0; j < CHUNK_SIZE; j++)
             {
                 if(i<fileSize)
                 {

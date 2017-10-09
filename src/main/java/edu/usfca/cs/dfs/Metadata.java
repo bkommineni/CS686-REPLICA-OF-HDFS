@@ -45,4 +45,14 @@ public class Metadata {
                 ", dataNode=" + dataNode +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        Metadata metadata = (Metadata)obj;
+        if((this.filename+Integer.toString(this.chunkId)).equals(metadata.filename+Integer.toString(metadata.chunkId)))
+            return true;
+        else
+            return false;
+    }
 }

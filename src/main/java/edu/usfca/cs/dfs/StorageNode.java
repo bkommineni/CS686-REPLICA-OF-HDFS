@@ -21,9 +21,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 public class StorageNode {
 
     public static final Logger logger = LoggerFactory.getLogger(StorageNode.class);
-    private int controllerPort = 9998;
+    private int controllerPort;
     private String controllerPortHostName = "localhost";
-    private int storageNodePort = 9999;
+    private int storageNodePort;
     private Map<String,StorageNodeMetadata> storageNodeMetadataMap = new HashMap<>();
     private Map<String,StorageNodeMetadata> dataStoredInLastFiveSeconds = new HashMap<>();
     private Socket controllerSocket = null;

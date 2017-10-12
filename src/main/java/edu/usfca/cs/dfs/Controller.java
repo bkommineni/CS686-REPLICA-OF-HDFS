@@ -1,9 +1,6 @@
 package edu.usfca.cs.dfs;
 
-import com.google.protobuf.Message;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -13,6 +10,8 @@ import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -31,6 +30,10 @@ public class Controller {
     private Map<String,Metadata> metadataMap = new HashMap<>();
     private Map<String,Boolean>  statusStorageNodesMap = new HashMap<>();
     private Map<Integer,String>  storageNodeMapToNum  = new HashMap<>();
+    private Map<String,Long>     storageNodeHeartBeatTimeStamps = new HashMap<>();
+    public static final int NUM_THREADS_ALLOWED = 20;
+    private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
+    public static final Long MAX_ALLOWED_ACTIVENESS = 10000L;
 
     private static final int REPLICATION_FACTOR = 3;
 
@@ -68,7 +71,49 @@ public class Controller {
         while (true)
         {
             Socket socket = serverSocket.accept();
-            new Thread(new Request(socket)).start();
+            executorService.submit(new Thread(new Request(socket)));
+        }
+    }
+
+    public class ActivenessChecker implements Runnable
+    {
+        String hostname = null;
+        int port ;
+        public ActivenessChecker(String hostname,int port)
+        {
+            this.hostname = hostname;
+            this.port = port;
+        }
+
+        @Override
+        public void run()
+        {
+            String key = hostname+Integer.toString(port);
+            while(true)
+            {
+                if (storageNodeHeartBeatTimeStamps.get(key) != null)
+                {
+                    Long prevTimeStamp = storageNodeHeartBeatTimeStamps.get(key);
+                    Long currentTimeStamp = System.currentTimeMillis();
+                    Long diff = (currentTimeStamp - prevTimeStamp);
+                    //logger.info("diff {} prevTimeStamp {} currTImeStamp {}",diff,prevTimeStamp,currentTimeStamp);
+                    if (diff > MAX_ALLOWED_ACTIVENESS)
+                    {
+                        //remove all metadata related particular storagenode
+                        statusStorageNodesMap.put(key,false);
+                        storageNodesList.remove(key);
+                        Iterator<Map.Entry<String,Metadata>> iterator = metadataMap.entrySet().iterator();
+                        while (iterator.hasNext())
+                        {
+                            Map.Entry<String,Metadata> entry = iterator.next();
+                            if(entry.getKey().contains(key))
+                                iterator.remove();
+                        }
+                        logger.info("deactivated {} {}",hostname,port);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -112,6 +157,7 @@ public class Controller {
 		            logger.info("enrolled host : {}",hostname);
                     acknowledgeEnrollment.writeDelimitedTo(connectionSocket.getOutputStream());
                     logger.info("Enrollment done!And acknowedged storage node with response");
+                    executorService.submit(new Thread(new ActivenessChecker(hostname,msgWrapper.getEnrollMsg().getPort())));
                     connectionSocket.close();
                 }
 
@@ -237,8 +283,8 @@ public class Controller {
                     for(int i=0;i<size;i++)
                     {
                         RequestsToController.Heartbeat.ChunkMetadata chunkMetadata = msgWrapper.getHeartbeatMsg().getMetadataList().get(i);
-                        String key = chunkMetadata.getFilename() + chunkMetadata.getChunkId() + storageNode.getHostname();
-                        logger.info("metadata map key {}",key);
+                        String key = chunkMetadata.getFilename() + chunkMetadata.getChunkId() + storageNode.getHostname() + storageNode.getPort();
+                        logger.debug("metadata map key {}",key);
                         if(!metadataMap.containsKey(key))
                         {
                             Metadata metadata = new Metadata(chunkMetadata.getFilename(),chunkMetadata.getChunkId());
@@ -246,9 +292,9 @@ public class Controller {
                             metadataMap.put(key,metadata);
                         }
                     }
+                    storageNodeHeartBeatTimeStamps.put(storageNode.getHostname()+storageNode.getPort(),System.currentTimeMillis());
                     logger.debug("Updated info from heartbeat message in memory from SN {} from port {}",msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
                     connectionSocket.close();
-
                 }
                 if(msgWrapper.hasListOfActiveNodes())
                 {
@@ -273,7 +319,9 @@ public class Controller {
                     connectionSocket.close();
                 }
 
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 logger.error("Exception caught : {}",ExceptionUtils.getStackTrace(e));
             }
         }

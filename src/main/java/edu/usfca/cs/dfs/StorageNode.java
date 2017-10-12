@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -28,6 +30,8 @@ public class StorageNode {
     private Map<String,StorageNodeMetadata> dataStoredInLastFiveSeconds = new HashMap<>();
     private Socket controllerSocket = null;
     private Socket connSocket = null;
+    public static final int NUM_THREADS_ALLOWED = 20;
+    private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
     private String dataDirectory = "/home2/bkommineni/";
 
     public static void main(String[] args)
@@ -41,7 +45,7 @@ public class StorageNode {
         String currPath = ".";
         Path p = Paths.get(currPath);
         Path absDir = p.toAbsolutePath();
-        //dataDirectory = absDir.toString() + "/data/";
+        
         if(args.length > 0) {
             if (args[0] != null) {
                 controllerPortHostName = args[0];
@@ -74,53 +78,62 @@ public class StorageNode {
         {
             ServerSocket serverSocket = new ServerSocket(storageNodePort);
             logger.info("Listening...");
+            //Timer timer = new Timer();
+            //long delay = 0;
+            //long intervalPeriod = 5 * 1000;
+            //timer.scheduleAtFixedRate(task,delay,intervalPeriod);
+            executorService.submit(new Thread(new HeartBeat()));
             while (true) {
-                TimerTask task = new TimerTask()
-                {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            controllerSocket = new Socket(controllerPortHostName,controllerPort);
-                            List<RequestsToController.Heartbeat.ChunkMetadata> chunkMetadataList = new ArrayList<>();
-                            for (String key : dataStoredInLastFiveSeconds.keySet()) {
-                                StorageNodeMetadata metadata = dataStoredInLastFiveSeconds.get(key);
-                                RequestsToController.Heartbeat.ChunkMetadata chunkMetadata = RequestsToController.Heartbeat.ChunkMetadata.newBuilder()
-                                        .setChunkId(metadata.getChunkId())
-                                        .setFilename(metadata.getFilename()).build();
-                                chunkMetadataList.add(chunkMetadata);
-                            }
-                            RequestsToController.Heartbeat.storageNode storageNode = RequestsToController.Heartbeat.storageNode.newBuilder()
-                                    .setPort(storageNodePort)
-                                    .setHostname(getHostname()).build();
-
-                            RequestsToController.Heartbeat heartbeat = RequestsToController.Heartbeat.newBuilder()
-                                    .addAllMetadata(chunkMetadataList)
-                                    .setSN(storageNode)
-                                    .build();
-                            RequestsToController.RequestsToControllerWrapper wrapper = RequestsToController.RequestsToControllerWrapper.newBuilder()
-                                    .setHeartbeatMsg(heartbeat).build();
-
-                            wrapper.writeDelimitedTo(controllerSocket.getOutputStream());
-                            //controllerSocket.close();
-                        }
-                        catch (UnknownHostException e)
-                        {
-                            logger.error("Exception caught : {}",ExceptionUtils.getStackTrace(e));
-                        }
-                        catch (IOException e)
-                        {
-                            logger.error("Exception caught : {}",ExceptionUtils.getStackTrace(e));
-                        }
-                    }
-                };
-                Timer timer = new Timer();
-                long delay = 0;
-                long intervalPeriod = 5 * 1000;
-                timer.scheduleAtFixedRate(task,delay,intervalPeriod);
                 connSocket = serverSocket.accept();
-                new Thread(new Request(connSocket)).start();
+                executorService.submit(new Thread(new Request(connSocket)));
+            }
+        }
+    }
+
+    public class HeartBeat implements Runnable
+    {
+        @Override
+        public void run()
+        {
+            try
+            {
+                while (true)
+                {
+                    controllerSocket = new Socket(controllerPortHostName, controllerPort);
+                    List<RequestsToController.Heartbeat.ChunkMetadata> chunkMetadataList = new ArrayList<>();
+                    for (String key : dataStoredInLastFiveSeconds.keySet()) {
+                        StorageNodeMetadata metadata = dataStoredInLastFiveSeconds.get(key);
+                        RequestsToController.Heartbeat.ChunkMetadata chunkMetadata = RequestsToController.Heartbeat.ChunkMetadata.newBuilder()
+                                .setChunkId(metadata.getChunkId())
+                                .setFilename(metadata.getFilename()).build();
+                        chunkMetadataList.add(chunkMetadata);
+                    }
+                    RequestsToController.Heartbeat.storageNode storageNode = RequestsToController.Heartbeat.storageNode.newBuilder()
+                            .setPort(storageNodePort)
+                            .setHostname(getHostname()).build();
+
+                    RequestsToController.Heartbeat heartbeat = RequestsToController.Heartbeat.newBuilder()
+                            .addAllMetadata(chunkMetadataList)
+                            .setSN(storageNode)
+                            .build();
+                    RequestsToController.RequestsToControllerWrapper wrapper = RequestsToController.RequestsToControllerWrapper.newBuilder()
+                            .setHeartbeatMsg(heartbeat).build();
+
+                    wrapper.writeDelimitedTo(controllerSocket.getOutputStream());
+                    controllerSocket.close();
+                    Thread.sleep(5000);
+                }
+            }
+            catch (UnknownHostException e)
+            {
+                logger.error("Exception caught : {}",ExceptionUtils.getStackTrace(e));
+            }
+            catch (IOException e)
+            {
+                logger.error("Exception caught : {}",ExceptionUtils.getStackTrace(e));
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -272,7 +285,7 @@ public class StorageNode {
                         logger.info("list of nodes {}",readinessCheckRequestToSN.getReadinessCheckRequestToSNFromClientMsg().getStorageNodeListList());
                         if(readinessCheckRequestToSN.getReadinessCheckRequestToSNFromClientMsg().getStorageNodeListList().size() > 0) {
                             logger.info("Another Thread which sends request to other storage nodes in list ");
-                            new Thread(new ReadinessCheckRequestToPeer(readinessCheckRequestToSN)).start();
+                            executorService.submit(new Thread(new ReadinessCheckRequestToPeer(readinessCheckRequestToSN)));
                         }
                     }
 
@@ -286,7 +299,7 @@ public class StorageNode {
                         logger.info("list of nodes {}",readinessCheckRequestToSN.getReadinessCheckRequestToSNFromClientMsg().getStorageNodeListList());
                         if(readinessCheckRequestToSN.getReadinessCheckRequestToSNFromSNMsg().getStorageNodeListList().size() > 0) {
                             logger.info("Another Thread which sends request to other storage nodes in list ");
-                            new Thread(new ReadinessCheckRequestToPeer(readinessCheckRequestToSN)).start();
+                            executorService.submit(new Thread(new ReadinessCheckRequestToPeer(readinessCheckRequestToSN)));
                         }
                     }
 

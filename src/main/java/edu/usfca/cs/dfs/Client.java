@@ -5,11 +5,15 @@ import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -20,6 +24,8 @@ public class Client {
     public static final Logger logger = LoggerFactory.getLogger(Client.class);
     private static SortedMap<Integer,byte[]> listOfChunks;
     private static final int CHUNK_SIZE = 2000;
+    public static final int NUM_THREADS_ALLOWED = 20;
+    private static ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
 
     public static void main(String[] args) throws Exception{
 
@@ -166,11 +172,21 @@ public class Client {
             socket.close();
 
             for (ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata : responseFromCN.getChunkListList()) {
-                Thread thread = new Thread(new ChunkRetrieveWorker(chunkMetadata));
-                thread.start();
-                thread.join();
-            }
 
+                Thread thread = new Thread(new ChunkRetrieveWorker(chunkMetadata));
+                executorService.submit(thread);
+                //thread.start();
+                //thread.join();
+            }
+            executorService.shutdown();
+            try
+            {
+                executorService.awaitTermination(1, TimeUnit.MINUTES);
+            }
+            catch (InterruptedException e)
+            {
+                logger.error("Exception caught {}",ExceptionUtils.getStackTrace(e));
+            }
             FileWriter writer = new FileWriter(mergedFile);
             logger.info("byte array size {}",listOfChunks.size());
             for(int key : listOfChunks.keySet())

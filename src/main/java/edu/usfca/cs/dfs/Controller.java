@@ -24,13 +24,14 @@ public class Controller {
     1 Enroll request
     */
 
-    public static final Logger logger = LoggerFactory.getLogger(Controller.class);
+    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
     private int controllerPort;
     private Map<String,DataNode> storageNodesList = new HashMap<>();
     private Map<String,Metadata> metadataMap = new HashMap<>();
     private Map<String,Boolean>  statusStorageNodesMap = new HashMap<>();
     private Map<Integer,String>  storageNodeMapToNum  = new HashMap<>();
     private Map<String,Long>     storageNodeHeartBeatTimeStamps = new HashMap<>();
+    private List<String> activeStorageNodeFileInfo = new ArrayList<>();
     public static final int NUM_THREADS_ALLOWED = 20;
     private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
     public static final Long MAX_ALLOWED_ACTIVENESS = 10000L;
@@ -287,6 +288,7 @@ public class Controller {
                         logger.debug("metadata map key {}",key);
                         if(!metadataMap.containsKey(key))
                         {
+                            activeStorageNodeFileInfo.add(chunkMetadata.getFilename()+" "+" ");
                             Metadata metadata = new Metadata(chunkMetadata.getFilename(),chunkMetadata.getChunkId());
                             metadata.setDataNode(new DataNode(storageNode.getPort(),storageNode.getHostname()));
                             metadataMap.put(key,metadata);
@@ -299,17 +301,31 @@ public class Controller {
                 if(msgWrapper.hasListOfActiveNodes())
                 {
                     logger.info("Received request for list of active storage nodes from client {} from port {}",inetAddress,port);
-                    List<ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> storageNodes = new ArrayList<>();
+                    List<ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo> storageNodes = new ArrayList<>();
                     for(String str : statusStorageNodesMap.keySet())
                     {
                         if(statusStorageNodesMap.get(str))
                         {
-                            DataNode storageNode = storageNodesList.get(str);
-                            ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode storageNodeMsg =
-                                    ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.newBuilder().setPort(storageNode.getPort())
-                                            .setHostname(storageNode.getHostname())
-                                            .build();
-                            storageNodes.add(storageNodeMsg);
+                            List<String> filenames = new ArrayList<>();
+                            for(String key : metadataMap.keySet())
+                            {
+                                if(key.contains(str))
+                                {
+                                    String filename = metadataMap.get(key).getFilename();
+                                    if(!filenames.contains(filename))
+                                    {
+                                        filenames.add(filename);
+                                        DataNode storageNode = metadataMap.get(key).getDataNode();
+                                        ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo storageNodeMsg =
+                                                ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.newBuilder().setPort(storageNode.getPort())
+                                                        .setHostname(storageNode.getHostname())
+                                                        .setFilename(metadataMap.get(key).getFilename())
+                                                        .build();
+                                        storageNodes.add(storageNodeMsg);
+                                    }
+                                }
+                            }
+
                         }
                     }
                     ResponsesToClient.ListOfActiveStorageNodesResponseFromCN list = ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.newBuilder()

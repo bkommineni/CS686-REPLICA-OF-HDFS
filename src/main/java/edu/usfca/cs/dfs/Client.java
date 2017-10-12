@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public class Client {
     
-    public static final Logger logger = LoggerFactory.getLogger(Client.class);
+    private static final Logger logger = LoggerFactory.getLogger(Client.class);
     private static SortedMap<Integer,byte[]> listOfChunks;
     private static final int CHUNK_SIZE = 2000;
     public static final int NUM_THREADS_ALLOWED = 20;
@@ -155,10 +155,26 @@ public class Client {
             String fileRequired = args[3];
             String[] tokens = fileRequired.split("/");
             int length = tokens.length;
-            String filename  = tokens[length-1].split("\\.")[0];
-            String mergedFile = absDir.toString() + "/retrievedFilesDirectory/"+filename + ".txt";
+            String filename = null;
+            String mergedFile = null;
+            if(length > 0)
+            {
+                filename = tokens[length-1];
+                if(filename.contains(".txt"))
+                {
+                    filename = tokens[length - 1].split("\\.")[0];
+                    mergedFile = absDir.toString() + "/retrievedFilesDirectory/"+filename + ".txt";
+                }
+                else
+                {
+                    mergedFile = absDir.toString() + "/retrievedFilesDirectory/"+filename;
+                }
+
+            }
+
+
             RequestsToController.RetrieveFileRequest retrieveFileRequest = RequestsToController.RetrieveFileRequest.newBuilder()
-                    .setFilename(filename+".txt")
+                    .setFilename(filename)
                     .build();
             RequestsToController.RequestsToControllerWrapper requestsToControllerWrapper1 = RequestsToController.RequestsToControllerWrapper.newBuilder().setRetrieveFileRequestMsg(retrieveFileRequest).build();
             logger.info("Sending RetrieveFile request to Controller {} to port {}",controllerHostname,controllerPort);
@@ -175,8 +191,6 @@ public class Client {
 
                 Thread thread = new Thread(new ChunkRetrieveWorker(chunkMetadata));
                 executorService.submit(thread);
-                //thread.start();
-                //thread.join();
             }
             executorService.shutdown();
             try
@@ -209,7 +223,14 @@ public class Client {
                                                                         .newBuilder()
                                                                         .setListOfActiveNodes(listOfActiveNodesRequest)
                                                                         .build();
+            logger.info("Sending  a list request to Controller...");
             wrapper.writeDelimitedTo(socket2.getOutputStream());
+            ResponsesToClient.ListOfActiveStorageNodesResponseFromCN list = ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.parseDelimitedFrom(socket2.getInputStream());
+            logger.info("Received response from controller");
+            for(ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo info : list.getActiveStorageNodesList())
+            {
+                logger.info("Filename: {} Host: {} Port: {}",info.getFilename(),info.getHostname(),info.getPort());
+            }
         }
     }
 

@@ -3484,27 +3484,27 @@ public final class ResponsesToClient {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
-    java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> 
+    java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo> 
         getActiveStorageNodesList();
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
-    edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode getActiveStorageNodes(int index);
+    edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo getActiveStorageNodes(int index);
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
     int getActiveStorageNodesCount();
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
-    java.util.List<? extends edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder> 
+    java.util.List<? extends edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder> 
         getActiveStorageNodesOrBuilderList();
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
-    edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder getActiveStorageNodesOrBuilder(
+    edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder getActiveStorageNodesOrBuilder(
         int index);
   }
   /**
@@ -3553,11 +3553,11 @@ public final class ResponsesToClient {
             }
             case 10: {
               if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                activeStorageNodes_ = new java.util.ArrayList<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode>();
+                activeStorageNodes_ = new java.util.ArrayList<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo>();
                 mutable_bitField0_ |= 0x00000001;
               }
               activeStorageNodes_.add(
-                  input.readMessage(edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.parser(), extensionRegistry));
+                  input.readMessage(edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.parser(), extensionRegistry));
               break;
             }
           }
@@ -3587,8 +3587,8 @@ public final class ResponsesToClient {
               edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.class, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.Builder.class);
     }
 
-    public interface storageNodeOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:ListOfActiveStorageNodesResponseFromCN.storageNode)
+    public interface storageNodeFileInfoOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo)
         com.google.protobuf.MessageOrBuilder {
 
       /**
@@ -3605,22 +3605,33 @@ public final class ResponsesToClient {
        */
       com.google.protobuf.ByteString
           getHostnameBytes();
+
+      /**
+       * <code>string filename = 3;</code>
+       */
+      java.lang.String getFilename();
+      /**
+       * <code>string filename = 3;</code>
+       */
+      com.google.protobuf.ByteString
+          getFilenameBytes();
     }
     /**
-     * Protobuf type {@code ListOfActiveStorageNodesResponseFromCN.storageNode}
+     * Protobuf type {@code ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo}
      */
-    public  static final class storageNode extends
+    public  static final class storageNodeFileInfo extends
         com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:ListOfActiveStorageNodesResponseFromCN.storageNode)
-        storageNodeOrBuilder {
+        // @@protoc_insertion_point(message_implements:ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo)
+        storageNodeFileInfoOrBuilder {
     private static final long serialVersionUID = 0L;
-      // Use storageNode.newBuilder() to construct.
-      private storageNode(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      // Use storageNodeFileInfo.newBuilder() to construct.
+      private storageNodeFileInfo(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
       }
-      private storageNode() {
+      private storageNodeFileInfo() {
         port_ = 0;
         hostname_ = "";
+        filename_ = "";
       }
 
       @java.lang.Override
@@ -3628,7 +3639,7 @@ public final class ResponsesToClient {
       getUnknownFields() {
         return this.unknownFields;
       }
-      private storageNode(
+      private storageNodeFileInfo(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -3662,6 +3673,12 @@ public final class ResponsesToClient {
                 hostname_ = s;
                 break;
               }
+              case 26: {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                filename_ = s;
+                break;
+              }
             }
           }
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -3676,14 +3693,14 @@ public final class ResponsesToClient {
       }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_descriptor;
+        return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_fieldAccessorTable
+        return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.class, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder.class);
+                edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.class, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder.class);
       }
 
       public static final int PORT_FIELD_NUMBER = 1;
@@ -3729,6 +3746,40 @@ public final class ResponsesToClient {
         }
       }
 
+      public static final int FILENAME_FIELD_NUMBER = 3;
+      private volatile java.lang.Object filename_;
+      /**
+       * <code>string filename = 3;</code>
+       */
+      public java.lang.String getFilename() {
+        java.lang.Object ref = filename_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          filename_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string filename = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getFilenameBytes() {
+        java.lang.Object ref = filename_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          filename_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
@@ -3747,6 +3798,9 @@ public final class ResponsesToClient {
         if (!getHostnameBytes().isEmpty()) {
           com.google.protobuf.GeneratedMessageV3.writeString(output, 2, hostname_);
         }
+        if (!getFilenameBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 3, filename_);
+        }
         unknownFields.writeTo(output);
       }
 
@@ -3762,6 +3816,9 @@ public final class ResponsesToClient {
         if (!getHostnameBytes().isEmpty()) {
           size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, hostname_);
         }
+        if (!getFilenameBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, filename_);
+        }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
@@ -3772,16 +3829,18 @@ public final class ResponsesToClient {
         if (obj == this) {
          return true;
         }
-        if (!(obj instanceof edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode)) {
+        if (!(obj instanceof edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo)) {
           return super.equals(obj);
         }
-        edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode other = (edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode) obj;
+        edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo other = (edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo) obj;
 
         boolean result = true;
         result = result && (getPort()
             == other.getPort());
         result = result && getHostname()
             .equals(other.getHostname());
+        result = result && getFilename()
+            .equals(other.getFilename());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
       }
@@ -3797,74 +3856,76 @@ public final class ResponsesToClient {
         hash = (53 * hash) + getPort();
         hash = (37 * hash) + HOSTNAME_FIELD_NUMBER;
         hash = (53 * hash) + getHostname().hashCode();
+        hash = (37 * hash) + FILENAME_FIELD_NUMBER;
+        hash = (53 * hash) + getFilename().hashCode();
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
       }
 
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(
           java.nio.ByteBuffer data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(
           java.nio.ByteBuffer data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(
           com.google.protobuf.ByteString data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(byte[] data)
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(byte[] data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(
           byte[] data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(java.io.InputStream input)
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input, extensionRegistry);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseDelimitedFrom(java.io.InputStream input)
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseDelimitedFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseDelimitedFrom(
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseDelimitedFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parseFrom(
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
@@ -3876,7 +3937,7 @@ public final class ResponsesToClient {
       public static Builder newBuilder() {
         return DEFAULT_INSTANCE.toBuilder();
       }
-      public static Builder newBuilder(edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode prototype) {
+      public static Builder newBuilder(edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo prototype) {
         return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
       }
       public Builder toBuilder() {
@@ -3891,25 +3952,25 @@ public final class ResponsesToClient {
         return builder;
       }
       /**
-       * Protobuf type {@code ListOfActiveStorageNodesResponseFromCN.storageNode}
+       * Protobuf type {@code ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo}
        */
       public static final class Builder extends
           com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:ListOfActiveStorageNodesResponseFromCN.storageNode)
-          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder {
+          // @@protoc_insertion_point(builder_implements:ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo)
+          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_descriptor;
+          return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_descriptor;
         }
 
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_fieldAccessorTable
+          return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                  edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.class, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder.class);
+                  edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.class, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder.class);
         }
 
-        // Construct using edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.newBuilder()
+        // Construct using edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -3930,30 +3991,33 @@ public final class ResponsesToClient {
 
           hostname_ = "";
 
+          filename_ = "";
+
           return this;
         }
 
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_descriptor;
+          return edu.usfca.cs.dfs.ResponsesToClient.internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_descriptor;
         }
 
-        public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode getDefaultInstanceForType() {
-          return edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.getDefaultInstance();
+        public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo getDefaultInstanceForType() {
+          return edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.getDefaultInstance();
         }
 
-        public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode build() {
-          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode result = buildPartial();
+        public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo build() {
+          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo result = buildPartial();
           if (!result.isInitialized()) {
             throw newUninitializedMessageException(result);
           }
           return result;
         }
 
-        public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode buildPartial() {
-          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode result = new edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode(this);
+        public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo buildPartial() {
+          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo result = new edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo(this);
           result.port_ = port_;
           result.hostname_ = hostname_;
+          result.filename_ = filename_;
           onBuilt();
           return result;
         }
@@ -3985,21 +4049,25 @@ public final class ResponsesToClient {
           return (Builder) super.addRepeatedField(field, value);
         }
         public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode) {
-            return mergeFrom((edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode)other);
+          if (other instanceof edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo) {
+            return mergeFrom((edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo)other);
           } else {
             super.mergeFrom(other);
             return this;
           }
         }
 
-        public Builder mergeFrom(edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode other) {
-          if (other == edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.getDefaultInstance()) return this;
+        public Builder mergeFrom(edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo other) {
+          if (other == edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.getDefaultInstance()) return this;
           if (other.getPort() != 0) {
             setPort(other.getPort());
           }
           if (!other.getHostname().isEmpty()) {
             hostname_ = other.hostname_;
+            onChanged();
+          }
+          if (!other.getFilename().isEmpty()) {
+            filename_ = other.filename_;
             onChanged();
           }
           this.mergeUnknownFields(other.unknownFields);
@@ -4015,11 +4083,11 @@ public final class ResponsesToClient {
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
-          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode parsedMessage = null;
+          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo parsedMessage = null;
           try {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
           } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode) e.getUnfinishedMessage();
+            parsedMessage = (edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo) e.getUnfinishedMessage();
             throw e.unwrapIOException();
           } finally {
             if (parsedMessage != null) {
@@ -4123,6 +4191,75 @@ public final class ResponsesToClient {
           onChanged();
           return this;
         }
+
+        private java.lang.Object filename_ = "";
+        /**
+         * <code>string filename = 3;</code>
+         */
+        public java.lang.String getFilename() {
+          java.lang.Object ref = filename_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            filename_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>string filename = 3;</code>
+         */
+        public com.google.protobuf.ByteString
+            getFilenameBytes() {
+          java.lang.Object ref = filename_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            filename_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string filename = 3;</code>
+         */
+        public Builder setFilename(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          filename_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string filename = 3;</code>
+         */
+        public Builder clearFilename() {
+          
+          filename_ = getDefaultInstance().getFilename();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string filename = 3;</code>
+         */
+        public Builder setFilenameBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          filename_ = value;
+          onChanged();
+          return this;
+        }
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
           return super.setUnknownFieldsProto3(unknownFields);
@@ -4134,75 +4271,75 @@ public final class ResponsesToClient {
         }
 
 
-        // @@protoc_insertion_point(builder_scope:ListOfActiveStorageNodesResponseFromCN.storageNode)
+        // @@protoc_insertion_point(builder_scope:ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo)
       }
 
-      // @@protoc_insertion_point(class_scope:ListOfActiveStorageNodesResponseFromCN.storageNode)
-      private static final edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode DEFAULT_INSTANCE;
+      // @@protoc_insertion_point(class_scope:ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo)
+      private static final edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo DEFAULT_INSTANCE;
       static {
-        DEFAULT_INSTANCE = new edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode();
+        DEFAULT_INSTANCE = new edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo();
       }
 
-      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode getDefaultInstance() {
+      public static edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo getDefaultInstance() {
         return DEFAULT_INSTANCE;
       }
 
-      private static final com.google.protobuf.Parser<storageNode>
-          PARSER = new com.google.protobuf.AbstractParser<storageNode>() {
-        public storageNode parsePartialFrom(
+      private static final com.google.protobuf.Parser<storageNodeFileInfo>
+          PARSER = new com.google.protobuf.AbstractParser<storageNodeFileInfo>() {
+        public storageNodeFileInfo parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
-            return new storageNode(input, extensionRegistry);
+            return new storageNodeFileInfo(input, extensionRegistry);
         }
       };
 
-      public static com.google.protobuf.Parser<storageNode> parser() {
+      public static com.google.protobuf.Parser<storageNodeFileInfo> parser() {
         return PARSER;
       }
 
       @java.lang.Override
-      public com.google.protobuf.Parser<storageNode> getParserForType() {
+      public com.google.protobuf.Parser<storageNodeFileInfo> getParserForType() {
         return PARSER;
       }
 
-      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode getDefaultInstanceForType() {
+      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo getDefaultInstanceForType() {
         return DEFAULT_INSTANCE;
       }
 
     }
 
     public static final int ACTIVESTORAGENODES_FIELD_NUMBER = 1;
-    private java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> activeStorageNodes_;
+    private java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo> activeStorageNodes_;
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
-    public java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> getActiveStorageNodesList() {
+    public java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo> getActiveStorageNodesList() {
       return activeStorageNodes_;
     }
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
-    public java.util.List<? extends edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder> 
+    public java.util.List<? extends edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder> 
         getActiveStorageNodesOrBuilderList() {
       return activeStorageNodes_;
     }
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
     public int getActiveStorageNodesCount() {
       return activeStorageNodes_.size();
     }
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
-    public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode getActiveStorageNodes(int index) {
+    public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo getActiveStorageNodes(int index) {
       return activeStorageNodes_.get(index);
     }
     /**
-     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+     * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
      */
-    public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder getActiveStorageNodesOrBuilder(
+    public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder getActiveStorageNodesOrBuilder(
         int index) {
       return activeStorageNodes_.get(index);
     }
@@ -4530,22 +4667,22 @@ public final class ResponsesToClient {
       }
       private int bitField0_;
 
-      private java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> activeStorageNodes_ =
+      private java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo> activeStorageNodes_ =
         java.util.Collections.emptyList();
       private void ensureActiveStorageNodesIsMutable() {
         if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          activeStorageNodes_ = new java.util.ArrayList<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode>(activeStorageNodes_);
+          activeStorageNodes_ = new java.util.ArrayList<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo>(activeStorageNodes_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder> activeStorageNodesBuilder_;
+          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder> activeStorageNodesBuilder_;
 
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
-      public java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> getActiveStorageNodesList() {
+      public java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo> getActiveStorageNodesList() {
         if (activeStorageNodesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(activeStorageNodes_);
         } else {
@@ -4553,7 +4690,7 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
       public int getActiveStorageNodesCount() {
         if (activeStorageNodesBuilder_ == null) {
@@ -4563,9 +4700,9 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
-      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode getActiveStorageNodes(int index) {
+      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo getActiveStorageNodes(int index) {
         if (activeStorageNodesBuilder_ == null) {
           return activeStorageNodes_.get(index);
         } else {
@@ -4573,10 +4710,10 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
       public Builder setActiveStorageNodes(
-          int index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode value) {
+          int index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo value) {
         if (activeStorageNodesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4590,10 +4727,10 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
       public Builder setActiveStorageNodes(
-          int index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder builderForValue) {
+          int index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder builderForValue) {
         if (activeStorageNodesBuilder_ == null) {
           ensureActiveStorageNodesIsMutable();
           activeStorageNodes_.set(index, builderForValue.build());
@@ -4604,9 +4741,9 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
-      public Builder addActiveStorageNodes(edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode value) {
+      public Builder addActiveStorageNodes(edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo value) {
         if (activeStorageNodesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4620,10 +4757,10 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
       public Builder addActiveStorageNodes(
-          int index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode value) {
+          int index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo value) {
         if (activeStorageNodesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4637,10 +4774,10 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
       public Builder addActiveStorageNodes(
-          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder builderForValue) {
+          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder builderForValue) {
         if (activeStorageNodesBuilder_ == null) {
           ensureActiveStorageNodesIsMutable();
           activeStorageNodes_.add(builderForValue.build());
@@ -4651,10 +4788,10 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
       public Builder addActiveStorageNodes(
-          int index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder builderForValue) {
+          int index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder builderForValue) {
         if (activeStorageNodesBuilder_ == null) {
           ensureActiveStorageNodesIsMutable();
           activeStorageNodes_.add(index, builderForValue.build());
@@ -4665,10 +4802,10 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
       public Builder addAllActiveStorageNodes(
-          java.lang.Iterable<? extends edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode> values) {
+          java.lang.Iterable<? extends edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo> values) {
         if (activeStorageNodesBuilder_ == null) {
           ensureActiveStorageNodesIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -4680,7 +4817,7 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
       public Builder clearActiveStorageNodes() {
         if (activeStorageNodesBuilder_ == null) {
@@ -4693,7 +4830,7 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
       public Builder removeActiveStorageNodes(int index) {
         if (activeStorageNodesBuilder_ == null) {
@@ -4706,16 +4843,16 @@ public final class ResponsesToClient {
         return this;
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
-      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder getActiveStorageNodesBuilder(
+      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder getActiveStorageNodesBuilder(
           int index) {
         return getActiveStorageNodesFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
-      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder getActiveStorageNodesOrBuilder(
+      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder getActiveStorageNodesOrBuilder(
           int index) {
         if (activeStorageNodesBuilder_ == null) {
           return activeStorageNodes_.get(index);  } else {
@@ -4723,9 +4860,9 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
-      public java.util.List<? extends edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder> 
+      public java.util.List<? extends edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder> 
            getActiveStorageNodesOrBuilderList() {
         if (activeStorageNodesBuilder_ != null) {
           return activeStorageNodesBuilder_.getMessageOrBuilderList();
@@ -4734,33 +4871,33 @@ public final class ResponsesToClient {
         }
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
-      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder addActiveStorageNodesBuilder() {
+      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder addActiveStorageNodesBuilder() {
         return getActiveStorageNodesFieldBuilder().addBuilder(
-            edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.getDefaultInstance());
+            edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.getDefaultInstance());
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
-      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder addActiveStorageNodesBuilder(
+      public edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder addActiveStorageNodesBuilder(
           int index) {
         return getActiveStorageNodesFieldBuilder().addBuilder(
-            index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.getDefaultInstance());
+            index, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.getDefaultInstance());
       }
       /**
-       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNode activeStorageNodes = 1;</code>
+       * <code>repeated .ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo activeStorageNodes = 1;</code>
        */
-      public java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder> 
+      public java.util.List<edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder> 
            getActiveStorageNodesBuilderList() {
         return getActiveStorageNodesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder> 
+          edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder> 
           getActiveStorageNodesFieldBuilder() {
         if (activeStorageNodesBuilder_ == null) {
           activeStorageNodesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNode.Builder, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeOrBuilder>(
+              edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo.Builder, edu.usfca.cs.dfs.ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfoOrBuilder>(
                   activeStorageNodes_,
                   ((bitField0_ & 0x00000001) == 0x00000001),
                   getParentForChildren(),
@@ -8009,10 +8146,10 @@ public final class ResponsesToClient {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_ListOfActiveStorageNodesResponseFromCN_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_descriptor;
+    internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_fieldAccessorTable;
+      internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_RetrieveFileResponseFromSN_descriptor;
   private static final 
@@ -8052,26 +8189,27 @@ public final class ResponsesToClient {
       "\001(\t\022\017\n\007chunkId\030\002 \001(\005\022C\n\004node\030\003 \001(\01325.Ret" +
       "rieveFileResponseFromCN.chunkMetadata.st" +
       "orageNode\032-\n\013storageNode\022\014\n\004port\030\001 \001(\005\022\020",
-      "\n\010hostname\030\002 \001(\t\"\250\001\n&ListOfActiveStorage" +
-      "NodesResponseFromCN\022O\n\022activeStorageNode" +
-      "s\030\001 \003(\01323.ListOfActiveStorageNodesRespon" +
-      "seFromCN.storageNode\032-\n\013storageNode\022\014\n\004p" +
-      "ort\030\001 \001(\005\022\020\n\010hostname\030\002 \001(\t\"d\n\032RetrieveF" +
-      "ileResponseFromSN\022\020\n\010checksum\030\001 \001(\005\022\021\n\tc" +
-      "hunkData\030\002 \001(\014\022\020\n\010filename\030\003 \001(\t\022\017\n\007chun" +
-      "kId\030\004 \001(\005\"/\n\034AcknowledgeReadinessToClien" +
-      "t\022\017\n\007success\030\001 \001(\010\"0\n\035AcknowledgeStoreCh" +
-      "unkToClient\022\017\n\007success\030\001 \001(\010\"\371\002\n\030Respons",
-      "esToClientWrapper\0224\n\025StoreChunkResponseM" +
-      "sg\030\001 \001(\0132\023.StoreChunkResponseH\000\022D\n\035Retri" +
-      "eveFileResponseFromCNMsg\030\002 \001(\0132\033.Retriev" +
-      "eFileResponseFromCNH\000\022D\n\035RetrieveFileRes" +
-      "ponseFromSNMsg\030\003 \001(\0132\033.RetrieveFileRespo" +
-      "nseFromSNH\000\022H\n\037AcknowledgeReadinessToCli" +
-      "entMsg\030\004 \001(\0132\035.AcknowledgeReadinessToCli" +
-      "entH\000\022J\n AcknowledgeStoreChunkToClientMs" +
-      "g\030\005 \001(\0132\036.AcknowledgeStoreChunkToClientH" +
-      "\000B\005\n\003msgB\022\n\020edu.usfca.cs.dfsb\006proto3"
+      "\n\010hostname\030\002 \001(\t\"\312\001\n&ListOfActiveStorage" +
+      "NodesResponseFromCN\022W\n\022activeStorageNode" +
+      "s\030\001 \003(\0132;.ListOfActiveStorageNodesRespon" +
+      "seFromCN.storageNodeFileInfo\032G\n\023storageN" +
+      "odeFileInfo\022\014\n\004port\030\001 \001(\005\022\020\n\010hostname\030\002 " +
+      "\001(\t\022\020\n\010filename\030\003 \001(\t\"d\n\032RetrieveFileRes" +
+      "ponseFromSN\022\020\n\010checksum\030\001 \001(\005\022\021\n\tchunkDa" +
+      "ta\030\002 \001(\014\022\020\n\010filename\030\003 \001(\t\022\017\n\007chunkId\030\004 " +
+      "\001(\005\"/\n\034AcknowledgeReadinessToClient\022\017\n\007s" +
+      "uccess\030\001 \001(\010\"0\n\035AcknowledgeStoreChunkToC",
+      "lient\022\017\n\007success\030\001 \001(\010\"\371\002\n\030ResponsesToCl" +
+      "ientWrapper\0224\n\025StoreChunkResponseMsg\030\001 \001" +
+      "(\0132\023.StoreChunkResponseH\000\022D\n\035RetrieveFil" +
+      "eResponseFromCNMsg\030\002 \001(\0132\033.RetrieveFileR" +
+      "esponseFromCNH\000\022D\n\035RetrieveFileResponseF" +
+      "romSNMsg\030\003 \001(\0132\033.RetrieveFileResponseFro" +
+      "mSNH\000\022H\n\037AcknowledgeReadinessToClientMsg" +
+      "\030\004 \001(\0132\035.AcknowledgeReadinessToClientH\000\022" +
+      "J\n AcknowledgeStoreChunkToClientMsg\030\005 \001(" +
+      "\0132\036.AcknowledgeStoreChunkToClientH\000B\005\n\003m",
+      "sgB\022\n\020edu.usfca.cs.dfsb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -8121,12 +8259,12 @@ public final class ResponsesToClient {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ListOfActiveStorageNodesResponseFromCN_descriptor,
         new java.lang.String[] { "ActiveStorageNodes", });
-    internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_descriptor =
+    internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_descriptor =
       internal_static_ListOfActiveStorageNodesResponseFromCN_descriptor.getNestedTypes().get(0);
-    internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_fieldAccessorTable = new
+    internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_ListOfActiveStorageNodesResponseFromCN_storageNode_descriptor,
-        new java.lang.String[] { "Port", "Hostname", });
+        internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_descriptor,
+        new java.lang.String[] { "Port", "Hostname", "Filename", });
     internal_static_RetrieveFileResponseFromSN_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_RetrieveFileResponseFromSN_fieldAccessorTable = new

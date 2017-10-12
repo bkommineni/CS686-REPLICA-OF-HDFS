@@ -3,10 +3,7 @@ package edu.usfca.cs.dfs;
 import com.google.protobuf.ByteString;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,7 +42,7 @@ public class StorageNode {
         String currPath = ".";
         Path p = Paths.get(currPath);
         Path absDir = p.toAbsolutePath();
-        
+
         if(args.length > 0) {
             if (args[0] != null) {
                 controllerPortHostName = args[0];
@@ -95,10 +92,11 @@ public class StorageNode {
         @Override
         public void run()
         {
-            try
+            while (true)
             {
-                while (true)
+                try
                 {
+                    logger.info("heart beat");
                     controllerSocket = new Socket(controllerPortHostName, controllerPort);
                     List<RequestsToController.Heartbeat.ChunkMetadata> chunkMetadataList = new ArrayList<>();
                     for (String key : dataStoredInLastFiveSeconds.keySet()) {
@@ -123,17 +121,18 @@ public class StorageNode {
                     controllerSocket.close();
                     Thread.sleep(5000);
                 }
-            }
-            catch (UnknownHostException e)
-            {
-                logger.error("Exception caught : {}",ExceptionUtils.getStackTrace(e));
-            }
-            catch (IOException e)
-            {
-                logger.error("Exception caught : {}",ExceptionUtils.getStackTrace(e));
-            }
-            catch (InterruptedException e) {
-                e.printStackTrace();
+                catch (UnknownHostException e)
+                {
+                    logger.error("exception caught {}",ExceptionUtils.getStackTrace(e));
+                }
+                catch (IOException e)
+                {
+                    logger.error("exception caught {}",ExceptionUtils.getStackTrace(e));
+                }
+                catch (InterruptedException e)
+                {
+                    logger.error("exception caught {}",ExceptionUtils.getStackTrace(e));
+                }
             }
         }
     }

@@ -27,7 +27,7 @@ public class StorageNode {
     private Map<String,StorageNodeMetadata> dataStoredInLastFiveSeconds = new HashMap<>();
     private Socket controllerSocket = null;
     private Socket connSocket = null;
-    public static final int NUM_THREADS_ALLOWED = 20;
+    public static final int NUM_THREADS_ALLOWED = 10;
     private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
     private String dataDirectory = "/home2/bkommineni/";
 
@@ -96,7 +96,7 @@ public class StorageNode {
             {
                 try
                 {
-                    logger.info("heart beat");
+                    logger.debug("heart beat");
                     controllerSocket = new Socket(controllerPortHostName, controllerPort);
                     List<RequestsToController.Heartbeat.ChunkMetadata> chunkMetadataList = new ArrayList<>();
                     for (String key : dataStoredInLastFiveSeconds.keySet()) {
@@ -206,17 +206,24 @@ public class StorageNode {
 
                     /*Calculating Checksum and adding all the chunkInfo(filename,chunkId,Checksum) to metadata Map of Storage Node*/
                     MessageDigest md = MessageDigest.getInstance("MD5");
-                    FileInputStream fis = new FileInputStream(blockFile);
+                    /*FileInputStream fis = new FileInputStream(blockFile);
 
                     byte[] dataBytes = new byte[1024];
 
                     int nread = 0;
-                    while ((nread = fis.read(dataBytes)) != -1) {
+                    while ((nread = fis.read(dataBytes)) != -1)
+                    {
                         md.update(dataBytes, 0, nread);
-                    };
-                    byte[] mdbytes = md.digest();
+                    }*/
+                    byte[] mdbytes = md.digest(Files.readAllBytes(Paths.get(blockFile)));
+                    StringBuilder checksum = new StringBuilder();
+                    for (int j = 0; j < mdbytes.length; ++j)
+                    {
+                        checksum.append(Integer.toHexString((mdbytes[j] & 0xFF) | 0x100).substring(1, 3));
+                    }
+                    logger.info("checksum {}",checksum.toString());
                     StorageNodeMetadata metadata = new StorageNodeMetadata(filename,chunkId);
-                    metadata.setChecksum(mdbytes);
+                    metadata.setChecksum(checksum.toString());
                     String key = filename + Integer.toString(chunkId);
                     storageNodeMetadataMap.put(key,metadata);
                     dataStoredInLastFiveSeconds.put(key,metadata);
@@ -259,10 +266,10 @@ public class StorageNode {
                     {
                         chunkData = Files.readAllBytes(new File(dataDirectory + filename +"Part"+requestToSN.getChunkId()).toPath());
                     }
-
-                    logger.info("chunk data {}",chunkData);
+                    StorageNodeMetadata storageNodeMetadata = storageNodeMetadataMap.get(requestToSN.getFilename()+requestToSN.getChunkId());
+                    logger.debug("chunk data {}",chunkData);
                     ResponsesToClient.RetrieveFileResponseFromSN response = ResponsesToClient.RetrieveFileResponseFromSN.newBuilder()
-                            .setChecksum(0)
+                            .setChecksum(storageNodeMetadata.getChecksum())
                             .setFilename(requestToSN.getFilename())
                             .setChunkId(requestToSN.getChunkId())
                             .setChunkData(ByteString.copyFrom(chunkData)).build();
@@ -302,6 +309,115 @@ public class StorageNode {
                         }
                     }
 
+                }
+                if(requestsWrapper.hasSendGoodChunkRequestToSNMsg())
+                {
+                    logger.info("Received good chunk request from Client!!");
+
+                    RequestsToStorageNode.SendGoodChunkRequestToSN sn = requestsWrapper.getSendGoodChunkRequestToSNMsg();
+                    String f = dataDirectory+sn.getFilename()+"Part"+sn.getChunkId();
+                    logger.info("corrupted data {}",Files.readAllBytes(Paths.get(f)));
+                    RequestsToController.SendGoodChunkRequest.storageNode storageNode = RequestsToController.SendGoodChunkRequest.storageNode.newBuilder()
+                                                                                        .setHostname(getHostname())
+                                                                                        .setPort(storageNodePort).build();
+                    //request to controller to send address of host which has same replica other than this
+                    RequestsToController.SendGoodChunkRequest sendGoodChunkRequest = RequestsToController.SendGoodChunkRequest.newBuilder()
+                                                                                    .setFilename(sn.getFilename())
+                                                                                    .setChunkId(sn.getChunkId())
+                                                                                    .setSN(storageNode).build();
+                    RequestsToController.RequestsToControllerWrapper wrapper = RequestsToController.RequestsToControllerWrapper.newBuilder()
+                                                                                .setSendGoodChunkRequestMsg(sendGoodChunkRequest).build();
+                    Socket socket = new Socket(controllerPortHostName,controllerPort);
+                    logger.info("Sending good chunk request to CN....");
+                    wrapper.writeDelimitedTo(socket.getOutputStream());
+                    ResponsesToStorageNode.GoodChunkInfoToSN goodChunkInfoToSN = ResponsesToStorageNode.GoodChunkInfoToSN
+                                                                                .parseDelimitedFrom(socket.getInputStream());
+                    logger.info("Received good chunk request from CN!!");
+                    socket.close();
+                    socket = new Socket(goodChunkInfoToSN.getSN().getHostname(),goodChunkInfoToSN.getSN().getPort());
+                    RequestsToStorageNode.SendGoodChunkRequestFromSNToSN.storageNode SN = RequestsToStorageNode.SendGoodChunkRequestFromSNToSN.storageNode
+                                                                                            .newBuilder()
+                                                                                            .setHostname(getHostname())
+                                                                                            .setPort(storageNodePort).build();
+                    RequestsToStorageNode.SendGoodChunkRequestFromSNToSN snToSN = RequestsToStorageNode.SendGoodChunkRequestFromSNToSN.newBuilder()
+                                                                                    .setSN(SN)
+                                                                                    .setFilename(goodChunkInfoToSN.getFilename())
+                                                                                    .setChunkId(goodChunkInfoToSN.getChunkId()).build();
+                    RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper1 = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
+                                                                                    .setSendGoodChunkRequestFromSNToSNMsg(snToSN).build();
+                    logger.info("Sending good chunk request to SN {} from port {}",goodChunkInfoToSN.getSN().getHostname(),goodChunkInfoToSN.getSN().getPort());
+                    wrapper1.writeDelimitedTo(socket.getOutputStream());
+                    ResponsesToStorageNode.GoodChunkDataToSN chunkDataToSN = ResponsesToStorageNode.GoodChunkDataToSN
+                                                                            .parseDelimitedFrom(socket.getInputStream());
+                    logger.info("Received good chunk data from SN ");
+                    socket.close();
+
+
+                    //replace the chunk
+                    String key = chunkDataToSN.getFilename()+ "Part" + chunkDataToSN.getChunkId();
+                    String filePath = dataDirectory+key;
+                    File file = new File(filePath);
+                    byte[] chunkData = chunkDataToSN.getChunkData().toByteArray();
+                    logger.info("chunkdata {}",chunkData);
+                    if(file.exists())
+                    {
+                        boolean check = file.delete();
+                        if(check)
+                        {
+                            file.createNewFile();
+                            FileWriter writer = new FileWriter(file);
+                            for(int i=0;i< chunkData.length;i++)
+                            {
+                                writer.write(chunkData[i]);
+                            }
+                            writer.close();
+                        }
+                    }
+                    //replace checksum in the entry of metadata
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+
+                    byte[] mdbytes = md.digest(Files.readAllBytes(Paths.get(filePath)));
+                    StringBuilder checksum = new StringBuilder();
+                    for (int j = 0; j < mdbytes.length; ++j)
+                    {
+                        checksum.append(Integer.toHexString((mdbytes[j] & 0xFF) | 0x100).substring(1, 3));
+                    }
+                    logger.info("checksum {}",checksum.toString());
+                    StorageNodeMetadata metadata = new StorageNodeMetadata(chunkDataToSN.getFilename(),chunkDataToSN.getChunkId());
+                    metadata.setChecksum(checksum.toString());
+                    storageNodeMetadataMap.put(chunkDataToSN.getFilename()+chunkDataToSN.getChunkId(),metadata);
+                    logger.info("good chunkData {}",Files.readAllBytes(Paths.get(filePath)));
+                    //send good chunk back to client which is waiting
+                    BufferedReader reader = new BufferedReader(new FileReader(new File(filePath)));
+                    String line = null;
+                    while ((line = reader.readLine()) != null)
+                    {
+                        logger.info("file info {}",line);
+                    }
+                    ResponsesToClient.GoodChunkDataToClient goodChunkData = ResponsesToClient.GoodChunkDataToClient.newBuilder()
+                                                                            .setChunkData(ByteString.copyFrom(Files.readAllBytes(Paths.get(filePath))))
+                                                                            .setChecksum(checksum.toString())
+                                                                            .setFilename(chunkDataToSN.getFilename())
+                                                                            .setChunkId(chunkDataToSN.getChunkId()).build();
+                    logger.info("Sending good chunk data back to client!!!");
+                    goodChunkData.writeDelimitedTo(connSocket.getOutputStream());
+                    connSocket.close();
+                }
+                if(requestsWrapper.hasSendGoodChunkRequestFromSNToSNMsg())
+                {
+                    RequestsToStorageNode.SendGoodChunkRequestFromSNToSN SN = requestsWrapper.getSendGoodChunkRequestFromSNToSNMsg();
+                    logger.info("Received good chunk data req from peer SN {} from port {} for file {} chunk {}",SN.getSN().getHostname()
+                            ,SN.getSN().getPort(),SN.getFilename(),SN.getChunkId());
+                    String filePath = dataDirectory + SN.getFilename()+"Part"+ SN.getChunkId();
+                    byte[] chunkData = Files.readAllBytes(Paths.get(filePath));
+                    logger.info("chunkData {}",chunkData);
+                    ResponsesToStorageNode.GoodChunkDataToSN chunkDataToSN = ResponsesToStorageNode.GoodChunkDataToSN.newBuilder()
+                                                                            .setChunkData(ByteString.copyFrom(chunkData))
+                                                                            .setFilename(SN.getFilename())
+                                                                            .setChunkId(SN.getChunkId()).build();
+                    chunkDataToSN.writeDelimitedTo(connSocket.getOutputStream());
+                    logger.info("Sending response with good chunk data..");
+                    connSocket.close();
                 }
 
             }

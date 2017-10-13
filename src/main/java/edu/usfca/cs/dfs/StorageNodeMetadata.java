@@ -7,7 +7,7 @@ public class StorageNodeMetadata {
 
     private String filename;
     private int chunkId;
-    private byte[] checksum;
+    private String checksum;
 
     public StorageNodeMetadata(String filename, int chunkId) {
         this.filename = filename;
@@ -30,11 +30,11 @@ public class StorageNodeMetadata {
         this.chunkId = chunkId;
     }
 
-    public byte[] getChecksum() {
+    public String getChecksum() {
         return checksum;
     }
 
-    public void setChecksum(byte[] checksum) {
+    public void setChecksum(String checksum) {
         this.checksum = checksum;
     }
 }

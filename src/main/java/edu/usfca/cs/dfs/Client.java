@@ -10,6 +10,8 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,7 +26,7 @@ public class Client {
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
     private static SortedMap<Integer,byte[]> listOfChunks;
     private static final int CHUNK_SIZE = 2000;
-    public static final int NUM_THREADS_ALLOWED = 20;
+    public static final int NUM_THREADS_ALLOWED = 5;
     private static ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
 
     public static void main(String[] args) throws Exception{
@@ -195,7 +197,7 @@ public class Client {
             executorService.shutdown();
             try
             {
-                executorService.awaitTermination(1, TimeUnit.MINUTES);
+                executorService.awaitTermination(20, TimeUnit.MINUTES);
             }
             catch (InterruptedException e)
             {
@@ -253,6 +255,7 @@ public class Client {
                         .setRetrieveFileRequestToSNMsg(requestToSN).build();
                 Socket socket1 = new Socket(chunkMetadata.getNode().getHostname(), chunkMetadata.getNode().getPort());
                 logger.info("Sending RetrieveFile request to Storage Node {} to port {}", socket1.getInetAddress(), socket1.getPort());
+                logger.info("Sending request for {} chunk {}",chunkMetadata.getFilename(),chunkMetadata.getChunkId());
                 toStorageNodeWrapper.writeDelimitedTo(socket1.getOutputStream());
                 logger.info("Waiting for RetrieveFile response from Storage Node...");
 
@@ -260,6 +263,36 @@ public class Client {
                 ResponsesToClient.RetrieveFileResponseFromSN responseFromSN = ResponsesToClient.RetrieveFileResponseFromSN.parseDelimitedFrom(socket1.getInputStream());
                 logger.info("Received RetrieveFile response from Storage Node...");
                 byte[] temp = responseFromSN.getChunkData().toByteArray();
+                String checksum = calculateChecksum(temp);
+                String checksumDesired = responseFromSN.getChecksum();
+                logger.info("checksum {} checksum desired {}",checksum,checksumDesired);
+
+                //check the checksum
+                while (!checksumDesired.equals(checksum))
+                {
+                    socket1.close();
+                    //checksum does not match
+                    //send request for right copy
+                    RequestsToStorageNode.SendGoodChunkRequestToSN goodChunkRequestToSN = RequestsToStorageNode.SendGoodChunkRequestToSN
+                                                                                           .newBuilder()
+                                                                                            .setFilename(chunkMetadata.getFilename())
+                                                                                            .setChunkId(chunkMetadata.getChunkId())
+                                                                                            .build();
+                    RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
+                                                                                .setSendGoodChunkRequestToSNMsg(goodChunkRequestToSN).build();
+                    socket1 = new Socket(chunkMetadata.getNode().getHostname(),chunkMetadata.getNode().getPort());
+                    logger.info("Sending good chunk request to SN {} to port {}",chunkMetadata.getNode().getHostname(),chunkMetadata.getNode().getPort());
+                    wrapper.writeDelimitedTo(socket1.getOutputStream());
+                    logger.info("Waiting for good chunk response from SN...");
+                    ResponsesToClient.GoodChunkDataToClient goodChunkData = ResponsesToClient.GoodChunkDataToClient
+                                                                            .parseDelimitedFrom(socket1.getInputStream());
+                    logger.info("Received good chunk data from SN {} from port {}",chunkMetadata.getNode().getHostname(),chunkMetadata.getNode().getPort());
+                    temp = goodChunkData.getChunkData().toByteArray();
+                    logger.info("chunkdata {}",temp);
+                    checksum = calculateChecksum(temp);
+                    checksumDesired = goodChunkData.getChecksum();
+                    logger.info("checksumDesired {} checksum {}",checksumDesired,checksum);
+                }
                 listOfChunks.put(responseFromSN.getChunkId(),temp);
                 System.out.println("list of chunks {}"+ listOfChunks);
                 socket1.close();
@@ -269,6 +302,25 @@ public class Client {
                 logger.error("Exception caught {}", ExceptionUtils.getStackTrace(e));
             }
         }
+    }
+
+    private static String calculateChecksum(byte[] bytes)
+    {
+        StringBuilder checksum = new StringBuilder();
+        try
+        {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] mdbytes = md.digest(bytes);
+            for (int j = 0; j < mdbytes.length; ++j) {
+                checksum.append(Integer.toHexString((mdbytes[j] & 0xFF) | 0x100).substring(1, 3));
+            }
+
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            logger.error("Exception caught {}", ExceptionUtils.getStackTrace(e));
+        }
+        return checksum.toString();
     }
 
     private static List chunking(String filePath) throws Exception

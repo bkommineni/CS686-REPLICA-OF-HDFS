@@ -32,7 +32,7 @@ public class Controller {
     private Map<Integer,String>  storageNodeMapToNum  = new HashMap<>();
     private Map<String,Long>     storageNodeHeartBeatTimeStamps = new HashMap<>();
     private List<String> activeStorageNodeFileInfo = new ArrayList<>();
-    public static final int NUM_THREADS_ALLOWED = 20;
+    public static final int NUM_THREADS_ALLOWED = 10;
     private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
     public static final Long MAX_ALLOWED_ACTIVENESS = 10000L;
 
@@ -275,7 +275,7 @@ public class Controller {
                 if(msgWrapper.hasHeartbeatMsg())
                 {
                     //check info sent on heartbeat and make sure what are active nodes
-                    logger.info("Received heartbeat message from storage node {} from port {}" , msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
+                    logger.debug("Received heartbeat message from storage node {} from port {}" , msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
                     int size = msgWrapper.getHeartbeatMsg().getMetadataList().size();
                     RequestsToController.Heartbeat.storageNode storageNode = RequestsToController.Heartbeat.storageNode.newBuilder()
                                                                                 .setHostname(msgWrapper.getHeartbeatMsg().getSN().getHostname())
@@ -333,6 +333,45 @@ public class Controller {
                     list.writeDelimitedTo(connectionSocket.getOutputStream());
                     logger.info("Responded with a list of active storage nodes");
                     connectionSocket.close();
+                }
+                if(msgWrapper.hasSendGoodChunkRequestMsg())
+                {
+                    RequestsToController.SendGoodChunkRequest goodChunkRequest = msgWrapper.getSendGoodChunkRequestMsg();
+                    ResponsesToStorageNode.GoodChunkInfoToSN goodChunkInfoToSN = null;
+                    ResponsesToStorageNode.GoodChunkInfoToSN.storageNode SN = null;
+                    String key = goodChunkRequest.getFilename()+goodChunkRequest.getChunkId();
+                    for(Map.Entry<String,Metadata> entry : metadataMap.entrySet())
+                    {
+                        if(entry.getKey().contains(key))
+                        {
+                            if(goodChunkRequest.getSN().getHostname().equals("Bhargavis-MacBook-Pro.local"))
+                            {
+                                if(entry.getValue().getDataNode().getPort() != goodChunkRequest.getSN().getPort())
+                                {
+                                    SN = ResponsesToStorageNode.GoodChunkInfoToSN.storageNode.newBuilder()
+                                            .setHostname(entry.getValue().getDataNode().getHostname())
+                                            .setPort(entry.getValue().getDataNode().getPort()).build();
+                                    goodChunkInfoToSN = ResponsesToStorageNode.GoodChunkInfoToSN.newBuilder()
+                                            .setFilename(entry.getValue().getFilename())
+                                            .setChunkId(entry.getValue().getChunkId())
+                                            .setSN(SN).build();
+                                }
+                            }
+                            else if(!entry.getValue().getDataNode().getHostname().equals(goodChunkRequest.getSN().getHostname()) &&
+                                    (entry.getValue().getDataNode().getPort() != goodChunkRequest.getSN().getPort()))
+                            {
+                                SN = ResponsesToStorageNode.GoodChunkInfoToSN.storageNode.newBuilder()
+                                        .setHostname(entry.getValue().getDataNode().getHostname())
+                                        .setPort(entry.getValue().getDataNode().getPort()).build();
+                                goodChunkInfoToSN = ResponsesToStorageNode.GoodChunkInfoToSN.newBuilder()
+                                                    .setFilename(entry.getValue().getFilename())
+                                                    .setChunkId(entry.getValue().getChunkId())
+                                                    .setSN(SN).build();
+                            }
+                        }
+                    }
+                    logger.info("Sending good chunk info to SN.....");
+                    goodChunkInfoToSN.writeDelimitedTo(connectionSocket.getOutputStream());
                 }
 
             }

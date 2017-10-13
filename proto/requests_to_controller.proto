@@ -44,6 +44,20 @@ message Heartbeat
     repeated ChunkMetadata metadata = 2;
 }
 
+message SendGoodChunkRequest
+{
+    string filename = 1;
+    int32 chunkId = 2;
+
+    message storageNode
+    {
+        int32 port = 1;
+        string hostname = 2;
+    }
+
+    storageNode SN = 3;
+}
+
 message RequestsToControllerWrapper {
     oneof msg {
         StoreChunkRequest storeChunkRequestMsg = 1;
@@ -51,5 +65,6 @@ message RequestsToControllerWrapper {
         Enroll enrollMsg = 3;
         Heartbeat heartbeatMsg = 4;
         ListOfActiveNodesRequest listOfActiveNodes = 5;
+        SendGoodChunkRequest sendGoodChunkRequestMsg = 6;
     }
 }

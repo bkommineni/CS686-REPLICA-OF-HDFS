@@ -81,11 +81,31 @@ message RetrieveFileRequestToSN
     int32  chunkId  = 2;
 }
 
+message SendGoodChunkRequestToSN
+{
+    string filename = 1;
+    int32  chunkId  = 2;
+}
+
+message SendGoodChunkRequestFromSNToSN
+{
+    string filename = 1;
+    int32  chunkId  = 2;
+    message storageNode
+    {
+        int32 port = 1;
+        string hostname = 2;
+    }
+    storageNode SN = 3;
+}
+
 message RequestsToStorageNodeWrapper {
     oneof msg {
         ReadinessCheckRequestToSN readinessCheckRequestToSNMsg = 1;
         StoreChunkRequestToSN storeChunkRequestToSNMsg = 2;
         RetrieveFileRequestToSN retrieveFileRequestToSNMsg = 3;
         ReadinessCheckRequestToSNFromSN readinessCheckRequestToSNFromSNMsg = 4;
+        SendGoodChunkRequestToSN sendGoodChunkRequestToSNMsg = 5;
+        SendGoodChunkRequestFromSNToSN sendGoodChunkRequestFromSNToSNMsg = 6;
     }
 }

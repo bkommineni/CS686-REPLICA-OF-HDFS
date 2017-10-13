@@ -18,11 +18,32 @@ message AcknowledgeStoreChunkToSN
     bool success = 1;
 }
 
+message GoodChunkInfoToSN
+{
+    string filename = 1;
+    int32 chunkId = 2;
+    message storageNode
+    {
+        int32 port = 1;
+        string hostname = 2;
+    }
+    storageNode SN = 3;
+}
+
+message GoodChunkDataToSN
+{
+    string filename = 1;
+    int32  chunkId  = 2;
+    bytes  chunkData = 3;
+}
+
 message ResponsesToStorageNodeWrapper {
     oneof msg {
         AcknowledgeEnrollment AcknowledgeEnrollmentMsg = 1;
         AcknowledgeReadinessToSN AcknowledgeReadinessToSNMsg = 2;
         AcknowledgeStoreChunkToSN AcknowledgeStoreChunkToSNMsg = 3;
+        GoodChunkInfoToSN goodChunkInfoToSN = 4;
+        GoodChunkDataToSN goodChunkDataToSNMsg = 5;
     }
 }
 

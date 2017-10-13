@@ -43,7 +43,7 @@ message ListOfActiveStorageNodesResponseFromCN
 //StorageNode
 message RetrieveFileResponseFromSN
 {
-    int32 checksum = 1;
+    string checksum = 1;
     bytes chunkData = 2;
     string filename = 3;
     int32 chunkId  = 4;
@@ -67,6 +67,14 @@ message AcknowledgeStoreChunkToClient
 //    string hostname = 4;
 //}
 
+message GoodChunkDataToClient
+{
+    string filename = 1;
+    int32 chunkId   = 2;
+    bytes chunkData = 3;
+    string checksum = 4;
+}
+
 message ResponsesToClientWrapper {
     oneof msg {
         StoreChunkResponse StoreChunkResponseMsg = 1;
@@ -74,5 +82,6 @@ message ResponsesToClientWrapper {
         RetrieveFileResponseFromSN RetrieveFileResponseFromSNMsg = 3;
         AcknowledgeReadinessToClient AcknowledgeReadinessToClientMsg = 4;
         AcknowledgeStoreChunkToClient AcknowledgeStoreChunkToClientMsg = 5;
+        GoodChunkDataToClient goodChunkDataToClientMsg = 6;
     }
 }

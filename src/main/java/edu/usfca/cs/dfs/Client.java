@@ -2,10 +2,7 @@ package edu.usfca.cs.dfs;
 
 import com.google.protobuf.ByteString;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InterruptedIOException;
+import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -203,18 +200,12 @@ public class Client {
             {
                 logger.error("Exception caught {}",ExceptionUtils.getStackTrace(e));
             }
-            FileWriter writer = new FileWriter(mergedFile);
             logger.info("byte array size {}",listOfChunks.size());
             for(int key : listOfChunks.keySet())
             {
                 byte[] temp = listOfChunks.get(key);
-                int k = 0;
-                while (k < temp.length) {
-                    writer.write(temp[k]);
-                    k++;
-                }
+                Files.write(Paths.get(mergedFile),temp);
             }
-            writer.close();
         }
         else if(args[2].equals("list"))
         {
@@ -335,19 +326,20 @@ public class Client {
             numBlocks = numBlocks + 1;
         logger.info("number of blocks {}", numBlocks);
         List<byte[]> blocks = new ArrayList<>();
+        ByteArrayOutputStream bos = null;
 
         while(i < fileSize)
         {
-            byte[] block = new byte[CHUNK_SIZE];
+            bos = new ByteArrayOutputStream();
             for (int j = 0; j < CHUNK_SIZE; j++)
             {
                 if(i<fileSize)
                 {
-                    block[j] = bFile[i];
+                    bos.write(bFile[i]);
                     i++;
                 }
             }
-            blocks.add(block);
+            blocks.add(bos.toByteArray());
         }
 
         return blocks;

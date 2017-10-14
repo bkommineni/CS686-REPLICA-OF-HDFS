@@ -75,10 +75,6 @@ public class StorageNode {
         {
             ServerSocket serverSocket = new ServerSocket(storageNodePort);
             logger.info("Listening...");
-            //Timer timer = new Timer();
-            //long delay = 0;
-            //long intervalPeriod = 5 * 1000;
-            //timer.scheduleAtFixedRate(task,delay,intervalPeriod);
             executorService.submit(new Thread(new HeartBeat()));
             while (true) {
                 connSocket = serverSocket.accept();
@@ -196,25 +192,11 @@ public class StorageNode {
                         blockFile = dataDirectory + filename + "Part" + chunkId;
                     }
                     int i=0;
-                    FileWriter writer = new FileWriter(blockFile);
-                    while(i < bytes.length)
-                    {
-                        writer.write(bytes[i]);
-                        i++;
-                    }
-                    writer.close();
+                    Files.write(Paths.get(blockFile),bytes);
+
 
                     /*Calculating Checksum and adding all the chunkInfo(filename,chunkId,Checksum) to metadata Map of Storage Node*/
                     MessageDigest md = MessageDigest.getInstance("MD5");
-                    /*FileInputStream fis = new FileInputStream(blockFile);
-
-                    byte[] dataBytes = new byte[1024];
-
-                    int nread = 0;
-                    while ((nread = fis.read(dataBytes)) != -1)
-                    {
-                        md.update(dataBytes, 0, nread);
-                    }*/
                     byte[] mdbytes = md.digest(Files.readAllBytes(Paths.get(blockFile)));
                     StringBuilder checksum = new StringBuilder();
                     for (int j = 0; j < mdbytes.length; ++j)
@@ -365,12 +347,7 @@ public class StorageNode {
                         if(check)
                         {
                             file.createNewFile();
-                            FileWriter writer = new FileWriter(file);
-                            for(int i=0;i< chunkData.length;i++)
-                            {
-                                writer.write(chunkData[i]);
-                            }
-                            writer.close();
+                            Files.write(Paths.get(filePath),chunkData);
                         }
                     }
                     //replace checksum in the entry of metadata

@@ -21,13 +21,13 @@ public class StorageNode {
 
     public static final Logger logger = LoggerFactory.getLogger(StorageNode.class);
     private int controllerPort;
-    private String controllerPortHostName = "localhost";
+    private String controllerPortHostName;
     private int storageNodePort;
     private Map<String,StorageNodeMetadata> storageNodeMetadataMap = new HashMap<>();
     private Map<String,StorageNodeMetadata> dataStoredInLastFiveSeconds = new HashMap<>();
     private Socket controllerSocket = null;
     private Socket connSocket = null;
-    public static final int NUM_THREADS_ALLOWED = 10;
+    public static final int NUM_THREADS_ALLOWED = 15;
     private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
     private String dataDirectory = "/home2/bkommineni/";
 
@@ -182,15 +182,15 @@ public class StorageNode {
                     /*Storing Chunk data on local file system of Node*/
                     String blockFile = null;
                     logger.info("filename {} ",filename);
-                    if((filename != null) && filename.endsWith(".txt"))
+                    /*if((filename != null) && filename.endsWith(".txt"))
                     {
                         filename = filename.split("\\.")[0];
                         blockFile = dataDirectory + filename + "Part" + chunkId +".txt";
                     }
                     else
-                    {
+                    {*/
                         blockFile = dataDirectory + filename + "Part" + chunkId;
-                    }
+                    //}
                     int i=0;
                     Files.write(Paths.get(blockFile),bytes);
 
@@ -239,15 +239,15 @@ public class StorageNode {
                     RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = requestsWrapper.getRetrieveFileRequestToSNMsg();
                     String filename  = requestToSN.getFilename();
                     byte[] chunkData = null;
-                    if((filename != null) && filename.endsWith(".txt"))
+                    /*if((filename != null) && filename.endsWith(".txt"))
                     {
                         filename = filename.split("\\.")[0];
                         chunkData = Files.readAllBytes(new File(dataDirectory + filename +"Part"+requestToSN.getChunkId()+".txt").toPath());
                     }
                     else
-                    {
+                    {*/
                         chunkData = Files.readAllBytes(new File(dataDirectory + filename +"Part"+requestToSN.getChunkId()).toPath());
-                    }
+                    //}
                     StorageNodeMetadata storageNodeMetadata = storageNodeMetadataMap.get(requestToSN.getFilename()+requestToSN.getChunkId());
                     logger.debug("chunk data {}",chunkData);
                     ResponsesToClient.RetrieveFileResponseFromSN response = ResponsesToClient.RetrieveFileResponseFromSN.newBuilder()
@@ -298,7 +298,7 @@ public class StorageNode {
 
                     RequestsToStorageNode.SendGoodChunkRequestToSN sn = requestsWrapper.getSendGoodChunkRequestToSNMsg();
                     String f = dataDirectory+sn.getFilename()+"Part"+sn.getChunkId();
-                    logger.info("corrupted data {}",Files.readAllBytes(Paths.get(f)));
+                    logger.debug("corrupted data {}",Files.readAllBytes(Paths.get(f)));
                     RequestsToController.SendGoodChunkRequest.storageNode storageNode = RequestsToController.SendGoodChunkRequest.storageNode.newBuilder()
                                                                                         .setHostname(getHostname())
                                                                                         .setPort(storageNodePort).build();
@@ -369,7 +369,7 @@ public class StorageNode {
                     String line = null;
                     while ((line = reader.readLine()) != null)
                     {
-                        logger.info("file info {}",line);
+                        logger.debug("file info {}",line);
                     }
                     ResponsesToClient.GoodChunkDataToClient goodChunkData = ResponsesToClient.GoodChunkDataToClient.newBuilder()
                                                                             .setChunkData(ByteString.copyFrom(Files.readAllBytes(Paths.get(filePath))))
@@ -396,7 +396,46 @@ public class StorageNode {
                     logger.info("Sending response with good chunk data..");
                     connSocket.close();
                 }
+                if(requestsWrapper.hasSendReplicaCopyToSNMsg())
+                {
+                    RequestsToStorageNode.SendReplicaCopyToSN replicaCopyToSN = requestsWrapper.getSendReplicaCopyToSNMsg();
 
+                    //get that file chunk data based on sent info
+
+                    String filePath = dataDirectory + replicaCopyToSN.getFilename() + replicaCopyToSN.getChunkId();
+                    byte[] chunkData = Files.readAllBytes(Paths.get(filePath));
+                    RequestsToStorageNode.SendReplicaCopyToSNFromSN replicaCopyToSNFromSN = RequestsToStorageNode.SendReplicaCopyToSNFromSN.newBuilder()
+                                                                                            .setChunkData(ByteString.copyFrom(chunkData))
+                                                                                            .setFilename(replicaCopyToSN.getFilename())
+                                                                                            .setChunkId(replicaCopyToSN.getChunkId()).build();
+                    Socket socket = new Socket(replicaCopyToSN.getSN().getHostname(),replicaCopyToSN.getSN().getPort());
+                    RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
+                                                                                .setSendReplicaCopyToSNFromSNMsg(replicaCopyToSNFromSN).build();
+                    wrapper.writeDelimitedTo(socket.getOutputStream());
+                }
+                if(requestsWrapper.hasSendReplicaCopyToSNFromSNMsg())
+                {
+                    RequestsToStorageNode.SendReplicaCopyToSNFromSN replicaCopyToSNFromSN = requestsWrapper.getSendReplicaCopyToSNFromSNMsg();
+                    String fileName = replicaCopyToSNFromSN.getFilename();
+                    int chunkId = replicaCopyToSNFromSN.getChunkId();
+                    String filePath = dataDirectory + fileName +"Part"+ chunkId;
+                    Files.createFile(Paths.get(filePath));
+                    Files.write(Paths.get(filePath),replicaCopyToSNFromSN.getChunkData().toByteArray());
+
+                    //checksum
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+
+                    byte[] mdbytes = md.digest(Files.readAllBytes(Paths.get(filePath)));
+                    StringBuilder checksum = new StringBuilder();
+                    for (int j = 0; j < mdbytes.length; ++j)
+                    {
+                        checksum.append(Integer.toHexString((mdbytes[j] & 0xFF) | 0x100).substring(1, 3));
+                    }
+                    logger.info("checksum {}",checksum.toString());
+                    StorageNodeMetadata metadata = new StorageNodeMetadata(fileName,chunkId);
+                    metadata.setChecksum(checksum.toString());
+                    storageNodeMetadataMap.put(fileName+chunkId,metadata);
+                }
             }
             catch (NoSuchAlgorithmException e)
             {
@@ -467,16 +506,16 @@ public class StorageNode {
                         logger.info("Received response from peer SN {} from port {}",hostname,socket.getPort());
                         socket.close();
                         String filepath = null;
-                        if((filename != null) && filename.endsWith(".txt"))
+                        /*if((filename != null) && filename.endsWith(".txt"))
                         {
                             filename = filename.split("\\.")[0];
                             filepath = dataDirectory + filename + "Part" + chunkId + ".txt";
                             filename = filename + ".txt";
                         }
                         else
-                        {
+                        {*/
                             filepath = dataDirectory + filename + "Part" + chunkId;
-                        }
+                        //}
                         if (acknowledgeReadinessToSN.getSuccess()) {
                             Socket socket1 = new Socket(hostname, peerList.get(0).getPort());
                             File file = new File(filepath);
@@ -551,16 +590,16 @@ public class StorageNode {
                         logger.info("Received readiness response(SN-SN) from peer SN {} from port {}",hostname,socket.getPort());
                         socket.close();
                         String filepath = null;
-                        if((filename != null) && filename.endsWith(".txt"))
+                        /*if((filename != null) && filename.endsWith(".txt"))
                         {
                             filename = filename.split("\\.")[0];
                             filepath = dataDirectory + filename + "Part" + chunkId + ".txt";
                             filename = filename + ".txt";
                         }
                         else
-                        {
+                        {*/
                             filepath = dataDirectory + filename + "Part" + chunkId;
-                        }
+                        //}
                         if (acknowledgeReadinessToSN.getSuccess()) {
                             Socket socket1 = new Socket(hostname,peerList.get(0).getPort());
                             File file = new File(filepath);

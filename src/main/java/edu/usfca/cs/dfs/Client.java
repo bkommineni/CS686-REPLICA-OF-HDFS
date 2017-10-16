@@ -24,7 +24,7 @@ public class Client {
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
     private static SortedMap<Integer,byte[]> listOfChunks;
     private static final int CHUNK_SIZE = 1000000;
-    public static final int NUM_THREADS_ALLOWED = 5;
+    public static final int NUM_THREADS_ALLOWED = 15;
     private static ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
 
     public static void main(String[] args) throws Exception{

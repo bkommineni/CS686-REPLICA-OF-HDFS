@@ -54,4 +54,12 @@ public class DataNode {
                 ", hostname='" + hostname + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        DataNode dataNode = (DataNode) o;
+        if (port != dataNode.port) return false;
+        return hostname != null ? hostname.equals(dataNode.hostname) : dataNode.hostname == null;
+    }
 }

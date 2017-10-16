@@ -99,6 +99,25 @@ message SendGoodChunkRequestFromSNToSN
     storageNode SN = 3;
 }
 
+message SendReplicaCopyToSN
+{
+    string filename = 1;
+    int32  chunkId  = 2;
+    message storageNode
+    {
+        int32 port = 1;
+        string hostname = 2;
+    }
+    storageNode SN = 3;
+}
+
+message SendReplicaCopyToSNFromSN
+{
+    string filename = 1;
+    int32  chunkId  = 2;
+    bytes chunkData = 3;
+}
+
 message RequestsToStorageNodeWrapper {
     oneof msg {
         ReadinessCheckRequestToSN readinessCheckRequestToSNMsg = 1;
@@ -107,5 +126,7 @@ message RequestsToStorageNodeWrapper {
         ReadinessCheckRequestToSNFromSN readinessCheckRequestToSNFromSNMsg = 4;
         SendGoodChunkRequestToSN sendGoodChunkRequestToSNMsg = 5;
         SendGoodChunkRequestFromSNToSN sendGoodChunkRequestFromSNToSNMsg = 6;
+        SendReplicaCopyToSN sendReplicaCopyToSNMsg = 7;
+        SendReplicaCopyToSNFromSN sendReplicaCopyToSNFromSNMsg = 8;
     }
 }

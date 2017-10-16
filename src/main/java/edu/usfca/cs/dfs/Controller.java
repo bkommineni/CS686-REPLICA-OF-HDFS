@@ -31,10 +31,10 @@ public class Controller {
     private Map<String,Boolean>  statusStorageNodesMap = new HashMap<>();
     private Map<Integer,String>  storageNodeMapToNum  = new HashMap<>();
     private Map<String,Long>     storageNodeHeartBeatTimeStamps = new HashMap<>();
-    private List<String> activeStorageNodeFileInfo = new ArrayList<>();
-    public static final int NUM_THREADS_ALLOWED = 10;
+    public static final int NUM_THREADS_ALLOWED = 15;
     private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
     public static final Long MAX_ALLOWED_ACTIVENESS = 10000L;
+    private String configPath = null;
 
     private static final int REPLICATION_FACTOR = 3;
 
@@ -46,15 +46,15 @@ public class Controller {
     private void start(String[] args) throws Exception
     {
         if(args.length > 0 ) {
-            if (args[0] != null)
+            if (args[0] != null) {
                 controllerPort = Integer.parseInt(args[0]);
+                if(args[1] != null)
+                {
+                    configPath = args[1];
+                }
+            }
         }
         /*Setting up the nodes using nodes list from config file*/
-
-        String currPath = ".";
-        Path p = Paths.get(currPath);
-        Path absDir = p.toAbsolutePath();
-        String configPath = absDir.toString() + "/config/Storage-nodes-list.txt";
         BufferedReader reader = new BufferedReader(new FileReader(configPath));
         String str = null;
         int counter = 1;
@@ -90,6 +90,7 @@ public class Controller {
         public void run()
         {
             String key = hostname+Integer.toString(port);
+            logger.info("Activeness check started on hostname {} port {}",hostname,port);
             while(true)
             {
                 if (storageNodeHeartBeatTimeStamps.get(key) != null)
@@ -97,23 +98,94 @@ public class Controller {
                     Long prevTimeStamp = storageNodeHeartBeatTimeStamps.get(key);
                     Long currentTimeStamp = System.currentTimeMillis();
                     Long diff = (currentTimeStamp - prevTimeStamp);
-                    //logger.info("diff {} prevTimeStamp {} currTImeStamp {}",diff,prevTimeStamp,currentTimeStamp);
+                    logger.debug("diff {} prevTimeStamp {} currTImeStamp {}",diff,prevTimeStamp,currentTimeStamp);
                     if (diff > MAX_ALLOWED_ACTIVENESS)
                     {
-                        //remove all metadata related particular storagenode
-                        statusStorageNodesMap.put(key,false);
-                        storageNodesList.remove(key);
-                        Iterator<Map.Entry<String,Metadata>> iterator = metadataMap.entrySet().iterator();
-                        while (iterator.hasNext())
-                        {
-                            Map.Entry<String,Metadata> entry = iterator.next();
-                            if(entry.getKey().contains(key))
-                                iterator.remove();
-                        }
-                        logger.info("deactivated {} {}",hostname,port);
+                        //remove all metadata related particular storage node
+                        toBeExecutedAfterDeActivationOfStorageNode(hostname,port);
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    public void toBeExecutedAfterDeActivationOfStorageNode(String hostname,int port)
+    {
+        String key = hostname+Integer.toString(port);
+        statusStorageNodesMap.put(key,false);
+        storageNodesList.remove(key);
+        Iterator<Map.Entry<String,Metadata>> iterator = metadataMap.entrySet().iterator();
+        List<Metadata> filenameChunkIdInfo = new ArrayList<>();
+        while (iterator.hasNext())
+        {
+            Map.Entry<String,Metadata> entry = iterator.next();
+            if(entry.getKey().contains(key))
+            {
+                filenameChunkIdInfo.add(entry.getValue());
+                iterator.remove();
+            }
+        }
+        logger.info("deactivated {} {}",hostname,port);
+
+        //Replica which are there in this node needs to be stored in some other storage node
+        logger.info("Metadata of deactivated node");
+        for(Metadata metadata : filenameChunkIdInfo)
+        {
+            logger.info("filename {} chunkid",metadata.getFilename(),metadata.getChunkId());
+        }
+
+
+        for(Metadata metadata : filenameChunkIdInfo)
+        {
+            List<DataNode> replicaNodes = new ArrayList<>() ;
+            iterator = metadataMap.entrySet().iterator();
+            while (iterator.hasNext())
+            {
+                Map.Entry<String,Metadata> entry = iterator.next();
+                if(entry.getKey().contains(metadata.getFilename()+metadata.getChunkId()))
+                {
+                    replicaNodes.add(new DataNode(entry.getValue().getDataNode().getPort(),entry.getValue().getDataNode().getHostname()));
+                }
+            }
+
+            int count = 0;
+            DataNode replicaCopyToBeSentTo = null;
+            while(count <= 1)
+            {
+                Random r = new Random();
+                int nodeNum = r.nextInt(storageNodeMapToNum.size())+1;
+                logger.debug("nodenum {}",nodeNum);
+                if(storageNodeMapToNum.get(nodeNum) != null)
+                {
+                    logger.debug("if loop...."+nodeNum+"--"+statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)));
+                    if(statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)) &&
+                            !replicaNodes.contains(storageNodesList.get(storageNodeMapToNum.get(nodeNum))))
+                    {
+                        replicaCopyToBeSentTo = storageNodesList.get(storageNodeMapToNum.get(nodeNum));
+                        count++;
+                    }
+                }
+            }
+            try
+            {
+                logger.info("Send Replica Copy to SN {} to port {}",replicaCopyToBeSentTo.getHostname(), replicaCopyToBeSentTo.getPort());
+                Socket socket = new Socket(replicaCopyToBeSentTo.getHostname(), replicaCopyToBeSentTo.getPort());
+                RequestsToStorageNode.SendReplicaCopyToSN.storageNode storageNode = RequestsToStorageNode.SendReplicaCopyToSN.storageNode.newBuilder()
+                                                                                    .setHostname(replicaCopyToBeSentTo.getHostname())
+                                                                                    .setPort(replicaCopyToBeSentTo.getPort()).build();
+                RequestsToStorageNode.SendReplicaCopyToSN replicaCopyToSN = RequestsToStorageNode.SendReplicaCopyToSN.newBuilder()
+                                                                            .setSN(storageNode)
+                                                                            .setFilename(metadata.getFilename())
+                                                                            .setChunkId(metadata.getChunkId()).build();
+                RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper
+                                                                            .newBuilder()
+                                                                            .setSendReplicaCopyToSNMsg(replicaCopyToSN).build();
+                wrapper.writeDelimitedTo(socket.getOutputStream());
+            }
+            catch (IOException e)
+            {
+                logger.error("Exception Caught {}",ExceptionUtils.getStackTrace(e));
             }
         }
     }
@@ -140,6 +212,7 @@ public class Controller {
                     String hostname = msgWrapper.getEnrollMsg().getHostname();
                     logger.info("Received enrollment request from storage node {} from port {}",hostname,port);
                     //setting storage node to active
+
                     if(hostname.contains("Bhargavis-MacBook-Pro.local"))
                     {
                         statusStorageNodesMap.put(hostname+msgWrapper.getEnrollMsg().getPort(),true);
@@ -170,7 +243,7 @@ public class Controller {
                     String filename = msgWrapper.getRetrieveFileRequestMsg().getFilename();
                     for(String str : metadataMap.keySet())
                     {
-                        if(filename.contains(".txt"))
+                        /*if(filename.contains(".txt"))
                         {
                             String tokens[] = filename.split("\\.");
                             if(str.contains(tokens[0]))
@@ -186,7 +259,7 @@ public class Controller {
                             }
                         }
                         else
-                        {
+                        {*/
                             if(str.contains(filename))
                             {
                                 Metadata metadata = metadataMap.get(str);
@@ -198,7 +271,7 @@ public class Controller {
                                     }
                                 }
                             }
-                        }
+                        //}
 
                     }
                     logger.info("metadatas {}",metadatas);
@@ -246,7 +319,7 @@ public class Controller {
                     {
 			            Random r = new Random();
 			            int nodeNum = r.nextInt(storageNodeMapToNum.size())+1;
-			            logger.debug(nodeNum + " "+"while loop");
+			            logger.debug("nodenum {}",nodeNum);
                         if(storageNodeMapToNum.get(nodeNum) != null)
                         {
 			                logger.debug("if loop...."+nodeNum+"--"+statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum))+"--"+nodenums.contains(nodeNum));
@@ -288,7 +361,6 @@ public class Controller {
                         logger.debug("metadata map key {}",key);
                         if(!metadataMap.containsKey(key))
                         {
-                            activeStorageNodeFileInfo.add(chunkMetadata.getFilename()+" "+" ");
                             Metadata metadata = new Metadata(chunkMetadata.getFilename(),chunkMetadata.getChunkId());
                             metadata.setDataNode(new DataNode(storageNode.getPort(),storageNode.getHostname()));
                             metadataMap.put(key,metadata);

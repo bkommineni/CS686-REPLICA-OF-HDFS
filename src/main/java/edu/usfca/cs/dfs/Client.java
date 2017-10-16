@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -22,7 +23,7 @@ public class Client {
     
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
     private static SortedMap<Integer,byte[]> listOfChunks;
-    private static final int CHUNK_SIZE = 2000;
+    private static final int CHUNK_SIZE = 1000000;
     public static final int NUM_THREADS_ALLOWED = 5;
     private static ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
 
@@ -194,18 +195,20 @@ public class Client {
             executorService.shutdown();
             try
             {
-                executorService.awaitTermination(20, TimeUnit.MINUTES);
+                executorService.awaitTermination(30, TimeUnit.MINUTES);
             }
             catch (InterruptedException e)
             {
                 logger.error("Exception caught {}",ExceptionUtils.getStackTrace(e));
             }
             logger.info("byte array size {}",listOfChunks.size());
+            Files.createFile(Paths.get(mergedFile));
             for(int key : listOfChunks.keySet())
             {
                 byte[] temp = listOfChunks.get(key);
-                Files.write(Paths.get(mergedFile),temp);
+                Files.write(Paths.get(mergedFile),temp, StandardOpenOption.APPEND);
             }
+            logger.info("checksum of retrieved file {}",calculateChecksum(Files.readAllBytes(Paths.get(mergedFile))));
         }
         else if(args[2].equals("list"))
         {
@@ -320,6 +323,7 @@ public class Client {
 
         byte[] bFile = Files.readAllBytes(new File(filePath).toPath());
         int fileSize = bFile.length;
+        logger.info("fileSize in bytes {}",fileSize);
 
         int numBlocks  = (fileSize / CHUNK_SIZE) ;
         if((fileSize % CHUNK_SIZE) != 0)

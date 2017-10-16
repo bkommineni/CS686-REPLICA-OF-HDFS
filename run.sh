@@ -14,7 +14,7 @@ git pull origin master
 
 cd retrievedFilesDirectory/
 
-rm *
+rm -r *
 
 #Controller (bass01)
 ssh ${ControllerHostname} "

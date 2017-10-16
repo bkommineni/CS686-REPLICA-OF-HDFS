@@ -43,25 +43,45 @@ public class StorageNode {
         Path p = Paths.get(currPath);
         Path absDir = p.toAbsolutePath();
 
-        if(args.length > 0) {
-            if (args[0] != null) {
+        if(args.length == 4)
+        {
+            if (args[0] != null)
+            {
                 controllerPortHostName = args[0];
-		System.out.println(controllerPortHostName);
-                if (args[1] != null)
-		{
-                    controllerPort = Integer.parseInt(args[1]);
-		    System.out.println(controllerPort);
-		}
-                if(args[2] != null)
-		{
-                    storageNodePort = Integer.parseInt(args[2]);
-		    System.out.println(controllerPortHostName);
-		}
-                //if(args[3] != null)
-		//{
-                //    dataDirectory = absDir.toString() + args[3];
-		//}
-		//System.out.println(dataDirectory);
+            }
+            System.out.println(controllerPortHostName);
+            if (args[1] != null)
+            {
+                controllerPort = Integer.parseInt(args[1]);
+                System.out.println(controllerPort);
+            }
+            if(args[2] != null)
+            {
+                storageNodePort = Integer.parseInt(args[2]);
+                System.out.println(controllerPortHostName);
+            }
+            if(args[3] != null)
+            {
+                dataDirectory = absDir.toString() + args[3];
+            }
+
+        }
+        else if(args.length == 3)
+        {
+            if (args[0] != null)
+            {
+                controllerPortHostName = args[0];
+            }
+            System.out.println(controllerPortHostName);
+            if (args[1] != null)
+            {
+                controllerPort = Integer.parseInt(args[1]);
+                System.out.println(controllerPort);
+            }
+            if(args[2] != null)
+            {
+                storageNodePort = Integer.parseInt(args[2]);
+                System.out.println(controllerPortHostName);
             }
         }
         logger.info("Enrolling with Controller {} on port {} after entering to network ",controllerPortHostName,controllerPort);
@@ -202,6 +222,8 @@ public class StorageNode {
                         blockFile = dataDirectory + filename + "Part" + chunkId;
                     //}
                     int i=0;
+                    Files.deleteIfExists(Paths.get(blockFile));
+                    Files.createFile(Paths.get(blockFile));
                     Files.write(Paths.get(blockFile),bytes);
 
 
@@ -409,6 +431,7 @@ public class StorageNode {
                 if(requestsWrapper.hasSendReplicaCopyToSNMsg())
                 {
                     RequestsToStorageNode.SendReplicaCopyToSN replicaCopyToSN = requestsWrapper.getSendReplicaCopyToSNMsg();
+                    logger.info("Received send replica copy request from controller...");
 
                     //get that file chunk data based on sent info
 
@@ -421,11 +444,13 @@ public class StorageNode {
                     Socket socket = new Socket(replicaCopyToSN.getSN().getHostname(),replicaCopyToSN.getSN().getPort());
                     RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
                                                                                 .setSendReplicaCopyToSNFromSNMsg(replicaCopyToSNFromSN).build();
+                    logger.info("Sent replica copy to SN hostname {} port {}",replicaCopyToSN.getSN().getHostname(),replicaCopyToSN.getSN().getPort());
                     wrapper.writeDelimitedTo(socket.getOutputStream());
                 }
                 if(requestsWrapper.hasSendReplicaCopyToSNFromSNMsg())
                 {
                     RequestsToStorageNode.SendReplicaCopyToSNFromSN replicaCopyToSNFromSN = requestsWrapper.getSendReplicaCopyToSNFromSNMsg();
+                    logger.info("Received replica store request from SN..");
                     String fileName = replicaCopyToSNFromSN.getFilename();
                     int chunkId = replicaCopyToSNFromSN.getChunkId();
                     String filePath = dataDirectory + fileName +"Part"+ chunkId;
@@ -445,6 +470,7 @@ public class StorageNode {
                     StorageNodeMetadata metadata = new StorageNodeMetadata(fileName,chunkId);
                     metadata.setChecksum(checksum.toString());
                     storageNodeMetadataMap.put(fileName+chunkId,metadata);
+                    logger.info("Stored replica on my storage node..");
                 }
             }
             catch (NoSuchAlgorithmException e)

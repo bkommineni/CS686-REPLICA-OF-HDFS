@@ -98,12 +98,137 @@ public class Controller {
                     Long prevTimeStamp = storageNodeHeartBeatTimeStamps.get(key);
                     Long currentTimeStamp = System.currentTimeMillis();
                     Long diff = (currentTimeStamp - prevTimeStamp);
-                    //logger.debug("diff {} prevTimeStamp {} currTImeStamp {}",diff,prevTimeStamp,currentTimeStamp);
+                    logger.debug("diff {} prevTimeStamp {} currTImeStamp {}",diff,prevTimeStamp,currentTimeStamp);
                     if (diff > MAX_ALLOWED_ACTIVENESS)
                     {
-			logger.debug("setting status as false for host {} port {}",hostname,port);
+			            logger.info("setting status as false for host {} port {}",hostname,port);
                         //remove all metadata related particular storage node
-                        toBeExecutedAfterDeActivationOfStorageNode(hostname,port);
+                        //toBeExecutedAfterDeActivationOfStorageNode(hostname,port);
+                        String key1 = hostname+Integer.toString(port);
+                        statusStorageNodesMap.put(key1,false);
+                        storageNodesList.remove(key1);
+                        Iterator<Map.Entry<String,Metadata>> iterator = metadataMap.entrySet().iterator();
+                        List<Metadata> filenameChunkIdInfo = new ArrayList<>();
+                        while (iterator.hasNext())
+                        {
+                            Map.Entry<String,Metadata> entry = iterator.next();
+                            if(entry.getKey().contains(key1))
+                            {
+                                filenameChunkIdInfo.add(entry.getValue());
+                                iterator.remove();
+                            }
+                        }
+                        logger.info("deactivated {} {}",hostname,port);
+
+                        //Replica which are there in this node needs to be stored in some other storage node
+                        logger.info("Metadata of deactivated node");
+                        for(Metadata metadata : filenameChunkIdInfo)
+                        {
+                            logger.info("filename {} chunkid {}",metadata.getFilename(),metadata.getChunkId());
+                        }
+
+                        List<Metadata>replicaNodeMetadatas = new ArrayList<>();
+                        List<DataNode> dataNodeList = new ArrayList<>();
+                        List<String> checkDuplicates = new ArrayList<>();
+
+                        for(Metadata metadata : filenameChunkIdInfo)
+                        {
+                            iterator = metadataMap.entrySet().iterator();
+                            while (iterator.hasNext())
+                            {
+                                Map.Entry<String, Metadata> entry = iterator.next();
+                                if (entry.getKey().contains(metadata.getFilename() + metadata.getChunkId()))
+                                {
+                                    if(!checkDuplicates.contains(metadata.getFilename() + metadata.getChunkId()))
+                                    {
+                                        Metadata metadata1 = new Metadata(metadata.getFilename(), metadata.getChunkId());
+                                        checkDuplicates.add(metadata.getFilename() + metadata.getChunkId());
+                                        metadata1.setDataNode(new DataNode(entry.getValue().getDataNode().getPort(), entry.getValue().getDataNode().getHostname()));
+                                        replicaNodeMetadatas.add(metadata1);
+                                    }
+                                    dataNodeList.add(new DataNode(entry.getValue().getDataNode().getPort(), entry.getValue().getDataNode().getHostname()));
+                                }
+                            }
+                        }
+                        logger.info("nodes which have same replica!!!");
+                        for (Metadata metadata : replicaNodeMetadatas)
+                        {
+                            logger.info("hostname {} port {}", metadata.getDataNode().getHostname(), metadata.getDataNode().getPort());
+                        }
+                        logger.info("datanodes which has the same replica!!");
+                        for(DataNode dataNode : dataNodeList)
+                        {
+                            logger.info("datanode {}",dataNode.toString());
+                        }
+
+                        int count = 1;
+                        DataNode replicaCopyToBeSentTo = null;
+                        while(count <= 1)
+                        {
+                            Random r = new Random();
+                            int nodeNum = r.nextInt(storageNodeMapToNum.size())+1;
+                            logger.info("node hostname {}",storageNodeMapToNum.get(nodeNum));
+                            for(int i : storageNodeMapToNum.keySet())
+                            {
+                                logger.debug("keys in MapToNum {}",storageNodeMapToNum.get(i));
+                            }
+                            if(storageNodeMapToNum.get(nodeNum) != null)
+                            {
+                                String hostnamePort = storageNodeMapToNum.get(nodeNum);
+                                boolean statusOfNode = statusStorageNodesMap.get(hostnamePort);
+                                DataNode dataNode = storageNodesList.get(hostnamePort);
+
+                                for(String str : storageNodesList.keySet())
+                                {
+                                    logger.debug("storage nodes list elements {}",storageNodesList.get(str).toString());
+                                }
+                                /*boolean check = false;
+                                for(Metadata metadata : replicaNodeMetadatas)
+                                {
+                                    logger.info("metadata {}",metadata.toString());
+                                    if(metadata.getDataNode().toString().equals(dataNode.toString()))
+                                    {
+                                        check = true;
+                                    }
+                                }
+                                logger.info("if the datanode has same replica {}",check);*/
+                                if(statusOfNode)
+                                {
+                                    if(!dataNodeList.contains(dataNode))
+                                    {
+                                        logger.info("Found 1 {}",dataNode.toString());
+                                        replicaCopyToBeSentTo = storageNodesList.get(storageNodeMapToNum.get(nodeNum));
+                                        count++;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        logger.info("replica to be sent to datanode {}",replicaCopyToBeSentTo.toString());
+                        for(Metadata metadata : replicaNodeMetadatas)
+                        {
+                            try
+                            {
+                                logger.info("Send Replica Copy to SN {} to port {}",replicaCopyToBeSentTo.getHostname(), replicaCopyToBeSentTo.getPort());
+                                Socket socket = new Socket(metadata.getDataNode().getHostname(),metadata.getDataNode().getPort());
+                                RequestsToStorageNode.SendReplicaCopyToSN.storageNode storageNode = RequestsToStorageNode.SendReplicaCopyToSN.storageNode.newBuilder()
+                                        .setHostname(replicaCopyToBeSentTo.getHostname())
+                                        .setPort(replicaCopyToBeSentTo.getPort()).build();
+                                RequestsToStorageNode.SendReplicaCopyToSN replicaCopyToSN = RequestsToStorageNode.SendReplicaCopyToSN.newBuilder()
+                                        .setSN(storageNode)
+                                        .setFilename(metadata.getFilename())
+                                        .setChunkId(metadata.getChunkId()).build();
+                                RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper
+                                        .newBuilder()
+                                        .setSendReplicaCopyToSNMsg(replicaCopyToSN).build();
+                                wrapper.writeDelimitedTo(socket.getOutputStream());
+                                socket.close();
+                            }
+                            catch (IOException e)
+                            {
+                                logger.error("Exception Caught {}",ExceptionUtils.getStackTrace(e));
+                            }
+                        }
                         break;
                     }
                 }
@@ -149,28 +274,46 @@ public class Controller {
                     replicaNodes.add(new DataNode(entry.getValue().getDataNode().getPort(),entry.getValue().getDataNode().getHostname()));
                 }
             }
-	    for(DataNode node : replicaNodes)
-	    {
-		logger.debug("hostname {} port {}",node.getHostname(),node.getPort());
-	    }
+            for(DataNode node : replicaNodes)
+            {
+                logger.info("hostname {} port {}",node.getHostname(),node.getPort());
+            }
 
             int count = 1;
             DataNode replicaCopyToBeSentTo = null;
             while(count <= 1)
             {
-		logger.debug("count while");
                 Random r = new Random();
                 int nodeNum = r.nextInt(storageNodeMapToNum.size())+1;
-                logger.debug("nodenum {}",nodeNum);
+                logger.info("nodenum {} String {}",nodeNum,storageNodeMapToNum.get(nodeNum));
+                for(int i : storageNodeMapToNum.keySet())
+                {
+                    logger.info("keys in MapToNum {}",storageNodeMapToNum.get(i));
+                }
                 if(storageNodeMapToNum.get(nodeNum) != null)
                 {
-                    logger.debug("if loop...."+nodeNum+"--"+statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)));
-		    logger.debug("replicaNodes list check {}",replicaNodes.contains(storageNodesList.get(storageNodeMapToNum.get(nodeNum))));
-                    if(statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)) &&
-                            !replicaNodes.contains(storageNodesList.get(storageNodeMapToNum.get(nodeNum))))
+                    String hostnamePort = storageNodeMapToNum.get(nodeNum);
+                    boolean statusOfNode = statusStorageNodesMap.get(hostnamePort);
+                    DataNode dataNode = storageNodesList.get(hostnamePort);
+		            logger.info("check if node {} has the replica {} and status of node {}",dataNode.toString()
+                            ,replicaNodes.contains(dataNode),statusOfNode);
+
+		            for(String str : storageNodesList.keySet())
                     {
-                        replicaCopyToBeSentTo = storageNodesList.get(storageNodeMapToNum.get(nodeNum));
-                        count++;
+                        logger.info("storage nodes list elements {}",storageNodesList.get(str).toString());
+                    }
+                    if(statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)))
+                    {
+                        for (DataNode temp : replicaNodes)
+                        {
+                            if(!temp.equals(dataNode))
+                            {
+                                logger.info("Found 1 {}",dataNode.toString());
+                                replicaCopyToBeSentTo = storageNodesList.get(storageNodeMapToNum.get(nodeNum));
+                                count++;
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -189,6 +332,7 @@ public class Controller {
                                                                             .newBuilder()
                                                                             .setSendReplicaCopyToSNMsg(replicaCopyToSN).build();
                 wrapper.writeDelimitedTo(socket.getOutputStream());
+                socket.close();
             }
             catch (IOException e)
             {
@@ -228,9 +372,9 @@ public class Controller {
                     }
                     else
                     {
-			logger.debug("enrolling and setting status to true..");
+			            logger.debug("enrolling and setting status to true..");
                         statusStorageNodesMap.put(hostname,true);
-			logger.debug("status after enrolling {} of host {}",statusStorageNodesMap.get(hostname),hostname);
+			            logger.debug("status after enrolling {} of host {}",statusStorageNodesMap.get(hostname),hostname);
                         storageNodesList.put(hostname,
                                 new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
                     }
@@ -250,17 +394,31 @@ public class Controller {
                     logger.info("Received retrieve file request from client {} from port {}",inetAddress,port);
                     List<Metadata> metadatas = new ArrayList<>();
                     String filename = msgWrapper.getRetrieveFileRequestMsg().getFilename();
-		    logger.debug("retrieve file request filename {}",filename);
+		            logger.debug("retrieve file request filename {}",filename);
                     for(String str : metadataMap.keySet())
                     {
-                        /*if(filename.contains(".txt"))
+                        logger.debug("metadata map key {}",str);
+                        if(str.contains(filename))
                         {
-                            String tokens[] = filename.split("\\.");
-                            if(str.contains(tokens[0]))
+                            Metadata metadata = metadataMap.get(str);
+                            String hostname = metadata.getDataNode().getHostname();
+                            logger.debug("hostname {} port {}",metadata.getDataNode().getHostname(),metadata.getDataNode().getPort());
+                            if(hostname.contains("Bhargavis-MacBook-Pro.local"))
                             {
-                                Metadata metadata = metadataMap.get(str);
                                 if(statusStorageNodesMap.get(metadata.getDataNode().getHostname()+metadata.getDataNode().getPort()))
                                 {
+                                    logger.debug("status checked!!");
+                                    if(!metadatas.contains(metadata))
+                                    {
+                                        metadatas.add(metadataMap.get(str));
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if(statusStorageNodesMap.get(metadata.getDataNode().getHostname()))
+                                {
+                                    logger.debug("status checked!!");
                                     if(!metadatas.contains(metadata))
                                     {
                                         metadatas.add(metadataMap.get(str));
@@ -268,39 +426,6 @@ public class Controller {
                                 }
                             }
                         }
-                        else
-                        {*/
-			logger.debug("metadata map key {}",str);
-                            if(str.contains(filename))
-                            {
-                                Metadata metadata = metadataMap.get(str);
-				String hostname = metadata.getDataNode().getHostname();
-				logger.debug("hostname {} port {}",metadata.getDataNode().getHostname(),metadata.getDataNode().getPort());
-				if(hostname.contains("Bhargavis-MacBook-Pro.local"))
-				{
-                                	if(statusStorageNodesMap.get(metadata.getDataNode().getHostname()+metadata.getDataNode().getPort()))
-                                	{
-				    	logger.debug("status checked!!");
-                                    	if(!metadatas.contains(metadata))
-                                    	{
-                                        	metadatas.add(metadataMap.get(str));
-                                    	}
-                                	}
-				}
-				else
-				{
-					if(statusStorageNodesMap.get(metadata.getDataNode().getHostname()))
-                                        {
-                                        logger.debug("status checked!!");
-                                        if(!metadatas.contains(metadata))
-                                        {
-                                                metadatas.add(metadataMap.get(str));
-                                        }
-                                        }
-				}
-                            }
-                        //}
-
                     }
                     logger.info("metadatas {}",metadatas);
 
@@ -351,7 +476,7 @@ public class Controller {
                         if(storageNodeMapToNum.get(nodeNum) != null)
                         {
 			                logger.debug("if loop...."+nodeNum+"--"+statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum))+"--"+nodenums.contains(nodeNum));
-			    logger.debug("status of storageNode {} list check {} on host {}",statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)),nodenums.contains(nodeNum),storageNodeMapToNum.get(nodeNum));
+			                logger.debug("status of storageNode {} list check {} on host {}",statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)),nodenums.contains(nodeNum),storageNodeMapToNum.get(nodeNum));
                             if (statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)) && (!nodenums.contains(nodeNum))) {
                                 logger.info("Replica Node Number {} Replica Node hostname {} " ,nodeNum,storageNodeMapToNum.get(nodeNum));
                                 DataNode storageNode = storageNodesList.get(storageNodeMapToNum.get(nodeNum));

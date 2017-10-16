@@ -348,6 +348,7 @@ public class StorageNode {
                                                                                 .parseDelimitedFrom(socket.getInputStream());
                     logger.info("Received good chunk request from CN!!");
                     socket.close();
+                    logger.info("good chunk is in host {} port {}",goodChunkInfoToSN.getSN().getHostname(),goodChunkInfoToSN.getSN().getPort());
                     socket = new Socket(goodChunkInfoToSN.getSN().getHostname(),goodChunkInfoToSN.getSN().getPort());
                     RequestsToStorageNode.SendGoodChunkRequestFromSNToSN.storageNode SN = RequestsToStorageNode.SendGoodChunkRequestFromSNToSN.storageNode
                                                                                             .newBuilder()

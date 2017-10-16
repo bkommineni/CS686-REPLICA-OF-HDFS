@@ -46,12 +46,22 @@ public class StorageNode {
         if(args.length > 0) {
             if (args[0] != null) {
                 controllerPortHostName = args[0];
+		System.out.println(controllerPortHostName);
                 if (args[1] != null)
+		{
                     controllerPort = Integer.parseInt(args[1]);
+		    System.out.println(controllerPort);
+		}
                 if(args[2] != null)
+		{
                     storageNodePort = Integer.parseInt(args[2]);
-                if(args[3] != null)
-                    dataDirectory = absDir.toString() + args[3];
+		    System.out.println(controllerPortHostName);
+		}
+                //if(args[3] != null)
+		//{
+                //    dataDirectory = absDir.toString() + args[3];
+		//}
+		//System.out.println(dataDirectory);
             }
         }
         logger.info("Enrolling with Controller {} on port {} after entering to network ",controllerPortHostName,controllerPort);
@@ -402,7 +412,7 @@ public class StorageNode {
 
                     //get that file chunk data based on sent info
 
-                    String filePath = dataDirectory + replicaCopyToSN.getFilename() + replicaCopyToSN.getChunkId();
+                    String filePath = dataDirectory + replicaCopyToSN.getFilename()+ "Part" + replicaCopyToSN.getChunkId();
                     byte[] chunkData = Files.readAllBytes(Paths.get(filePath));
                     RequestsToStorageNode.SendReplicaCopyToSNFromSN replicaCopyToSNFromSN = RequestsToStorageNode.SendReplicaCopyToSNFromSN.newBuilder()
                                                                                             .setChunkData(ByteString.copyFrom(chunkData))

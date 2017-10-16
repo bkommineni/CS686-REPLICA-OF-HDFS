@@ -33,7 +33,7 @@ public class Controller {
     private Map<String,Long>     storageNodeHeartBeatTimeStamps = new HashMap<>();
     public static final int NUM_THREADS_ALLOWED = 15;
     private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
-    public static final Long MAX_ALLOWED_ACTIVENESS = 30000L;
+    public static final Long MAX_ALLOWED_ACTIVENESS = 10000L;
     private String configPath = null;
 
     private static final int REPLICATION_FACTOR = 3;
@@ -98,9 +98,10 @@ public class Controller {
                     Long prevTimeStamp = storageNodeHeartBeatTimeStamps.get(key);
                     Long currentTimeStamp = System.currentTimeMillis();
                     Long diff = (currentTimeStamp - prevTimeStamp);
-                    logger.debug("diff {} prevTimeStamp {} currTImeStamp {}",diff,prevTimeStamp,currentTimeStamp);
+                    //logger.debug("diff {} prevTimeStamp {} currTImeStamp {}",diff,prevTimeStamp,currentTimeStamp);
                     if (diff > MAX_ALLOWED_ACTIVENESS)
                     {
+			logger.debug("setting status as false for host {} port {}",hostname,port);
                         //remove all metadata related particular storage node
                         toBeExecutedAfterDeActivationOfStorageNode(hostname,port);
                         break;
@@ -132,7 +133,7 @@ public class Controller {
         logger.info("Metadata of deactivated node");
         for(Metadata metadata : filenameChunkIdInfo)
         {
-            logger.info("filename {} chunkid",metadata.getFilename(),metadata.getChunkId());
+            logger.info("filename {} chunkid {}",metadata.getFilename(),metadata.getChunkId());
         }
 
 
@@ -148,17 +149,23 @@ public class Controller {
                     replicaNodes.add(new DataNode(entry.getValue().getDataNode().getPort(),entry.getValue().getDataNode().getHostname()));
                 }
             }
+	    for(DataNode node : replicaNodes)
+	    {
+		logger.debug("hostname {} port {}",node.getHostname(),node.getPort());
+	    }
 
-            int count = 0;
+            int count = 1;
             DataNode replicaCopyToBeSentTo = null;
             while(count <= 1)
             {
+		logger.debug("count while");
                 Random r = new Random();
                 int nodeNum = r.nextInt(storageNodeMapToNum.size())+1;
                 logger.debug("nodenum {}",nodeNum);
                 if(storageNodeMapToNum.get(nodeNum) != null)
                 {
                     logger.debug("if loop...."+nodeNum+"--"+statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)));
+		    logger.debug("replicaNodes list check {}",replicaNodes.contains(storageNodesList.get(storageNodeMapToNum.get(nodeNum))));
                     if(statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)) &&
                             !replicaNodes.contains(storageNodesList.get(storageNodeMapToNum.get(nodeNum))))
                     {
@@ -221,7 +228,9 @@ public class Controller {
                     }
                     else
                     {
+			logger.debug("enrolling and setting status to true..");
                         statusStorageNodesMap.put(hostname,true);
+			logger.debug("status after enrolling {} of host {}",statusStorageNodesMap.get(hostname),hostname);
                         storageNodesList.put(hostname,
                                 new DataNode(msgWrapper.getEnrollMsg().getPort(),msgWrapper.getEnrollMsg().getHostname()));
                     }
@@ -241,6 +250,7 @@ public class Controller {
                     logger.info("Received retrieve file request from client {} from port {}",inetAddress,port);
                     List<Metadata> metadatas = new ArrayList<>();
                     String filename = msgWrapper.getRetrieveFileRequestMsg().getFilename();
+		    logger.debug("retrieve file request filename {}",filename);
                     for(String str : metadataMap.keySet())
                     {
                         /*if(filename.contains(".txt"))
@@ -260,16 +270,34 @@ public class Controller {
                         }
                         else
                         {*/
+			logger.debug("metadata map key {}",str);
                             if(str.contains(filename))
                             {
                                 Metadata metadata = metadataMap.get(str);
-                                if(statusStorageNodesMap.get(metadata.getDataNode().getHostname()+metadata.getDataNode().getPort()))
-                                {
-                                    if(!metadatas.contains(metadata))
-                                    {
-                                        metadatas.add(metadataMap.get(str));
-                                    }
-                                }
+				String hostname = metadata.getDataNode().getHostname();
+				logger.debug("hostname {} port {}",metadata.getDataNode().getHostname(),metadata.getDataNode().getPort());
+				if(hostname.contains("Bhargavis-MacBook-Pro.local"))
+				{
+                                	if(statusStorageNodesMap.get(metadata.getDataNode().getHostname()+metadata.getDataNode().getPort()))
+                                	{
+				    	logger.debug("status checked!!");
+                                    	if(!metadatas.contains(metadata))
+                                    	{
+                                        	metadatas.add(metadataMap.get(str));
+                                    	}
+                                	}
+				}
+				else
+				{
+					if(statusStorageNodesMap.get(metadata.getDataNode().getHostname()))
+                                        {
+                                        logger.debug("status checked!!");
+                                        if(!metadatas.contains(metadata))
+                                        {
+                                                metadatas.add(metadataMap.get(str));
+                                        }
+                                        }
+				}
                             }
                         //}
 
@@ -323,6 +351,7 @@ public class Controller {
                         if(storageNodeMapToNum.get(nodeNum) != null)
                         {
 			                logger.debug("if loop...."+nodeNum+"--"+statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum))+"--"+nodenums.contains(nodeNum));
+			    logger.debug("status of storageNode {} list check {} on host {}",statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)),nodenums.contains(nodeNum),storageNodeMapToNum.get(nodeNum));
                             if (statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)) && (!nodenums.contains(nodeNum))) {
                                 logger.info("Replica Node Number {} Replica Node hostname {} " ,nodeNum,storageNodeMapToNum.get(nodeNum));
                                 DataNode storageNode = storageNodesList.get(storageNodeMapToNum.get(nodeNum));
@@ -348,7 +377,7 @@ public class Controller {
                 if(msgWrapper.hasHeartbeatMsg())
                 {
                     //check info sent on heartbeat and make sure what are active nodes
-                    logger.debug("Received heartbeat message from storage node {} from port {}" , msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
+                    //logger.debug("Received heartbeat message from storage node {} from port {}" , msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
                     int size = msgWrapper.getHeartbeatMsg().getMetadataList().size();
                     RequestsToController.Heartbeat.storageNode storageNode = RequestsToController.Heartbeat.storageNode.newBuilder()
                                                                                 .setHostname(msgWrapper.getHeartbeatMsg().getSN().getHostname())
@@ -358,7 +387,7 @@ public class Controller {
                     {
                         RequestsToController.Heartbeat.ChunkMetadata chunkMetadata = msgWrapper.getHeartbeatMsg().getMetadataList().get(i);
                         String key = chunkMetadata.getFilename() + chunkMetadata.getChunkId() + storageNode.getHostname() + storageNode.getPort();
-                        logger.debug("metadata map key {}",key);
+                        //logger.debug("metadata map key {}",key);
                         if(!metadataMap.containsKey(key))
                         {
                             Metadata metadata = new Metadata(chunkMetadata.getFilename(),chunkMetadata.getChunkId());
@@ -367,7 +396,7 @@ public class Controller {
                         }
                     }
                     storageNodeHeartBeatTimeStamps.put(storageNode.getHostname()+storageNode.getPort(),System.currentTimeMillis());
-                    logger.debug("Updated info from heartbeat message in memory from SN {} from port {}",msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
+                    //logger.debug("Updated info from heartbeat message in memory from SN {} from port {}",msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
                     connectionSocket.close();
                 }
                 if(msgWrapper.hasListOfActiveNodes())

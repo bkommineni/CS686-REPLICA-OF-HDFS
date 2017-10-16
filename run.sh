@@ -12,6 +12,10 @@ StorageNodePort=$3
 #pull the existing repository for latest changes
 git pull origin master
 
+cd retrievedFilesDirectory/
+
+rm *
+
 #Controller (bass01)
 ssh ${ControllerHostname} "
 cd ~/Documents/courses/cs686/p1-bkommineni;
@@ -20,8 +24,7 @@ cd ~/Documents/courses/cs686/p1-bkommineni/target/;
 mv dfs-1.0-jar-with-dependencies.jar ~/Documents/courses/cs686/p1-bkommineni/dfs-1.0-jar-with-dependencies.jar;
 cd ~/Documents/courses/cs686/p1-bkommineni;
 rm controller.out;
-rm -rf data;
-mkdir data;
+rm -r storage_*.out;
 java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Controller $ControllerPort config/Storage-nodes-list-cluster.txt > controller.out 2>&1 &
 "
 
@@ -29,10 +32,9 @@ java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.Controller $Controll
 
 for node in ${node_list[@]};do
 	ssh $node "
+	cd /home2/bkommineni;
+	rm -r *;
 	cd ~/Documents/courses/cs686/p1-bkommineni;
-	rm storage_${node}.out;
-	rm -rf data;
-	mkdir data;
 	java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.StorageNode $ControllerHostname $ControllerPort $StorageNodePort > storage_${node}.out 2>&1 &
 	"
 done

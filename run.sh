@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-node_list=(bass02 bass04 bass07 bass08 bass09 bass11 bass12 bass13 bass14 bass15)
-#(bass16 bass17 bass18 bass20 bass21 bass22 bass23) ->working too;just trying on 10 nodes
+node_list=(bass02 bass04 bass07 bass08 )
+#(bass09 bass11 bass12 bass13 bass14 bass15 bass16 bass17 bass18 bass20 bass21 bass22 bass23) ->working too;just trying on 10 nodes
 ControllerHostname=$1
 ControllerPort=$2
 StorageNodePort=$3

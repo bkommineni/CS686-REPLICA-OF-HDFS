@@ -33,7 +33,7 @@ public class Controller {
     private Map<String,Long>     storageNodeHeartBeatTimeStamps = new HashMap<>();
     public static final int NUM_THREADS_ALLOWED = 15;
     private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
-    public static final Long MAX_ALLOWED_ACTIVENESS = 10000L;
+    public static final Long MAX_ALLOWED_ACTIVENESS = 30000L;
     private String configPath = null;
 
     private static final int REPLICATION_FACTOR = 3;

@@ -450,6 +450,8 @@ public class Controller {
                     String key = goodChunkRequest.getFilename()+goodChunkRequest.getChunkId();
                     for(Map.Entry<String,Metadata> entry : metadataMap.entrySet())
                     {
+			logger.info("map entry {} protobuf msg {}",entry.getValue().getDataNode().getHostname(),goodChunkRequest.getSN().getHostname());
+			logger.info("map entry port {} protobuf msg port {}",entry.getValue().getDataNode().getPort(),goodChunkRequest.getSN().getPort());
                         if(entry.getKey().contains(key))
                         {
                             if(goodChunkRequest.getSN().getHostname().equals("Bhargavis-MacBook-Pro.local"))
@@ -463,10 +465,14 @@ public class Controller {
                                             .setFilename(entry.getValue().getFilename())
                                             .setChunkId(entry.getValue().getChunkId())
                                             .setSN(SN).build();
+				    logger.info("Sending good chunk info to SN hostname {} port {}",entry.getValue().getDataNode().getHostname(),
+                                                entry.getValue().getDataNode().getPort());
+                               	    goodChunkInfoToSN.writeDelimitedTo(connectionSocket.getOutputStream());
+                                    connectionSocket.close();
+                                    break;
                                 }
                             }
-                            else if(!entry.getValue().getDataNode().getHostname().equals(goodChunkRequest.getSN().getHostname()) &&
-                                    (entry.getValue().getDataNode().getPort() != goodChunkRequest.getSN().getPort()))
+                            else if(!entry.getValue().getDataNode().getHostname().equals(goodChunkRequest.getSN().getHostname()))
                             {
                                 SN = ResponsesToStorageNode.GoodChunkInfoToSN.storageNode.newBuilder()
                                         .setHostname(entry.getValue().getDataNode().getHostname())
@@ -475,11 +481,14 @@ public class Controller {
                                                     .setFilename(entry.getValue().getFilename())
                                                     .setChunkId(entry.getValue().getChunkId())
                                                     .setSN(SN).build();
+				logger.info("Sending good chunk info to SN hostname {} port {}",entry.getValue().getDataNode().getHostname(),
+						entry.getValue().getDataNode().getPort());
+                    		goodChunkInfoToSN.writeDelimitedTo(connectionSocket.getOutputStream());
+				connectionSocket.close();
+				break;
                             }
                         }
-                    }
-                    logger.info("Sending good chunk info to SN.....");
-                    goodChunkInfoToSN.writeDelimitedTo(connectionSocket.getOutputStream());
+                     }
                 }
 
             }

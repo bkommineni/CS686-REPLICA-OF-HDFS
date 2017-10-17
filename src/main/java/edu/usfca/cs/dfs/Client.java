@@ -202,6 +202,7 @@ public class Client {
                 logger.error("Exception caught {}",ExceptionUtils.getStackTrace(e));
             }
             logger.info("byte array size {}",listOfChunks.size());
+	    Files.deleteIfExists(Paths.get(mergedFile));
             Files.createFile(Paths.get(mergedFile));
             for(int key : listOfChunks.keySet())
             {

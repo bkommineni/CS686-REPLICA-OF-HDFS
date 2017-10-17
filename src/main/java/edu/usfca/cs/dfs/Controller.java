@@ -7,8 +7,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -103,7 +101,6 @@ public class Controller {
                     {
 			            logger.info("setting status as false for host {} port {}",hostname,port);
                         //remove all metadata related particular storage node
-                        //toBeExecutedAfterDeActivationOfStorageNode(hostname,port);
                         String key1 = hostname+Integer.toString(port);
                         statusStorageNodesMap.put(key1,false);
                         storageNodesList.remove(key1);
@@ -182,16 +179,6 @@ public class Controller {
                                 {
                                     logger.debug("storage nodes list elements {}",storageNodesList.get(str).toString());
                                 }
-                                /*boolean check = false;
-                                for(Metadata metadata : replicaNodeMetadatas)
-                                {
-                                    logger.info("metadata {}",metadata.toString());
-                                    if(metadata.getDataNode().toString().equals(dataNode.toString()))
-                                    {
-                                        check = true;
-                                    }
-                                }
-                                logger.info("if the datanode has same replica {}",check);*/
                                 if(statusOfNode)
                                 {
                                     if(!dataNodeList.contains(dataNode))
@@ -232,111 +219,6 @@ public class Controller {
                         break;
                     }
                 }
-            }
-        }
-    }
-
-    public void toBeExecutedAfterDeActivationOfStorageNode(String hostname,int port)
-    {
-        String key = hostname+Integer.toString(port);
-        statusStorageNodesMap.put(key,false);
-        storageNodesList.remove(key);
-        Iterator<Map.Entry<String,Metadata>> iterator = metadataMap.entrySet().iterator();
-        List<Metadata> filenameChunkIdInfo = new ArrayList<>();
-        while (iterator.hasNext())
-        {
-            Map.Entry<String,Metadata> entry = iterator.next();
-            if(entry.getKey().contains(key))
-            {
-                filenameChunkIdInfo.add(entry.getValue());
-                iterator.remove();
-            }
-        }
-        logger.info("deactivated {} {}",hostname,port);
-
-        //Replica which are there in this node needs to be stored in some other storage node
-        logger.info("Metadata of deactivated node");
-        for(Metadata metadata : filenameChunkIdInfo)
-        {
-            logger.info("filename {} chunkid {}",metadata.getFilename(),metadata.getChunkId());
-        }
-
-
-        for(Metadata metadata : filenameChunkIdInfo)
-        {
-            List<DataNode> replicaNodes = new ArrayList<>() ;
-            iterator = metadataMap.entrySet().iterator();
-            while (iterator.hasNext())
-            {
-                Map.Entry<String,Metadata> entry = iterator.next();
-                if(entry.getKey().contains(metadata.getFilename()+metadata.getChunkId()))
-                {
-                    replicaNodes.add(new DataNode(entry.getValue().getDataNode().getPort(),entry.getValue().getDataNode().getHostname()));
-                }
-            }
-            for(DataNode node : replicaNodes)
-            {
-                logger.info("hostname {} port {}",node.getHostname(),node.getPort());
-            }
-
-            int count = 1;
-            DataNode replicaCopyToBeSentTo = null;
-            while(count <= 1)
-            {
-                Random r = new Random();
-                int nodeNum = r.nextInt(storageNodeMapToNum.size())+1;
-                logger.info("nodenum {} String {}",nodeNum,storageNodeMapToNum.get(nodeNum));
-                for(int i : storageNodeMapToNum.keySet())
-                {
-                    logger.info("keys in MapToNum {}",storageNodeMapToNum.get(i));
-                }
-                if(storageNodeMapToNum.get(nodeNum) != null)
-                {
-                    String hostnamePort = storageNodeMapToNum.get(nodeNum);
-                    boolean statusOfNode = statusStorageNodesMap.get(hostnamePort);
-                    DataNode dataNode = storageNodesList.get(hostnamePort);
-		            logger.info("check if node {} has the replica {} and status of node {}",dataNode.toString()
-                            ,replicaNodes.contains(dataNode),statusOfNode);
-
-		            for(String str : storageNodesList.keySet())
-                    {
-                        logger.info("storage nodes list elements {}",storageNodesList.get(str).toString());
-                    }
-                    if(statusStorageNodesMap.get(storageNodeMapToNum.get(nodeNum)))
-                    {
-                        for (DataNode temp : replicaNodes)
-                        {
-                            if(!temp.equals(dataNode))
-                            {
-                                logger.info("Found 1 {}",dataNode.toString());
-                                replicaCopyToBeSentTo = storageNodesList.get(storageNodeMapToNum.get(nodeNum));
-                                count++;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            try
-            {
-                logger.info("Send Replica Copy to SN {} to port {}",replicaCopyToBeSentTo.getHostname(), replicaCopyToBeSentTo.getPort());
-                Socket socket = new Socket(replicaCopyToBeSentTo.getHostname(), replicaCopyToBeSentTo.getPort());
-                RequestsToStorageNode.SendReplicaCopyToSN.storageNode storageNode = RequestsToStorageNode.SendReplicaCopyToSN.storageNode.newBuilder()
-                                                                                    .setHostname(replicaCopyToBeSentTo.getHostname())
-                                                                                    .setPort(replicaCopyToBeSentTo.getPort()).build();
-                RequestsToStorageNode.SendReplicaCopyToSN replicaCopyToSN = RequestsToStorageNode.SendReplicaCopyToSN.newBuilder()
-                                                                            .setSN(storageNode)
-                                                                            .setFilename(metadata.getFilename())
-                                                                            .setChunkId(metadata.getChunkId()).build();
-                RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper = RequestsToStorageNode.RequestsToStorageNodeWrapper
-                                                                            .newBuilder()
-                                                                            .setSendReplicaCopyToSNMsg(replicaCopyToSN).build();
-                wrapper.writeDelimitedTo(socket.getOutputStream());
-                socket.close();
-            }
-            catch (IOException e)
-            {
-                logger.error("Exception Caught {}",ExceptionUtils.getStackTrace(e));
             }
         }
     }

@@ -35,7 +35,7 @@ for node in ${node_list[@]};do
 	cd /home2/bkommineni;
 	rm -r *;
 	cd ~/Documents/courses/cs686/p1-bkommineni;
-	java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.StorageNode $ControllerHostname $ControllerPort $StorageNodePort > storage_${node}.out 2>&1 &
+	java -cp dfs-1.0-jar-with-dependencies.jar edu.usfca.cs.dfs.StorageNode $ControllerHostname $ControllerPort $StorageNodePort /home2/bkommineni/ > storage_${node}.out 2>&1 &
 	"
 done
 

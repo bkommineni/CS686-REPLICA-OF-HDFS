@@ -29,7 +29,7 @@ public class StorageNode {
     private Socket connSocket = null;
     public static final int NUM_THREADS_ALLOWED = 15;
     private ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
-    private String dataDirectory = "/home2/bkommineni/";
+    private String dataDirectory ;
 
     public static void main(String[] args)
             throws Exception
@@ -62,28 +62,11 @@ public class StorageNode {
             }
             if(args[3] != null)
             {
-                dataDirectory = absDir.toString() + args[3];
+                dataDirectory = args[3];
             }
 
         }
-        else if(args.length == 3)
-        {
-            if (args[0] != null)
-            {
-                controllerPortHostName = args[0];
-            }
-            System.out.println(controllerPortHostName);
-            if (args[1] != null)
-            {
-                controllerPort = Integer.parseInt(args[1]);
-                System.out.println(controllerPort);
-            }
-            if(args[2] != null)
-            {
-                storageNodePort = Integer.parseInt(args[2]);
-                System.out.println(controllerPortHostName);
-            }
-        }
+
         logger.info("Enrolling with Controller {} on port {} after entering to network ",controllerPortHostName,controllerPort);
         controllerSocket = new Socket(controllerPortHostName,controllerPort);
         RequestsToController.Enroll enroll = RequestsToController.Enroll.newBuilder()
@@ -212,15 +195,7 @@ public class StorageNode {
                     /*Storing Chunk data on local file system of Node*/
                     String blockFile = null;
                     logger.info("filename {} ",filename);
-                    /*if((filename != null) && filename.endsWith(".txt"))
-                    {
-                        filename = filename.split("\\.")[0];
-                        blockFile = dataDirectory + filename + "Part" + chunkId +".txt";
-                    }
-                    else
-                    {*/
-                        blockFile = dataDirectory + filename + "Part" + chunkId;
-                    //}
+                    blockFile = dataDirectory + filename + "Part" + chunkId;
                     int i=0;
                     Files.deleteIfExists(Paths.get(blockFile));
                     Files.createFile(Paths.get(blockFile));
@@ -271,15 +246,8 @@ public class StorageNode {
                     RequestsToStorageNode.RetrieveFileRequestToSN requestToSN = requestsWrapper.getRetrieveFileRequestToSNMsg();
                     String filename  = requestToSN.getFilename();
                     byte[] chunkData = null;
-                    /*if((filename != null) && filename.endsWith(".txt"))
-                    {
-                        filename = filename.split("\\.")[0];
-                        chunkData = Files.readAllBytes(new File(dataDirectory + filename +"Part"+requestToSN.getChunkId()+".txt").toPath());
-                    }
-                    else
-                    {*/
-                        chunkData = Files.readAllBytes(new File(dataDirectory + filename +"Part"+requestToSN.getChunkId()).toPath());
-                    //}
+
+                    chunkData = Files.readAllBytes(new File(dataDirectory + filename +"Part"+requestToSN.getChunkId()).toPath());
                     StorageNodeMetadata storageNodeMetadata = storageNodeMetadataMap.get(requestToSN.getFilename()+requestToSN.getChunkId());
                     logger.debug("chunk data {}",chunkData);
                     ResponsesToClient.RetrieveFileResponseFromSN response = ResponsesToClient.RetrieveFileResponseFromSN.newBuilder()
@@ -543,16 +511,9 @@ public class StorageNode {
                         logger.info("Received response from peer SN {} from port {}",hostname,socket.getPort());
                         socket.close();
                         String filepath = null;
-                        /*if((filename != null) && filename.endsWith(".txt"))
-                        {
-                            filename = filename.split("\\.")[0];
-                            filepath = dataDirectory + filename + "Part" + chunkId + ".txt";
-                            filename = filename + ".txt";
-                        }
-                        else
-                        {*/
-                            filepath = dataDirectory + filename + "Part" + chunkId;
-                        //}
+
+                        filepath = dataDirectory + filename + "Part" + chunkId;
+
                         if (acknowledgeReadinessToSN.getSuccess()) {
                             Socket socket1 = new Socket(hostname, peerList.get(0).getPort());
                             File file = new File(filepath);
@@ -627,16 +588,8 @@ public class StorageNode {
                         logger.info("Received readiness response(SN-SN) from peer SN {} from port {}",hostname,socket.getPort());
                         socket.close();
                         String filepath = null;
-                        /*if((filename != null) && filename.endsWith(".txt"))
-                        {
-                            filename = filename.split("\\.")[0];
-                            filepath = dataDirectory + filename + "Part" + chunkId + ".txt";
-                            filename = filename + ".txt";
-                        }
-                        else
-                        {*/
-                            filepath = dataDirectory + filename + "Part" + chunkId;
-                        //}
+
+                        filepath = dataDirectory + filename + "Part" + chunkId;
                         if (acknowledgeReadinessToSN.getSuccess()) {
                             Socket socket1 = new Socket(hostname,peerList.get(0).getPort());
                             File file = new File(filepath);

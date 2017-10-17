@@ -195,7 +195,7 @@ public class Client {
             executorService.shutdown();
             try
             {
-                executorService.awaitTermination(30, TimeUnit.MINUTES);
+                executorService.awaitTermination(40, TimeUnit.SECONDS);
             }
             catch (InterruptedException e)
             {

@@ -2,3 +2,9 @@ bass02.cs.usfca.edu
 bass04.cs.usfca.edu
 bass07.cs.usfca.edu
 bass08.cs.usfca.edu
+bass09.cs.usfca.edu
+bass11.cs.usfca.edu
+bass12.cs.usfca.edu
+bass13.cs.usfca.edu
+bass14.cs.usfca.edu
+bass15.cs.usfca.edu

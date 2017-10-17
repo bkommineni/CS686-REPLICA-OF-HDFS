@@ -349,7 +349,7 @@ public class StorageNode {
                     logger.info("Received good chunk request from CN!!");
                     socket.close();
                     logger.info("good chunk is in host {} port {}",goodChunkInfoToSN.getSN().getHostname(),goodChunkInfoToSN.getSN().getPort());
-                    socket = new Socket(goodChunkInfoToSN.getSN().getHostname(),goodChunkInfoToSN.getSN().getPort());
+                    Socket socket1 = new Socket(goodChunkInfoToSN.getSN().getHostname(),goodChunkInfoToSN.getSN().getPort());
                     RequestsToStorageNode.SendGoodChunkRequestFromSNToSN.storageNode SN = RequestsToStorageNode.SendGoodChunkRequestFromSNToSN.storageNode
                                                                                             .newBuilder()
                                                                                             .setHostname(getHostname())
@@ -361,11 +361,11 @@ public class StorageNode {
                     RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper1 = RequestsToStorageNode.RequestsToStorageNodeWrapper.newBuilder()
                                                                                     .setSendGoodChunkRequestFromSNToSNMsg(snToSN).build();
                     logger.info("Sending good chunk request to SN {} from port {}",goodChunkInfoToSN.getSN().getHostname(),goodChunkInfoToSN.getSN().getPort());
-                    wrapper1.writeDelimitedTo(socket.getOutputStream());
+                    wrapper1.writeDelimitedTo(socket1.getOutputStream());
                     ResponsesToStorageNode.GoodChunkDataToSN chunkDataToSN = ResponsesToStorageNode.GoodChunkDataToSN
-                                                                            .parseDelimitedFrom(socket.getInputStream());
+                                                                            .parseDelimitedFrom(socket1.getInputStream());
                     logger.info("Received good chunk data from SN ");
-                    socket.close();
+                    socket1.close();
 
 
                     //replace the chunk
@@ -471,6 +471,7 @@ public class StorageNode {
                     StorageNodeMetadata metadata = new StorageNodeMetadata(fileName,chunkId);
                     metadata.setChecksum(checksum.toString());
                     storageNodeMetadataMap.put(fileName+chunkId,metadata);
+		    dataStoredInLastFiveSeconds.put(fileName+chunkId,metadata);
                     logger.info("Stored replica on my storage node..");
                 }
             }

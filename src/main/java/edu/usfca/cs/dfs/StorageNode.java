@@ -31,6 +31,7 @@ public class StorageNode {
     protected static Map<String, StorageNodeMetadata> storageNodeMetadataMap = new HashMap<>();
     protected static Map<String, StorageNodeMetadata> dataStoredInLastFiveSeconds = new HashMap<>();
     protected static Socket controllerSocket = null;
+    private static String rootDirectory = "/home2/";
     protected static String dataDirectory;
     protected static long diskSpaceUsed;
     protected static long diskCapacity;
@@ -87,7 +88,7 @@ public class StorageNode {
 
         }
 
-        file = new File(dataDirectory);
+        file = new File(rootDirectory);
         diskCapacity = file.getTotalSpace();
         diskSpaceUsed = (file.getTotalSpace() - file.getFreeSpace());
         logger.info("At Start :- diskCapacity {} diskSpaceUsed {}", diskCapacity, diskSpaceUsed);

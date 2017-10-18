@@ -24,8 +24,7 @@ public class EnrollRequestToCNHandler extends Controller {
         this.socket = socket;
     }
 
-    public void executeRequest()
-    {
+    public void executeRequest() {
         try {
             String hostname = enroll.getHostname();
             logger.info("Received enrollment request from storage node {} from port {}", hostname, enroll.getPort());
@@ -44,15 +43,13 @@ public class EnrollRequestToCNHandler extends Controller {
             }
 
             ResponsesToStorageNode.AcknowledgeEnrollment acknowledgeEnrollment = ResponsesToStorageNode.AcknowledgeEnrollment
-                                                                                .newBuilder().setSuccess(true).build();
+                    .newBuilder().setSuccess(true).build();
             logger.info("enrolled host : {}", hostname);
             acknowledgeEnrollment.writeDelimitedTo(socket.getOutputStream());
             logger.info("Enrollment done!And acknowedged storage node with response");
             executorService.submit(new Thread(new ActivenessChecker(hostname, enroll.getPort())));
             socket.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Exception caught : {}", ExceptionUtils.getStackTrace(e));
         }
     }

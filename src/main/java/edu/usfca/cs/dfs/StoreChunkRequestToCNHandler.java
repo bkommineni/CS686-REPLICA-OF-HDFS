@@ -28,10 +28,8 @@ public class StoreChunkRequestToCNHandler extends Controller {
         this.socket = socket;
     }
 
-    public void executeRequest()
-    {
-        try
-        {
+    public void executeRequest() {
+        try {
             InetAddress inetAddress = socket.getInetAddress();
             int port = socket.getPort();
 
@@ -70,9 +68,7 @@ public class StoreChunkRequestToCNHandler extends Controller {
             storeChunkResponse.writeDelimitedTo(socket.getOutputStream());
             logger.info("Responded with list of three distinct storage nodes to client for store chunk request");
             socket.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Exception caught : {}", ExceptionUtils.getStackTrace(e));
         }
     }

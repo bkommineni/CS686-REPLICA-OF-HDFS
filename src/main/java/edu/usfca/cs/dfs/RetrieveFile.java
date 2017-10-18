@@ -14,19 +14,15 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by bharu on 10/17/17.
  */
-public class RetrieveFile extends Client
-{
+public class RetrieveFile extends Client {
     private String filePath;
 
-    public RetrieveFile(String filePath)
-    {
+    public RetrieveFile(String filePath) {
         this.filePath = filePath;
     }
 
-    public void executeRequest()
-    {
-        try
-        {
+    public void executeRequest() {
+        try {
             String currPath = ".";
             Path p = Paths.get(currPath);
             Path absDir = p.toAbsolutePath();
@@ -52,8 +48,7 @@ public class RetrieveFile extends Client
             logger.info("Received RetrieveFile response from Controller...");
             socket.close();
 
-            for (ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata : responseFromCN.getChunkListList())
-            {
+            for (ResponsesToClient.RetrieveFileResponseFromCN.chunkMetadata chunkMetadata : responseFromCN.getChunkListList()) {
                 Thread thread = new Thread(new ChunkRetrieveWorker(chunkMetadata));
                 executorService.submit(thread);
             }
@@ -62,19 +57,14 @@ public class RetrieveFile extends Client
             logger.info("byte array size {}", listOfChunks.size());
             Files.deleteIfExists(Paths.get(mergedFile));
             Files.createFile(Paths.get(mergedFile));
-            for (int key : listOfChunks.keySet())
-            {
+            for (int key : listOfChunks.keySet()) {
                 byte[] temp = listOfChunks.get(key);
                 Files.write(Paths.get(mergedFile), temp, StandardOpenOption.APPEND);
             }
             logger.info("checksum of retrieved file {}", calculateChecksum(Files.readAllBytes(Paths.get(mergedFile))));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Exception caught : {}", ExceptionUtils.getStackTrace(e));
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             logger.error("Exception caught {}", ExceptionUtils.getStackTrace(e));
         }
     }

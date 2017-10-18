@@ -26,10 +26,8 @@ public class ReadinessCheckRequestToSNHandler extends StorageNode {
         this.socket = socket;
     }
 
-    public void executeRequest()
-    {
-        try
-        {
+    public void executeRequest() {
+        try {
             InetAddress inetAddress = socket.getInetAddress();
             int port = socket.getPort();
             if (readinessCheckRequestToSN.hasReadinessCheckRequestToSNFromClientMsg()) {
@@ -58,9 +56,7 @@ public class ReadinessCheckRequestToSNHandler extends StorageNode {
                 }
             }
             socket.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Exception caught : {}", ExceptionUtils.getStackTrace(e));
         }
     }

@@ -27,26 +27,19 @@ public class ListRequestToCNHandler extends Controller {
         this.socket = socket;
     }
 
-    public void executeRequest()
-    {
-        try
-        {
+    public void executeRequest() {
+        try {
             InetAddress inetAddress = socket.getInetAddress();
             int port = socket.getPort();
             logger.info("Received request for list of active storage nodes from client {} from port {}", inetAddress, port);
             List<ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo> storageNodes = new ArrayList<>();
-            for (String str : statusStorageNodesMap.keySet())
-            {
-                if (statusStorageNodesMap.get(str))
-                {
+            for (String str : statusStorageNodesMap.keySet()) {
+                if (statusStorageNodesMap.get(str)) {
                     List<String> filenames = new ArrayList<>();
-                    for (String key : metadataMap.keySet())
-                    {
-                        if (key.contains(str))
-                        {
+                    for (String key : metadataMap.keySet()) {
+                        if (key.contains(str)) {
                             String filename = metadataMap.get(key).getFilename();
-                            if (!filenames.contains(filename))
-                            {
+                            if (!filenames.contains(filename)) {
                                 filenames.add(filename);
                                 DataNode storageNode = metadataMap.get(key).getDataNode();
                                 ResponsesToClient.ListOfActiveStorageNodesResponseFromCN.storageNodeFileInfo storageNodeMsg =
@@ -66,9 +59,7 @@ public class ListRequestToCNHandler extends Controller {
             list.writeDelimitedTo(socket.getOutputStream());
             logger.info("Responded with a list of active storage nodes");
             socket.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Exception caught : {}", ExceptionUtils.getStackTrace(e));
         }
     }

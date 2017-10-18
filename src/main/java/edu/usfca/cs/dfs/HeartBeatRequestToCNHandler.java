@@ -25,41 +25,35 @@ public class HeartBeatRequestToCNHandler extends Controller {
         this.socket = socket;
     }
 
-    public void executeRequest()
-    {
-        try
-        {
+    public void executeRequest() {
+        try {
             //logger.debug("Received heartbeat message from storage node {} from port {}" , heartbeat.getSN().getHostname(),heartbeat.getSN().getPort());
             int size = heartbeat.getMetadataList().size();
             RequestsToController.Heartbeat.storageNode storageNode = RequestsToController.Heartbeat.storageNode.newBuilder()
-                                                                    .setHostname(heartbeat.getSN().getHostname())
-                                                                    .setPort(heartbeat.getSN().getPort())
-                                                                    .setDiskCapacity(heartbeat.getSN().getDiskCapacity())
-                                                                    .setDiskSpaceUsed(heartbeat.getSN().getDiskSpaceUsed())
-                                                                    .build();
-            for(int i=0;i<size;i++)
-            {
+                    .setHostname(heartbeat.getSN().getHostname())
+                    .setPort(heartbeat.getSN().getPort())
+                    .setDiskCapacity(heartbeat.getSN().getDiskCapacity())
+                    .setDiskSpaceUsed(heartbeat.getSN().getDiskSpaceUsed())
+                    .build();
+            for (int i = 0; i < size; i++) {
                 RequestsToController.Heartbeat.ChunkMetadata chunkMetadata = heartbeat.getMetadataList().get(i);
                 String key = chunkMetadata.getFilename() + chunkMetadata.getChunkId() + storageNode.getHostname() + storageNode.getPort();
                 //logger.debug("metadata map key {}",key);
-                if(!metadataMap.containsKey(key))
-                {
-                    Metadata metadata = new Metadata(chunkMetadata.getFilename(),chunkMetadata.getChunkId());
-                    DataNode dataNode = new DataNode(storageNode.getPort(),storageNode.getHostname());
+                if (!metadataMap.containsKey(key)) {
+                    Metadata metadata = new Metadata(chunkMetadata.getFilename(), chunkMetadata.getChunkId());
+                    DataNode dataNode = new DataNode(storageNode.getPort(), storageNode.getHostname());
                     dataNode.setDiskCapacity(storageNode.getDiskCapacity());
                     dataNode.setDiskspaceUsed(storageNode.getDiskSpaceUsed());
                     //logger.debug("disk space used {} total capacity {}",storageNode.getDiskSpaceUsed(),storageNode.getDiskCapacity());
                     metadata.setDataNode(dataNode);
-                    metadataMap.put(key,metadata);
-                    storageNodesList.put(storageNode.getHostname()+storageNode.getPort(),dataNode);
+                    metadataMap.put(key, metadata);
+                    storageNodesList.put(storageNode.getHostname() + storageNode.getPort(), dataNode);
                 }
             }
-            storageNodeHeartBeatTimeStamps.put(storageNode.getHostname()+storageNode.getPort(),System.currentTimeMillis());
+            storageNodeHeartBeatTimeStamps.put(storageNode.getHostname() + storageNode.getPort(), System.currentTimeMillis());
             //logger.debug("Updated info from heartbeat message in memory from SN {} from port {}",msgWrapper.getHeartbeatMsg().getSN().getHostname(),msgWrapper.getHeartbeatMsg().getSN().getPort());
             socket.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Exception caught : {}", ExceptionUtils.getStackTrace(e));
         }
     }

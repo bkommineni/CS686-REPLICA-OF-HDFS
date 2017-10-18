@@ -15,10 +15,9 @@ import java.nio.file.Files;
 public class RetrieveFileRequestToSNHandler extends StorageNode {
 
     RequestsToStorageNode.RetrieveFileRequestToSN requestToSN;
-    private Socket socket ;
+    private Socket socket;
 
-    public RetrieveFileRequestToSNHandler(RequestsToStorageNode.RetrieveFileRequestToSN requestToSN)
-    {
+    public RetrieveFileRequestToSNHandler(RequestsToStorageNode.RetrieveFileRequestToSN requestToSN) {
         this.requestToSN = requestToSN;
     }
 
@@ -30,10 +29,8 @@ public class RetrieveFileRequestToSNHandler extends StorageNode {
         this.socket = socket;
     }
 
-    public void executeRequest()
-    {
-        try
-        {
+    public void executeRequest() {
+        try {
             InetAddress inetAddress = socket.getInetAddress();
             int port = socket.getPort();
             String filename = requestToSN.getFilename();
@@ -51,9 +48,7 @@ public class RetrieveFileRequestToSNHandler extends StorageNode {
             response.writeDelimitedTo(socket.getOutputStream());
             logger.info("Retrieve chunk from this node is done and sent back response");
             socket.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Exception caught : {}", ExceptionUtils.getStackTrace(e));
         }
     }

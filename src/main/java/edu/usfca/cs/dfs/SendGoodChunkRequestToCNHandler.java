@@ -25,8 +25,7 @@ public class SendGoodChunkRequestToCNHandler extends Controller {
         this.socket = socket;
     }
 
-    public void executeRequest()
-    {
+    public void executeRequest() {
         try {
             ResponsesToStorageNode.GoodChunkInfoToSN goodChunkInfoToSN = null;
             ResponsesToStorageNode.GoodChunkInfoToSN.storageNode SN = null;
@@ -34,12 +33,9 @@ public class SendGoodChunkRequestToCNHandler extends Controller {
             for (Map.Entry<String, Metadata> entry : metadataMap.entrySet()) {
                 logger.info("map entry {} protobuf msg {}", entry.getValue().getDataNode().getHostname(), goodChunkRequest.getSN().getHostname());
                 logger.info("map entry port {} protobuf msg port {}", entry.getValue().getDataNode().getPort(), goodChunkRequest.getSN().getPort());
-                if (entry.getKey().contains(key))
-                {
-                    if (goodChunkRequest.getSN().getHostname().equals("Bhargavis-MacBook-Pro.local"))
-                    {
-                        if (entry.getValue().getDataNode().getPort() != goodChunkRequest.getSN().getPort())
-                        {
+                if (entry.getKey().contains(key)) {
+                    if (goodChunkRequest.getSN().getHostname().equals("Bhargavis-MacBook-Pro.local")) {
+                        if (entry.getValue().getDataNode().getPort() != goodChunkRequest.getSN().getPort()) {
                             SN = ResponsesToStorageNode.GoodChunkInfoToSN.storageNode.newBuilder()
                                     .setHostname(entry.getValue().getDataNode().getHostname())
                                     .setPort(entry.getValue().getDataNode().getPort()).build();
@@ -53,9 +49,7 @@ public class SendGoodChunkRequestToCNHandler extends Controller {
                             socket.close();
                             break;
                         }
-                    }
-                    else if (!entry.getValue().getDataNode().getHostname().equals(goodChunkRequest.getSN().getHostname()))
-                    {
+                    } else if (!entry.getValue().getDataNode().getHostname().equals(goodChunkRequest.getSN().getHostname())) {
                         SN = ResponsesToStorageNode.GoodChunkInfoToSN.storageNode.newBuilder()
                                 .setHostname(entry.getValue().getDataNode().getHostname())
                                 .setPort(entry.getValue().getDataNode().getPort()).build();
@@ -71,9 +65,7 @@ public class SendGoodChunkRequestToCNHandler extends Controller {
                     }
                 }
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Exception caught : {}", ExceptionUtils.getStackTrace(e));
         }
     }

@@ -28,10 +28,8 @@ public class RetrieveFileRequestToCNHandler extends Controller {
         this.socket = socket;
     }
 
-    public void executeRequest()
-    {
-        try
-        {
+    public void executeRequest() {
+        try {
             InetAddress inetAddress = socket.getInetAddress();
             int port = socket.getPort();
 
@@ -86,9 +84,7 @@ public class RetrieveFileRequestToCNHandler extends Controller {
             responseFromCN.writeDelimitedTo(socket.getOutputStream());
             logger.info("Responded with list of three distinct storage nodes to client for retrieve file request");
             socket.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Exception caught : {}", ExceptionUtils.getStackTrace(e));
         }
     }

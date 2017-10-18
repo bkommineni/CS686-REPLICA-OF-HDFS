@@ -7,10 +7,10 @@ public class DataNode {
 
     private int port;
     private String hostname;
-    private long  diskspaceUsed;
-    private long  diskCapacity;
+    private long diskspaceUsed;
+    private long diskCapacity;
 
-    public DataNode(int port,String hostname) {
+    public DataNode(int port, String hostname) {
         this.port = port;
         this.hostname = hostname;
     }
@@ -56,8 +56,7 @@ public class DataNode {
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         DataNode dataNode = (DataNode) o;
         if (port != dataNode.port) return false;
         return hostname != null ? hostname.equals(dataNode.hostname) : dataNode.hostname == null;

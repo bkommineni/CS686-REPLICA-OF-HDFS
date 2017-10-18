@@ -42,7 +42,9 @@ message ListOfActiveStorageNodesResponseFromCN
 
 message FreeSpaceInfoResponseFromCN
 {
-    int64 diskSpace = 1;
+    int64 clusterAvailableSpace = 1;
+    int64 clusterCapacity = 2;
+    int64 clusterUsedSpace = 3;
 }
 
 //StorageNode

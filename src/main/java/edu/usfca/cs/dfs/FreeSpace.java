@@ -11,20 +11,45 @@ import java.net.Socket;
 public class FreeSpace extends Client {
     public void executeRequest() {
         try {
+
             Socket socket = new Socket(controllerHostname, controllerPort);
-            RequestsToController.FreeSpaceInfoRequest freeSpaceInfoRequest = RequestsToController.FreeSpaceInfoRequest
+            RequestsToController.ListOfActiveNodesRequest listOfActiveNodesRequest = RequestsToController.ListOfActiveNodesRequest
                     .newBuilder().build();
             RequestsToController.RequestsToControllerWrapper wrapper = RequestsToController.RequestsToControllerWrapper
                     .newBuilder()
-                    .setFreeSpaceInfoRequestMsg(freeSpaceInfoRequest)
+                    .setListOfActiveNodesRequestMsg(listOfActiveNodesRequest)
                     .build();
-            logger.info("Sending  a free space request to Controller...");
+            logger.info("Sending  a list request to Controller...");
             wrapper.writeDelimitedTo(socket.getOutputStream());
-            ResponsesToClient.FreeSpaceInfoResponseFromCN freeSpace = ResponsesToClient.FreeSpaceInfoResponseFromCN.parseDelimitedFrom(socket.getInputStream());
+            ResponsesToClient.ListOfActiveStorageNodesFromCN response = ResponsesToClient.ListOfActiveStorageNodesFromCN.parseDelimitedFrom(socket.getInputStream());
             logger.info("Received response from controller");
-            logger.info("Cluster Capacity {}", freeSpace.getClusterCapacity());
-            logger.info("Cluster Used Space {}", freeSpace.getClusterUsedSpace());
-            logger.info("Cluster Free Space {}", freeSpace.getClusterAvailableSpace());
+            socket.close();
+
+            long totalAvailableSpaceOnCluster = 0;
+            long totalCapacityOfCluster = 0;
+            long totalUsedSpaceOnCluster = 0;
+
+            for(ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode SN : response.getSNList())
+            {
+                logger.info("sending a request to host {} on port {}",SN.getHostname(),SN.getPort());
+                socket = new Socket(SN.getHostname(), SN.getPort());
+                RequestsToStorageNode.FreeSpaceInfoRequestToSN requestToSN = RequestsToStorageNode.FreeSpaceInfoRequestToSN.newBuilder()
+                                                                                .build();
+                RequestsToStorageNode.RequestsToStorageNodeWrapper wrapper1 = RequestsToStorageNode.RequestsToStorageNodeWrapper
+                                                                            .newBuilder()
+                                                                            .setFreeSpaceInfoRequestToSNMsg(requestToSN).build();
+                wrapper1.writeDelimitedTo(socket.getOutputStream());
+                ResponsesToClient.FreeSpaceInfoResponseFromSN responseFromSN = ResponsesToClient.FreeSpaceInfoResponseFromSN
+                                                                                .parseDelimitedFrom(socket.getInputStream());
+                totalAvailableSpaceOnCluster = totalAvailableSpaceOnCluster + responseFromSN.getNodeAvailableSpace();
+                totalCapacityOfCluster = totalCapacityOfCluster + responseFromSN.getNodeCapacity();
+                totalUsedSpaceOnCluster = totalUsedSpaceOnCluster + responseFromSN.getNodeUsedSpace();
+                socket.close();
+            }
+            logger.info("Received response from all nodes");
+            logger.info("Cluster Capacity {}", totalCapacityOfCluster);
+            logger.info("Cluster Used Space {}", totalUsedSpaceOnCluster);
+            logger.info("Cluster Free Space {}", totalAvailableSpaceOnCluster);
             socket.close();
         } catch (IOException e) {
             logger.error("Exception caught {}", ExceptionUtils.getStackTrace(e));

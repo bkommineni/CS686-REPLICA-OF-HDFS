@@ -29,7 +29,7 @@ message RetrieveFileResponseFromCN
     repeated chunkMetadata chunkList = 1;
 }
 
-message ListOfActiveStorageNodesResponseFromCN
+message ListOfFilesOnNodesResponseFromCN
 {
     message storageNodeFileInfo
     {
@@ -37,14 +37,25 @@ message ListOfActiveStorageNodesResponseFromCN
         string hostname = 2;
         string filename = 3;
     }
-    repeated storageNodeFileInfo activeStorageNodes = 1;
+    repeated storageNodeFileInfo listOfStorageNodesWithFileInfo = 1;
 }
 
-message FreeSpaceInfoResponseFromCN
+message ListOfActiveStorageNodesFromCN
 {
-    int64 clusterAvailableSpace = 1;
-    int64 clusterCapacity = 2;
-    int64 clusterUsedSpace = 3;
+    message storageNode
+    {
+        int32 port = 1;
+        string hostname = 2;
+    }
+
+    repeated storageNode SN = 1;
+}
+
+message FreeSpaceInfoResponseFromSN
+{
+    int64 nodeAvailableSpace = 1;
+    int64 nodeCapacity = 2;
+    int64 nodeUsedSpace = 3;
 }
 
 //StorageNode
@@ -83,6 +94,8 @@ message ResponsesToClientWrapper {
         AcknowledgeReadinessToClient AcknowledgeReadinessToClientMsg = 4;
         AcknowledgeStoreChunkToClient AcknowledgeStoreChunkToClientMsg = 5;
         GoodChunkDataToClient goodChunkDataToClientMsg = 6;
-        FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;
+        FreeSpaceInfoResponseFromSN freeSpaceInfoResponseFromSNMsg = 7;
+        ListOfFilesOnNodesResponseFromCN listOfFilesOnNodesResponseFromCNMsg = 8;
+        ListOfActiveStorageNodesFromCN listOfActiveStorageNodesFromCNMsg = 9;
     }
 }

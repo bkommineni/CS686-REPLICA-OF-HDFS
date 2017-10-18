@@ -34,6 +34,7 @@ public class StorageNode {
     protected static String dataDirectory;
     protected static long diskSpaceUsed;
     protected static long diskCapacity;
+    protected static File file;
     protected ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS_ALLOWED);
 
     public static void main(String[] args)
@@ -86,7 +87,7 @@ public class StorageNode {
 
         }
 
-        File file = new File(dataDirectory);
+        file = new File(dataDirectory);
         diskCapacity = file.getTotalSpace();
         diskSpaceUsed = (file.getTotalSpace() - file.getFreeSpace());
         logger.info("At Start :- diskCapacity {} diskSpaceUsed {}", diskCapacity, diskSpaceUsed);

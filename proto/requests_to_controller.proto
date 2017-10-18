@@ -13,12 +13,12 @@ message RetrieveFileRequest
     string filename = 1;
 }
 
-message ListOfActiveNodesRequest
+message ListOfFilesOnNodesRequest
 {
 
 }
 
-message FreeSpaceInfoRequest
+message ListOfActiveNodesRequest
 {
 
 }
@@ -71,8 +71,8 @@ message RequestsToControllerWrapper {
         RetrieveFileRequest retrieveFileRequestMsg = 2;
         Enroll enrollMsg = 3;
         Heartbeat heartbeatMsg = 4;
-        ListOfActiveNodesRequest listOfActiveNodes = 5;
+        ListOfFilesOnNodesRequest listOfFilesOnNodesRequestMsg = 5;
         SendGoodChunkRequest sendGoodChunkRequestMsg = 6;
-        FreeSpaceInfoRequest freeSpaceInfoRequestMsg = 7;
+        ListOfActiveNodesRequest listOfActiveNodesRequestMsg = 7;
     }
 }

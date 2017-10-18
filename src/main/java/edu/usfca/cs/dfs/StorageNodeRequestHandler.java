@@ -62,6 +62,14 @@ public class StorageNodeRequestHandler extends StorageNode implements Runnable {
                 handler.setSocket(socket);
                 handler.executeRequest();
             }
+            if(requestsWrapper.hasFreeSpaceInfoRequestToSNMsg())
+            {
+                logger.info("Received free space info request from Client!!");
+                RequestsToStorageNode.FreeSpaceInfoRequestToSN freeSpaceInfoRequestToSN = requestsWrapper.getFreeSpaceInfoRequestToSNMsg();
+                FreeSpaceInfoRequestToSNHandler handler = new FreeSpaceInfoRequestToSNHandler(freeSpaceInfoRequestToSN);
+                handler.setSocket(socket);
+                handler.executeRequest();
+            }
             if (requestsWrapper.hasSendGoodChunkRequestFromSNToSNMsg()) {
                 RequestsToStorageNode.SendGoodChunkRequestFromSNToSN SN = requestsWrapper.getSendGoodChunkRequestFromSNToSNMsg();
                 logger.info("Received good chunk data req from peer SN {} from port {} for file {} chunk {}", SN.getSN().getHostname()
@@ -103,7 +111,6 @@ public class StorageNodeRequestHandler extends StorageNode implements Runnable {
                 String filePath = dataDirectory + fileName + "Part" + chunkId;
                 Files.createFile(Paths.get(filePath));
                 Files.write(Paths.get(filePath), replicaCopyToSNFromSN.getChunkData().toByteArray());
-                File file = new File(filePath);
                 diskSpaceUsed = (file.getTotalSpace() - file.getFreeSpace());
                 //checksum
                 String checksum = calculateChecksum(filePath);

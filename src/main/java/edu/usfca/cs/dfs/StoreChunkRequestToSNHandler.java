@@ -56,7 +56,6 @@ public class StoreChunkRequestToSNHandler extends StorageNode {
             String blockFile = null;
             logger.info("filename {} ", filename);
             blockFile = dataDirectory + filename + "Part" + chunkId;
-            File file = new File(blockFile);
             Files.deleteIfExists(Paths.get(blockFile));
             Files.createFile(Paths.get(blockFile));
             if (bytes.length < file.getFreeSpace()) {

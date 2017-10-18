@@ -9,14 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by bharu on 10/17/17.
+ * Created by bharu on 10/18/17.
  */
-public class ListRequestToCNHandler extends Controller {
-    private RequestsToController.ListOfFilesOnNodesRequest list;
+public class ListActiveNodesToCNHandler extends Controller {
+
+    private RequestsToController.ListOfActiveNodesRequest listOfActiveNodesRequest;
     private Socket socket;
 
-    public ListRequestToCNHandler(RequestsToController.ListOfFilesOnNodesRequest list) {
-        this.list = list;
+    public ListActiveNodesToCNHandler(RequestsToController.ListOfActiveNodesRequest listOfActiveNodesRequest) {
+        this.listOfActiveNodesRequest = listOfActiveNodesRequest;
     }
 
     public Socket getSocket() {
@@ -27,35 +28,35 @@ public class ListRequestToCNHandler extends Controller {
         this.socket = socket;
     }
 
-    public void executeRequest() {
+    public void executeRequest()
+    {
         try {
             InetAddress inetAddress = socket.getInetAddress();
             int port = socket.getPort();
             logger.info("Received request for list of files on different nodes from client {} from port {}", inetAddress, port);
-            List<ResponsesToClient.ListOfFilesOnNodesResponseFromCN.storageNodeFileInfo> storageNodes = new ArrayList<>();
+            List<ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode> storageNodes = new ArrayList<>();
             for (String str : statusStorageNodesMap.keySet()) {
                 if (statusStorageNodesMap.get(str)) {
-                    List<String> filenames = new ArrayList<>();
+                    List<DataNode> dataNodeList = new ArrayList<>();
                     for (String key : metadataMap.keySet()) {
                         if (key.contains(str)) {
-                            String filename = metadataMap.get(key).getFilename();
-                            if (!filenames.contains(filename)) {
-                                filenames.add(filename);
+                            DataNode dataNode = metadataMap.get(key).getDataNode();
+                            if (!dataNodeList.contains(dataNode)) {
+                                dataNodeList.add(dataNode);
                                 DataNode storageNode = metadataMap.get(key).getDataNode();
-                                ResponsesToClient.ListOfFilesOnNodesResponseFromCN.storageNodeFileInfo storageNodeMsg =
-                                        ResponsesToClient.ListOfFilesOnNodesResponseFromCN.storageNodeFileInfo.newBuilder().setPort(storageNode.getPort())
+                                ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode SN =
+                                        ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode.newBuilder()
+                                                .setPort(storageNode.getPort())
                                                 .setHostname(storageNode.getHostname())
-                                                .setFilename(metadataMap.get(key).getFilename())
                                                 .build();
-                                storageNodes.add(storageNodeMsg);
+                                storageNodes.add(SN);
                             }
                         }
                     }
-
                 }
             }
-            ResponsesToClient.ListOfFilesOnNodesResponseFromCN list = ResponsesToClient.ListOfFilesOnNodesResponseFromCN.newBuilder()
-                    .addAllListOfStorageNodesWithFileInfo(storageNodes).build();
+            ResponsesToClient.ListOfActiveStorageNodesFromCN list = ResponsesToClient.ListOfActiveStorageNodesFromCN.newBuilder()
+                    .addAllSN(storageNodes).build();
             list.writeDelimitedTo(socket.getOutputStream());
             logger.info("Responded with a list of active storage nodes");
             socket.close();

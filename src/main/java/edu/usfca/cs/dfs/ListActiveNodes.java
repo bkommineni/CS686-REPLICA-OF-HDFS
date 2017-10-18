@@ -6,24 +6,24 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- * Created by bharu on 10/18/17.
+ * Created by bharu on 10/17/17.
  */
-public class ListFiles extends Client {
+public class ListActiveNodes extends Client {
     public void executeRequest() {
         try {
             Socket socket = new Socket(controllerHostname, controllerPort);
-            RequestsToController.ListOfFilesOnNodesRequest listOfFilesOnNodesRequest = RequestsToController.ListOfFilesOnNodesRequest
+            RequestsToController.ListOfActiveNodesRequest listOfActiveNodesRequest = RequestsToController.ListOfActiveNodesRequest
                     .newBuilder().build();
             RequestsToController.RequestsToControllerWrapper wrapper = RequestsToController.RequestsToControllerWrapper
                     .newBuilder()
-                    .setListOfFilesOnNodesRequestMsg(listOfFilesOnNodesRequest)
+                    .setListOfActiveNodesRequestMsg(listOfActiveNodesRequest)
                     .build();
-            logger.info("Sending  a list of files request to Controller...");
+            logger.info("Sending  a list of active nodes request to Controller...");
             wrapper.writeDelimitedTo(socket.getOutputStream());
-            ResponsesToClient.ListOfFilesOnNodesResponseFromCN list = ResponsesToClient.ListOfFilesOnNodesResponseFromCN.parseDelimitedFrom(socket.getInputStream());
+            ResponsesToClient.ListOfActiveStorageNodesFromCN list = ResponsesToClient.ListOfActiveStorageNodesFromCN.parseDelimitedFrom(socket.getInputStream());
             logger.info("Received response from controller");
-            for (ResponsesToClient.ListOfFilesOnNodesResponseFromCN.storageNodeFileInfo info : list.getListOfStorageNodesWithFileInfoList()) {
-                logger.info("filename: {} Host: {} Port: {}",info.getFilename(),info.getHostname(), info.getPort());
+            for (ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode info : list.getSNList()) {
+                logger.info("Host: {} Port: {}",info.getHostname(), info.getPort());
             }
             socket.close();
         } catch (IOException e) {

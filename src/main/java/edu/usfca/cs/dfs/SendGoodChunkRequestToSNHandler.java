@@ -101,7 +101,6 @@ public class SendGoodChunkRequestToSNHandler extends StorageNode {
         try {
             //replace the chunk
             String filePath = dataDirectory + filename + "Part" + chunkId;
-            File file = new File(filePath);
 
             logger.info("chunkdata {}", bytes);
             logger.info("free space {} bytes size {}", file.getFreeSpace(), bytes.length);

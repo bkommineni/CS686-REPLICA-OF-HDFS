@@ -54,21 +54,22 @@ public class ControllerRequestHandler extends Controller implements Runnable {
                 handler.setSocket(connectionSocket);
                 handler.executeRequest();
             }
-            if (msgWrapper.hasListOfActiveNodes()) {
-                RequestsToController.ListOfActiveNodesRequest list = msgWrapper.getListOfActiveNodes();
+            if (msgWrapper.hasListOfFilesOnNodesRequestMsg()) {
+                RequestsToController.ListOfFilesOnNodesRequest list = msgWrapper.getListOfFilesOnNodesRequestMsg();
                 ListRequestToCNHandler handler = new ListRequestToCNHandler(list);
+                handler.setSocket(connectionSocket);
+                handler.executeRequest();
+            }
+            if(msgWrapper.hasListOfActiveNodesRequestMsg())
+            {
+                RequestsToController.ListOfActiveNodesRequest listActiveNodes = msgWrapper.getListOfActiveNodesRequestMsg();
+                ListActiveNodesToCNHandler handler = new ListActiveNodesToCNHandler(listActiveNodes);
                 handler.setSocket(connectionSocket);
                 handler.executeRequest();
             }
             if (msgWrapper.hasSendGoodChunkRequestMsg()) {
                 RequestsToController.SendGoodChunkRequest goodChunkRequest = msgWrapper.getSendGoodChunkRequestMsg();
                 SendGoodChunkRequestToCNHandler handler = new SendGoodChunkRequestToCNHandler(goodChunkRequest);
-                handler.setSocket(connectionSocket);
-                handler.executeRequest();
-            }
-            if (msgWrapper.hasFreeSpaceInfoRequestMsg()) {
-                RequestsToController.FreeSpaceInfoRequest freeSpaceInfoRequest = msgWrapper.getFreeSpaceInfoRequestMsg();
-                FreeSpaceInfoRequestHandler handler = new FreeSpaceInfoRequestHandler(freeSpaceInfoRequest);
                 handler.setSocket(connectionSocket);
                 handler.executeRequest();
             }

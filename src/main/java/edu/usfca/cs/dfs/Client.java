@@ -42,7 +42,11 @@ public class Client {
                 RetrieveFile retrieveFile = new RetrieveFile(filePath);
                 retrieveFile.executeRequest();
                 break;
-            case "list":
+            case "listActiveNodes":
+                ListActiveNodes listActiveNodes = new ListActiveNodes();
+                listActiveNodes.executeRequest();
+                break;
+            case "listFiles":
                 ListFiles listFiles = new ListFiles();
                 listFiles.executeRequest();
                 break;

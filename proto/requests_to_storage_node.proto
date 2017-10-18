@@ -42,6 +42,11 @@ message StoreChunkRequestToSNFromClient
     repeated StorageNode storageNodeList = 4;
 }
 
+message FreeSpaceInfoRequestToSN
+{
+
+}
+
 message StoreChunkRequestToSNFromSN
 {
     string filename = 1;
@@ -128,5 +133,6 @@ message RequestsToStorageNodeWrapper {
         SendGoodChunkRequestFromSNToSN sendGoodChunkRequestFromSNToSNMsg = 6;
         SendReplicaCopyToSN sendReplicaCopyToSNMsg = 7;
         SendReplicaCopyToSNFromSN sendReplicaCopyToSNFromSNMsg = 8;
+        FreeSpaceInfoRequestToSN freeSpaceInfoRequestToSNMsg = 9;
     }
 }

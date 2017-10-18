@@ -22,9 +22,9 @@ public class FreeSpace extends Client {
             wrapper.writeDelimitedTo(socket.getOutputStream());
             ResponsesToClient.FreeSpaceInfoResponseFromCN freeSpace = ResponsesToClient.FreeSpaceInfoResponseFromCN.parseDelimitedFrom(socket.getInputStream());
             logger.info("Received response from controller");
-            logger.info("Cluster Capacity", freeSpace.getClusterCapacity());
-            logger.info("Cluster Used Space", freeSpace.getClusterUsedSpace());
-            logger.info("Cluster Free Space", freeSpace.getClusterAvailableSpace());
+            logger.info("Cluster Capacity {}", freeSpace.getClusterCapacity());
+            logger.info("Cluster Used Space {}", freeSpace.getClusterUsedSpace());
+            logger.info("Cluster Free Space {}", freeSpace.getClusterAvailableSpace());
             socket.close();
         } catch (IOException e) {
             logger.error("Exception caught {}", ExceptionUtils.getStackTrace(e));

@@ -40,6 +40,11 @@ message ListOfActiveStorageNodesResponseFromCN
     repeated storageNodeFileInfo activeStorageNodes = 1;
 }
 
+message FreeSpaceInfoResponseFromCN
+{
+    int64 diskSpace = 1;
+}
+
 //StorageNode
 message RetrieveFileResponseFromSN
 {
@@ -59,14 +64,6 @@ message AcknowledgeStoreChunkToClient
     bool success = 1;
 }
 
-//message AcknowledgeStoreChunk
-//{
-//    string filename = 1;
-//    int32  chunkId  = 2;
-//    int32  port     = 3;
-//    string hostname = 4;
-//}
-
 message GoodChunkDataToClient
 {
     string filename = 1;
@@ -76,12 +73,14 @@ message GoodChunkDataToClient
 }
 
 message ResponsesToClientWrapper {
-    oneof msg {
+    oneof msg
+    {
         StoreChunkResponse StoreChunkResponseMsg = 1;
         RetrieveFileResponseFromCN RetrieveFileResponseFromCNMsg = 2;
         RetrieveFileResponseFromSN RetrieveFileResponseFromSNMsg = 3;
         AcknowledgeReadinessToClient AcknowledgeReadinessToClientMsg = 4;
         AcknowledgeStoreChunkToClient AcknowledgeStoreChunkToClientMsg = 5;
         GoodChunkDataToClient goodChunkDataToClientMsg = 6;
+        FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;
     }
 }

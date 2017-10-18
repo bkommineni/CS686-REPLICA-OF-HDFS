@@ -18,6 +18,11 @@ message ListOfActiveNodesRequest
 
 }
 
+message FreeSpaceInfoRequest
+{
+
+}
+
 //StorageNode
 message Enroll
 {
@@ -31,6 +36,8 @@ message Heartbeat
     {
         int32 port = 1;
         string hostname = 2;
+        int64 diskSpaceUsed = 3;
+        int64 diskCapacity = 4;
     }
 
     storageNode SN = 1;
@@ -66,5 +73,6 @@ message RequestsToControllerWrapper {
         Heartbeat heartbeatMsg = 4;
         ListOfActiveNodesRequest listOfActiveNodes = 5;
         SendGoodChunkRequest sendGoodChunkRequestMsg = 6;
+        FreeSpaceInfoRequest freeSpaceInfoRequestMsg = 7;
     }
 }

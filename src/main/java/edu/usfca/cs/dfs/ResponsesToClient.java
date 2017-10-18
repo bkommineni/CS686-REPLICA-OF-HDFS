@@ -4955,6 +4955,455 @@ public final class ResponsesToClient {
 
   }
 
+  public interface FreeSpaceInfoResponseFromCNOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:FreeSpaceInfoResponseFromCN)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 diskSpace = 1;</code>
+     */
+    long getDiskSpace();
+  }
+  /**
+   * Protobuf type {@code FreeSpaceInfoResponseFromCN}
+   */
+  public  static final class FreeSpaceInfoResponseFromCN extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:FreeSpaceInfoResponseFromCN)
+      FreeSpaceInfoResponseFromCNOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use FreeSpaceInfoResponseFromCN.newBuilder() to construct.
+    private FreeSpaceInfoResponseFromCN(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private FreeSpaceInfoResponseFromCN() {
+      diskSpace_ = 0L;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private FreeSpaceInfoResponseFromCN(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+
+              diskSpace_ = input.readInt64();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return edu.usfca.cs.dfs.ResponsesToClient.internal_static_FreeSpaceInfoResponseFromCN_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return edu.usfca.cs.dfs.ResponsesToClient.internal_static_FreeSpaceInfoResponseFromCN_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.class, edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.Builder.class);
+    }
+
+    public static final int DISKSPACE_FIELD_NUMBER = 1;
+    private long diskSpace_;
+    /**
+     * <code>int64 diskSpace = 1;</code>
+     */
+    public long getDiskSpace() {
+      return diskSpace_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (diskSpace_ != 0L) {
+        output.writeInt64(1, diskSpace_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (diskSpace_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, diskSpace_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN)) {
+        return super.equals(obj);
+      }
+      edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN other = (edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) obj;
+
+      boolean result = true;
+      result = result && (getDiskSpace()
+          == other.getDiskSpace());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + DISKSPACE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getDiskSpace());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code FreeSpaceInfoResponseFromCN}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:FreeSpaceInfoResponseFromCN)
+        edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCNOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return edu.usfca.cs.dfs.ResponsesToClient.internal_static_FreeSpaceInfoResponseFromCN_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return edu.usfca.cs.dfs.ResponsesToClient.internal_static_FreeSpaceInfoResponseFromCN_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.class, edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.Builder.class);
+      }
+
+      // Construct using edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        diskSpace_ = 0L;
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return edu.usfca.cs.dfs.ResponsesToClient.internal_static_FreeSpaceInfoResponseFromCN_descriptor;
+      }
+
+      public edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN getDefaultInstanceForType() {
+        return edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.getDefaultInstance();
+      }
+
+      public edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN build() {
+        edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN buildPartial() {
+        edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN result = new edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN(this);
+        result.diskSpace_ = diskSpace_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) {
+          return mergeFrom((edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN other) {
+        if (other == edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.getDefaultInstance()) return this;
+        if (other.getDiskSpace() != 0L) {
+          setDiskSpace(other.getDiskSpace());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long diskSpace_ ;
+      /**
+       * <code>int64 diskSpace = 1;</code>
+       */
+      public long getDiskSpace() {
+        return diskSpace_;
+      }
+      /**
+       * <code>int64 diskSpace = 1;</code>
+       */
+      public Builder setDiskSpace(long value) {
+        
+        diskSpace_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 diskSpace = 1;</code>
+       */
+      public Builder clearDiskSpace() {
+        
+        diskSpace_ = 0L;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:FreeSpaceInfoResponseFromCN)
+    }
+
+    // @@protoc_insertion_point(class_scope:FreeSpaceInfoResponseFromCN)
+    private static final edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN();
+    }
+
+    public static edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<FreeSpaceInfoResponseFromCN>
+        PARSER = new com.google.protobuf.AbstractParser<FreeSpaceInfoResponseFromCN>() {
+      public FreeSpaceInfoResponseFromCN parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new FreeSpaceInfoResponseFromCN(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<FreeSpaceInfoResponseFromCN> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<FreeSpaceInfoResponseFromCN> getParserForType() {
+      return PARSER;
+    }
+
+    public edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface RetrieveFileResponseFromSNOrBuilder extends
       // @@protoc_insertion_point(interface_extends:RetrieveFileResponseFromSN)
       com.google.protobuf.MessageOrBuilder {
@@ -7519,6 +7968,19 @@ public final class ResponsesToClient {
      */
     edu.usfca.cs.dfs.ResponsesToClient.GoodChunkDataToClientOrBuilder getGoodChunkDataToClientMsgOrBuilder();
 
+    /**
+     * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+     */
+    boolean hasFreeSpaceInfoResponseFromCNMsg();
+    /**
+     * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+     */
+    edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN getFreeSpaceInfoResponseFromCNMsg();
+    /**
+     * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+     */
+    edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCNOrBuilder getFreeSpaceInfoResponseFromCNMsgOrBuilder();
+
     public edu.usfca.cs.dfs.ResponsesToClient.ResponsesToClientWrapper.MsgCase getMsgCase();
   }
   /**
@@ -7648,6 +8110,20 @@ public final class ResponsesToClient {
               msgCase_ = 6;
               break;
             }
+            case 58: {
+              edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.Builder subBuilder = null;
+              if (msgCase_ == 7) {
+                subBuilder = ((edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 7;
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -7682,6 +8158,7 @@ public final class ResponsesToClient {
       ACKNOWLEDGEREADINESSTOCLIENTMSG(4),
       ACKNOWLEDGESTORECHUNKTOCLIENTMSG(5),
       GOODCHUNKDATATOCLIENTMSG(6),
+      FREESPACEINFORESPONSEFROMCNMSG(7),
       MSG_NOT_SET(0);
       private final int value;
       private MsgCase(int value) {
@@ -7703,6 +8180,7 @@ public final class ResponsesToClient {
           case 4: return ACKNOWLEDGEREADINESSTOCLIENTMSG;
           case 5: return ACKNOWLEDGESTORECHUNKTOCLIENTMSG;
           case 6: return GOODCHUNKDATATOCLIENTMSG;
+          case 7: return FREESPACEINFORESPONSEFROMCNMSG;
           case 0: return MSG_NOT_SET;
           default: return null;
         }
@@ -7874,6 +8352,32 @@ public final class ResponsesToClient {
       return edu.usfca.cs.dfs.ResponsesToClient.GoodChunkDataToClient.getDefaultInstance();
     }
 
+    public static final int FREESPACEINFORESPONSEFROMCNMSG_FIELD_NUMBER = 7;
+    /**
+     * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+     */
+    public boolean hasFreeSpaceInfoResponseFromCNMsg() {
+      return msgCase_ == 7;
+    }
+    /**
+     * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+     */
+    public edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN getFreeSpaceInfoResponseFromCNMsg() {
+      if (msgCase_ == 7) {
+         return (edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_;
+      }
+      return edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.getDefaultInstance();
+    }
+    /**
+     * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+     */
+    public edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCNOrBuilder getFreeSpaceInfoResponseFromCNMsgOrBuilder() {
+      if (msgCase_ == 7) {
+         return (edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_;
+      }
+      return edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.getDefaultInstance();
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -7903,6 +8407,9 @@ public final class ResponsesToClient {
       }
       if (msgCase_ == 6) {
         output.writeMessage(6, (edu.usfca.cs.dfs.ResponsesToClient.GoodChunkDataToClient) msg_);
+      }
+      if (msgCase_ == 7) {
+        output.writeMessage(7, (edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_);
       }
       unknownFields.writeTo(output);
     }
@@ -7935,6 +8442,10 @@ public final class ResponsesToClient {
       if (msgCase_ == 6) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(6, (edu.usfca.cs.dfs.ResponsesToClient.GoodChunkDataToClient) msg_);
+      }
+      if (msgCase_ == 7) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(7, (edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -7980,6 +8491,10 @@ public final class ResponsesToClient {
           result = result && getGoodChunkDataToClientMsg()
               .equals(other.getGoodChunkDataToClientMsg());
           break;
+        case 7:
+          result = result && getFreeSpaceInfoResponseFromCNMsg()
+              .equals(other.getFreeSpaceInfoResponseFromCNMsg());
+          break;
         case 0:
         default:
       }
@@ -8018,6 +8533,10 @@ public final class ResponsesToClient {
         case 6:
           hash = (37 * hash) + GOODCHUNKDATATOCLIENTMSG_FIELD_NUMBER;
           hash = (53 * hash) + getGoodChunkDataToClientMsg().hashCode();
+          break;
+        case 7:
+          hash = (37 * hash) + FREESPACEINFORESPONSEFROMCNMSG_FIELD_NUMBER;
+          hash = (53 * hash) + getFreeSpaceInfoResponseFromCNMsg().hashCode();
           break;
         case 0:
         default:
@@ -8217,6 +8736,13 @@ public final class ResponsesToClient {
             result.msg_ = goodChunkDataToClientMsgBuilder_.build();
           }
         }
+        if (msgCase_ == 7) {
+          if (freeSpaceInfoResponseFromCNMsgBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = freeSpaceInfoResponseFromCNMsgBuilder_.build();
+          }
+        }
         result.msgCase_ = msgCase_;
         onBuilt();
         return result;
@@ -8282,6 +8808,10 @@ public final class ResponsesToClient {
           }
           case GOODCHUNKDATATOCLIENTMSG: {
             mergeGoodChunkDataToClientMsg(other.getGoodChunkDataToClientMsg());
+            break;
+          }
+          case FREESPACEINFORESPONSEFROMCNMSG: {
+            mergeFreeSpaceInfoResponseFromCNMsg(other.getFreeSpaceInfoResponseFromCNMsg());
             break;
           }
           case MSG_NOT_SET: {
@@ -9145,6 +9675,142 @@ public final class ResponsesToClient {
         onChanged();;
         return goodChunkDataToClientMsgBuilder_;
       }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN, edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.Builder, edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCNOrBuilder> freeSpaceInfoResponseFromCNMsgBuilder_;
+      /**
+       * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+       */
+      public boolean hasFreeSpaceInfoResponseFromCNMsg() {
+        return msgCase_ == 7;
+      }
+      /**
+       * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+       */
+      public edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN getFreeSpaceInfoResponseFromCNMsg() {
+        if (freeSpaceInfoResponseFromCNMsgBuilder_ == null) {
+          if (msgCase_ == 7) {
+            return (edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_;
+          }
+          return edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.getDefaultInstance();
+        } else {
+          if (msgCase_ == 7) {
+            return freeSpaceInfoResponseFromCNMsgBuilder_.getMessage();
+          }
+          return edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+       */
+      public Builder setFreeSpaceInfoResponseFromCNMsg(edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN value) {
+        if (freeSpaceInfoResponseFromCNMsgBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          freeSpaceInfoResponseFromCNMsgBuilder_.setMessage(value);
+        }
+        msgCase_ = 7;
+        return this;
+      }
+      /**
+       * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+       */
+      public Builder setFreeSpaceInfoResponseFromCNMsg(
+          edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.Builder builderForValue) {
+        if (freeSpaceInfoResponseFromCNMsgBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          freeSpaceInfoResponseFromCNMsgBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 7;
+        return this;
+      }
+      /**
+       * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+       */
+      public Builder mergeFreeSpaceInfoResponseFromCNMsg(edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN value) {
+        if (freeSpaceInfoResponseFromCNMsgBuilder_ == null) {
+          if (msgCase_ == 7 &&
+              msg_ != edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.getDefaultInstance()) {
+            msg_ = edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.newBuilder((edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 7) {
+            freeSpaceInfoResponseFromCNMsgBuilder_.mergeFrom(value);
+          }
+          freeSpaceInfoResponseFromCNMsgBuilder_.setMessage(value);
+        }
+        msgCase_ = 7;
+        return this;
+      }
+      /**
+       * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+       */
+      public Builder clearFreeSpaceInfoResponseFromCNMsg() {
+        if (freeSpaceInfoResponseFromCNMsgBuilder_ == null) {
+          if (msgCase_ == 7) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 7) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          freeSpaceInfoResponseFromCNMsgBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+       */
+      public edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.Builder getFreeSpaceInfoResponseFromCNMsgBuilder() {
+        return getFreeSpaceInfoResponseFromCNMsgFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+       */
+      public edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCNOrBuilder getFreeSpaceInfoResponseFromCNMsgOrBuilder() {
+        if ((msgCase_ == 7) && (freeSpaceInfoResponseFromCNMsgBuilder_ != null)) {
+          return freeSpaceInfoResponseFromCNMsgBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 7) {
+            return (edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_;
+          }
+          return edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.FreeSpaceInfoResponseFromCN freeSpaceInfoResponseFromCNMsg = 7;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN, edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.Builder, edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCNOrBuilder> 
+          getFreeSpaceInfoResponseFromCNMsgFieldBuilder() {
+        if (freeSpaceInfoResponseFromCNMsgBuilder_ == null) {
+          if (!(msgCase_ == 7)) {
+            msg_ = edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.getDefaultInstance();
+          }
+          freeSpaceInfoResponseFromCNMsgBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN, edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN.Builder, edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCNOrBuilder>(
+                  (edu.usfca.cs.dfs.ResponsesToClient.FreeSpaceInfoResponseFromCN) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 7;
+        onChanged();;
+        return freeSpaceInfoResponseFromCNMsgBuilder_;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -9230,6 +9896,11 @@ public final class ResponsesToClient {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_FreeSpaceInfoResponseFromCN_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_FreeSpaceInfoResponseFromCN_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_RetrieveFileResponseFromSN_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -9278,26 +9949,29 @@ public final class ResponsesToClient {
       "s\030\001 \003(\0132;.ListOfActiveStorageNodesRespon" +
       "seFromCN.storageNodeFileInfo\032G\n\023storageN" +
       "odeFileInfo\022\014\n\004port\030\001 \001(\005\022\020\n\010hostname\030\002 " +
-      "\001(\t\022\020\n\010filename\030\003 \001(\t\"d\n\032RetrieveFileRes" +
-      "ponseFromSN\022\020\n\010checksum\030\001 \001(\t\022\021\n\tchunkDa" +
-      "ta\030\002 \001(\014\022\020\n\010filename\030\003 \001(\t\022\017\n\007chunkId\030\004 " +
-      "\001(\005\"/\n\034AcknowledgeReadinessToClient\022\017\n\007s" +
-      "uccess\030\001 \001(\010\"0\n\035AcknowledgeStoreChunkToC",
-      "lient\022\017\n\007success\030\001 \001(\010\"_\n\025GoodChunkDataT" +
-      "oClient\022\020\n\010filename\030\001 \001(\t\022\017\n\007chunkId\030\002 \001" +
-      "(\005\022\021\n\tchunkData\030\003 \001(\014\022\020\n\010checksum\030\004 \001(\t\"" +
-      "\265\003\n\030ResponsesToClientWrapper\0224\n\025StoreChu" +
-      "nkResponseMsg\030\001 \001(\0132\023.StoreChunkResponse" +
-      "H\000\022D\n\035RetrieveFileResponseFromCNMsg\030\002 \001(" +
-      "\0132\033.RetrieveFileResponseFromCNH\000\022D\n\035Retr" +
-      "ieveFileResponseFromSNMsg\030\003 \001(\0132\033.Retrie" +
-      "veFileResponseFromSNH\000\022H\n\037AcknowledgeRea" +
-      "dinessToClientMsg\030\004 \001(\0132\035.AcknowledgeRea",
-      "dinessToClientH\000\022J\n AcknowledgeStoreChun" +
-      "kToClientMsg\030\005 \001(\0132\036.AcknowledgeStoreChu" +
-      "nkToClientH\000\022:\n\030goodChunkDataToClientMsg" +
-      "\030\006 \001(\0132\026.GoodChunkDataToClientH\000B\005\n\003msgB" +
-      "\022\n\020edu.usfca.cs.dfsb\006proto3"
+      "\001(\t\022\020\n\010filename\030\003 \001(\t\"0\n\033FreeSpaceInfoRe" +
+      "sponseFromCN\022\021\n\tdiskSpace\030\001 \001(\003\"d\n\032Retri" +
+      "eveFileResponseFromSN\022\020\n\010checksum\030\001 \001(\t\022" +
+      "\021\n\tchunkData\030\002 \001(\014\022\020\n\010filename\030\003 \001(\t\022\017\n\007" +
+      "chunkId\030\004 \001(\005\"/\n\034AcknowledgeReadinessToC",
+      "lient\022\017\n\007success\030\001 \001(\010\"0\n\035AcknowledgeSto" +
+      "reChunkToClient\022\017\n\007success\030\001 \001(\010\"_\n\025Good" +
+      "ChunkDataToClient\022\020\n\010filename\030\001 \001(\t\022\017\n\007c" +
+      "hunkId\030\002 \001(\005\022\021\n\tchunkData\030\003 \001(\014\022\020\n\010check" +
+      "sum\030\004 \001(\t\"\375\003\n\030ResponsesToClientWrapper\0224" +
+      "\n\025StoreChunkResponseMsg\030\001 \001(\0132\023.StoreChu" +
+      "nkResponseH\000\022D\n\035RetrieveFileResponseFrom" +
+      "CNMsg\030\002 \001(\0132\033.RetrieveFileResponseFromCN" +
+      "H\000\022D\n\035RetrieveFileResponseFromSNMsg\030\003 \001(" +
+      "\0132\033.RetrieveFileResponseFromSNH\000\022H\n\037Ackn",
+      "owledgeReadinessToClientMsg\030\004 \001(\0132\035.Ackn" +
+      "owledgeReadinessToClientH\000\022J\n Acknowledg" +
+      "eStoreChunkToClientMsg\030\005 \001(\0132\036.Acknowled" +
+      "geStoreChunkToClientH\000\022:\n\030goodChunkDataT" +
+      "oClientMsg\030\006 \001(\0132\026.GoodChunkDataToClient" +
+      "H\000\022F\n\036freeSpaceInfoResponseFromCNMsg\030\007 \001" +
+      "(\0132\034.FreeSpaceInfoResponseFromCNH\000B\005\n\003ms" +
+      "gB\022\n\020edu.usfca.cs.dfsb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -9353,36 +10027,42 @@ public final class ResponsesToClient {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ListOfActiveStorageNodesResponseFromCN_storageNodeFileInfo_descriptor,
         new java.lang.String[] { "Port", "Hostname", "Filename", });
-    internal_static_RetrieveFileResponseFromSN_descriptor =
+    internal_static_FreeSpaceInfoResponseFromCN_descriptor =
       getDescriptor().getMessageTypes().get(3);
+    internal_static_FreeSpaceInfoResponseFromCN_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_FreeSpaceInfoResponseFromCN_descriptor,
+        new java.lang.String[] { "DiskSpace", });
+    internal_static_RetrieveFileResponseFromSN_descriptor =
+      getDescriptor().getMessageTypes().get(4);
     internal_static_RetrieveFileResponseFromSN_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_RetrieveFileResponseFromSN_descriptor,
         new java.lang.String[] { "Checksum", "ChunkData", "Filename", "ChunkId", });
     internal_static_AcknowledgeReadinessToClient_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_AcknowledgeReadinessToClient_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_AcknowledgeReadinessToClient_descriptor,
         new java.lang.String[] { "Success", });
     internal_static_AcknowledgeStoreChunkToClient_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_AcknowledgeStoreChunkToClient_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_AcknowledgeStoreChunkToClient_descriptor,
         new java.lang.String[] { "Success", });
     internal_static_GoodChunkDataToClient_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_GoodChunkDataToClient_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_GoodChunkDataToClient_descriptor,
         new java.lang.String[] { "Filename", "ChunkId", "ChunkData", "Checksum", });
     internal_static_ResponsesToClientWrapper_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_ResponsesToClientWrapper_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ResponsesToClientWrapper_descriptor,
-        new java.lang.String[] { "StoreChunkResponseMsg", "RetrieveFileResponseFromCNMsg", "RetrieveFileResponseFromSNMsg", "AcknowledgeReadinessToClientMsg", "AcknowledgeStoreChunkToClientMsg", "GoodChunkDataToClientMsg", "Msg", });
+        new java.lang.String[] { "StoreChunkResponseMsg", "RetrieveFileResponseFromCNMsg", "RetrieveFileResponseFromSNMsg", "AcknowledgeReadinessToClientMsg", "AcknowledgeStoreChunkToClientMsg", "GoodChunkDataToClientMsg", "FreeSpaceInfoResponseFromCNMsg", "Msg", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

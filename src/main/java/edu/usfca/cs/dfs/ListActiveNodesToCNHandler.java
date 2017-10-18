@@ -37,22 +37,13 @@ public class ListActiveNodesToCNHandler extends Controller {
             List<ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode> storageNodes = new ArrayList<>();
             for (String str : statusStorageNodesMap.keySet()) {
                 if (statusStorageNodesMap.get(str)) {
-                    List<DataNode> dataNodeList = new ArrayList<>();
-                    for (String key : metadataMap.keySet()) {
-                        if (key.contains(str)) {
-                            DataNode dataNode = metadataMap.get(key).getDataNode();
-                            if (!dataNodeList.contains(dataNode)) {
-                                dataNodeList.add(dataNode);
-                                DataNode storageNode = metadataMap.get(key).getDataNode();
-                                ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode SN =
-                                        ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode.newBuilder()
-                                                .setPort(storageNode.getPort())
-                                                .setHostname(storageNode.getHostname())
-                                                .build();
-                                storageNodes.add(SN);
-                            }
-                        }
-                    }
+                    DataNode dataNode = storageNodesList.get(str);
+                    ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode SN =
+                            ResponsesToClient.ListOfActiveStorageNodesFromCN.storageNode.newBuilder()
+                                    .setPort(dataNode.getPort())
+                                    .setHostname(dataNode.getHostname())
+                                    .build();
+                    storageNodes.add(SN);
                 }
             }
             ResponsesToClient.ListOfActiveStorageNodesFromCN list = ResponsesToClient.ListOfActiveStorageNodesFromCN.newBuilder()

@@ -35,19 +35,22 @@ public class HeartBeatRequestToCNHandler extends Controller {
                     .setDiskCapacity(heartbeat.getSN().getDiskCapacity())
                     .setDiskSpaceUsed(heartbeat.getSN().getDiskSpaceUsed())
                     .build();
+            DataNode dataNode = new DataNode(heartbeat.getSN().getPort(),heartbeat.getSN().getHostname());
+            dataNode.setDiskCapacity(heartbeat.getSN().getDiskCapacity());
+            dataNode.setDiskspaceUsed(heartbeat.getSN().getDiskSpaceUsed());
+            storageNodesList.put(storageNode.getHostname() + storageNode.getPort(), dataNode);
             for (int i = 0; i < size; i++) {
                 RequestsToController.Heartbeat.ChunkMetadata chunkMetadata = heartbeat.getMetadataList().get(i);
                 String key = chunkMetadata.getFilename() + chunkMetadata.getChunkId() + storageNode.getHostname() + storageNode.getPort();
                 //logger.debug("metadata map key {}",key);
                 if (!metadataMap.containsKey(key)) {
                     Metadata metadata = new Metadata(chunkMetadata.getFilename(), chunkMetadata.getChunkId());
-                    DataNode dataNode = new DataNode(storageNode.getPort(), storageNode.getHostname());
-                    dataNode.setDiskCapacity(storageNode.getDiskCapacity());
-                    dataNode.setDiskspaceUsed(storageNode.getDiskSpaceUsed());
+                    DataNode dataNode1 = new DataNode(storageNode.getPort(), storageNode.getHostname());
+                    dataNode1.setDiskCapacity(storageNode.getDiskCapacity());
+                    dataNode1.setDiskspaceUsed(storageNode.getDiskSpaceUsed());
                     //logger.debug("disk space used {} total capacity {}",storageNode.getDiskSpaceUsed(),storageNode.getDiskCapacity());
-                    metadata.setDataNode(dataNode);
+                    metadata.setDataNode(dataNode1);
                     metadataMap.put(key, metadata);
-                    storageNodesList.put(storageNode.getHostname() + storageNode.getPort(), dataNode);
                 }
             }
             storageNodeHeartBeatTimeStamps.put(storageNode.getHostname() + storageNode.getPort(), System.currentTimeMillis());

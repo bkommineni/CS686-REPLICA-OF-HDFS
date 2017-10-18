@@ -34,8 +34,11 @@ public class FreeSpaceInfoRequestHandler extends Controller {
             long totalUsedSpaceOnCluster = 0;
 
             for (String str : storageNodesList.keySet()) {
-                totalDiskSpaceOnCluster = totalDiskSpaceOnCluster + storageNodesList.get(str).getDiskCapacity();
-                totalUsedSpaceOnCluster = totalUsedSpaceOnCluster + storageNodesList.get(str).getDiskspaceUsed();
+                DataNode dataNode = storageNodesList.get(str);
+                logger.info("host {} port {}",dataNode.getHostname(),dataNode.getPort());
+                logger.info("disk capacity {} disk used {}",dataNode.getDiskCapacity(),dataNode.getDiskspaceUsed());
+                totalDiskSpaceOnCluster = totalDiskSpaceOnCluster + dataNode.getDiskCapacity();
+                totalUsedSpaceOnCluster = totalUsedSpaceOnCluster + dataNode.getDiskspaceUsed();
             }
             logger.info("total space {} total used {}", totalDiskSpaceOnCluster, totalUsedSpaceOnCluster);
             long availableDiskSpaceOnCluster = (totalDiskSpaceOnCluster - totalUsedSpaceOnCluster);
